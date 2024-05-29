@@ -9,6 +9,7 @@ import SendMailScreen from './Screens/SendMailScreen';
 import EmployeesScreen from './Screens/EmployeesScreen';
 import LoginScreen from './Screens/LoginScreen';
 import Loader from './components/Loader';
+import './App.css'
 
 
 const App = () => {

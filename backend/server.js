@@ -26,17 +26,20 @@ app.use('/api/employees',employeeRoutes);
 app.use('/api/programs',programRoutes);
 app.use('/api/login',loginRoutes);
 
-app.get('/',(req,res) => {
-  res.send("API is running...");
-})
-
-
-
-
 const __dirname = path.resolve();
 app.use('/uploads', express.static(path.join(__dirname,'/uploads')));
 
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static(path.join(__dirname, '../frontend/build')));
 
+  app.get('*', (req, res) =>
+    res.sendFile(path.resolve(__dirname, 'frontend', 'build', 'index.html'))
+  );
+} else {
+  app.get('/', (req, res) => {
+    res.send('API is running....');
+  });
+}
 
 app.listen(PORT, () => {
   console.log(`Server listening on port: ${PORT}`);
