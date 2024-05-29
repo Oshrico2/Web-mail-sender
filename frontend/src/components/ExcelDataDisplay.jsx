@@ -16,7 +16,7 @@ const ExcelDataDisplay = () => {
     setIsLoading(true); // Activate loader
 
     axios
-      .post("http://localhost:4000/api/programs/general", {
+      .post("/api/programs/general", {
         weeklyStatus: false,
       })
       .then((response) => {
@@ -35,7 +35,7 @@ const ExcelDataDisplay = () => {
     setIsLoading(true); // Activate loader
 
     axios
-      .post("http://localhost:4000/api/programs/general", {
+      .post("/api/programs/general", {
         weeklyStatus: true,
       })
       .then((response) => {
@@ -54,7 +54,7 @@ const ExcelDataDisplay = () => {
     setIsLoading(true); // Activate loader
 
     axios
-      .post("http://localhost:4000/api/programs/other-services", {
+      .post("/api/programs/other-services", {
         weeklyStatus: "בריאות",
       })
       .then((response) => {
@@ -72,7 +72,7 @@ const ExcelDataDisplay = () => {
     setIsLoading(true); // Activate loader
 
     axios
-      .post("http://localhost:4000/api/programs/other-services", {
+      .post("/api/programs/other-services", {
         weeklyStatus: "פנסיה",
       })
       .then((response) => {
@@ -119,7 +119,7 @@ reader.onload = (e) => {
 
       formData.append("xlsx", file);
       axios
-        .post("http://localhost:4000/api/upload", formData)
+        .post("/api/upload", formData)
         .then((response) => {
           console.log(response.data);
           // Handle success response here

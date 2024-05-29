@@ -22,7 +22,7 @@ const AgentsScreen = () => {
     const fetchAgents = async () => {
       setIsLoading(true); // Set loading state to true before fetching
       try {
-        const response = await axios.get('http://localhost:4000/api/agents');
+        const response = await axios.get('/api/agents');
         setAgents(response.data);
       } catch (error) {
         console.error('There was a problem fetching the agents:', error);
@@ -37,11 +37,11 @@ const AgentsScreen = () => {
   // Function to handle search by name
   const handleSearch = async (searchTerm) => {
     if(searchTerm === ''){
-      const response = await axios.get(`http://localhost:4000/api/agents`);
+      const response = await axios.get(`/api/agents`);
       setAgents(response.data);
     }else{
       try {
-        const response = await axios.get(`http://localhost:4000/api/agents/search/${searchTerm}`);
+        const response = await axios.get(`/api/agents/search/${searchTerm}`);
         setAgents(response.data);
       } catch (error) {
         console.error('There was a problem searching for agents:', error);
@@ -52,7 +52,7 @@ const AgentsScreen = () => {
 
   const handleRowClick = async (id) => {
     try {
-      const response = await axios.get(`http://localhost:4000/api/agents/${id}`);
+      const response = await axios.get(`/api/agents/${id}`);
       setSelectedAgent(response.data);
       setShowModal(true);
     } catch (error) {
@@ -62,7 +62,7 @@ const AgentsScreen = () => {
 
   const handleDeleteAgent = async (agentId) => {
     try {
-      await axios.delete(`http://localhost:4000/api/agents/${agentId}`);
+      await axios.delete(`/api/agents/${agentId}`);
       setAgents(prevAgents => prevAgents.filter(agent => agent._id !== agentId));
     } catch (error) {
       console.error('Error deleting agent:', error);

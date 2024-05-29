@@ -22,7 +22,7 @@ const AddEmployeeModal = ({ show, onHide }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:4000/api/employees/add', formData);
+      await axios.post('/api/employees/add', formData);
       toast.success('העובד נוסף בהצלחה!');
       setTimeout(() => {
         window.location.reload();

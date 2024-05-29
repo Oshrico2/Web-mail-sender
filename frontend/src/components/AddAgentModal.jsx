@@ -23,7 +23,7 @@ const AddAgentModal = ({ show, onHide }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:4000/api/agents/add', formData);
+      await axios.post('/api/agents/add', formData);
       toast.success('הסוכן נוסף בהצלחה!');
       setTimeout(() => {
         window.location.reload();

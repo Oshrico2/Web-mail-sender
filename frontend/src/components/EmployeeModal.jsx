@@ -33,7 +33,7 @@ const EmployeesModal = ({ show, onHide, employee, onDelete }) => {
 
   const handleDelete = async () => {
     try {
-      await axios.delete(`http://localhost:4000/api/employees/${employee._id}`);
+      await axios.delete(`/api/employees/${employee._id}`);
       onDelete(employee._id);
       toast.success("העובד נמחק בהצלחה");
       setTimeout(() => {
@@ -49,7 +49,7 @@ const EmployeesModal = ({ show, onHide, employee, onDelete }) => {
     e.preventDefault();
     try {
       await axios.put(
-        `http://localhost:4000/api/employees/${employee._id}`,
+        `/api/employees/${employee._id}`,
         formData
       );
       toast.success("פרטי העובד עודכנו בהצלחה");

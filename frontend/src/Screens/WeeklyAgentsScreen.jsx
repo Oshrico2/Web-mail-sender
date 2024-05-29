@@ -15,7 +15,7 @@ const WeeklyAgentsScreen = () => {
   useEffect(() => {
     const fetchAgents = async () => {
       try {
-        const response = await axios.get("http://localhost:4000/api/agents/per-week");
+        const response = await axios.get("/api/agents/per-week");
         setAgents(response.data);
       } catch (error) {
         console.error("There was a problem fetching the agents:", error);

@@ -20,7 +20,7 @@ const EmployeesScreen = () => {
     const fetchEmployees = async () => {
       setIsLoading(true);
       try {
-        const response = await axios.get("http://localhost:4000/api/employees");
+        const response = await axios.get("/api/employees");
         setEmployees(response.data);
       } catch (error) {
         console.error("There was a problem fetching the employees:", error);
@@ -35,12 +35,12 @@ const EmployeesScreen = () => {
   // Function to handle search by name
   const handleSearch = async (searchTerm) => {
     if (searchTerm === "") {
-      const response = await axios.get(`http://localhost:4000/api/employees`);
+      const response = await axios.get(`/api/employees`);
       setEmployees(response.data);
     } else {
       try {
         const response = await axios.get(
-          `http://localhost:4000/api/employees/search-by-subject/${searchTerm}`
+          `/api/employees/search-by-subject/${searchTerm}`
         );
         setEmployees(response.data);
       } catch (error) {
@@ -52,7 +52,7 @@ const EmployeesScreen = () => {
   const handleRowClick = async (id) => {
     try {
       const response = await axios.get(
-        `http://localhost:4000/api/employees/${id}`
+        `/api/employees/${id}`
       );
       setSelectedEmployee(response.data);
       setShowModal(true);
@@ -63,7 +63,7 @@ const EmployeesScreen = () => {
 
   const handleDeleteEmployee = async (employeeId) => {
     try {
-      await axios.delete(`http://localhost:4000/api/employees/${employeeId}`);
+      await axios.delete(`/api/employees/${employeeId}`);
       setEmployees((prevEmployees) =>
         prevEmployees.filter((employee) => employee._id !== employeeId)
       );

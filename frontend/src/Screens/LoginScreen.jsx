@@ -11,7 +11,7 @@ const LoginScreen = ({setIsAuthenticated}) => {
   const handleClick = () => {
     const userData = { username: username, password: password };
 
-    axios.post('http://localhost:4000/api/login', userData)
+    axios.post('/api/login', userData)
     .then(response => {
         console.log('Login successful:', response.data);
         const token = response.data; // Extract token from response data

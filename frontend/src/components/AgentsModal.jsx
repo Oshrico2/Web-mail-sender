@@ -36,7 +36,7 @@ const AgentsModal = ({ show, onHide, agent, onDelete }) => {
 
   const handleDelete = async () => {
     try {
-      await axios.delete(`http://localhost:4000/api/agents/${agent._id}`);
+      await axios.delete(`/api/agents/${agent._id}`);
       onDelete(agent._id);
       toast.success('הסוכן נמחק בהצלחה');
       setTimeout(() => {
@@ -51,7 +51,7 @@ const AgentsModal = ({ show, onHide, agent, onDelete }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.put(`http://localhost:4000/api/agents/${agent._id}`, formData);
+      await axios.put(`/api/agents/${agent._id}`, formData);
       toast.success('פרטי הסוכן עודכנו בהצלחה');
       setTimeout(() => {
         window.location.reload();
