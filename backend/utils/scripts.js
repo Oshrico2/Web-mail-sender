@@ -1,9 +1,6 @@
 import xlsx from "xlsx";
 import axios from "axios";
 
-axios.defaults.baseURL = "http://localhost:4000";
-
-
 const readExcelFile = () => {
   const workbook = xlsx.readFile("../uploads/file1.xlsx");
   const sheetName = workbook.SheetNames[0];
