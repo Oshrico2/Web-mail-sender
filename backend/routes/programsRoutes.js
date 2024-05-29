@@ -30,7 +30,7 @@ const sendMailsWithFile = (agentMap, weeklyStatus) => {
     let ws = xlsx.utils.json_to_sheet(agentInfo.data);
     ws = removeUnwantedColumns(ws);
     xlsx.utils.book_append_sheet(wb, ws, "Agent Data");
-    const excelFileName = `../uploads/status-by-agent/${agentInfo.name}.xlsx`;
+    const excelFileName = process.env.UPLOAD_PATH_AGENT_FILE;
     xlsx.writeFile(wb, excelFileName);
     console.log(`Excel file saved for ${agentInfo.name}`);
 
@@ -81,7 +81,7 @@ const sendMailsWithFile = (agentMap, weeklyStatus) => {
     </style>
 </head>
 <body dir="rtl">
-<p>לפניך מקרא המסביר את הסטטוסים:</p>
+<p dir="rtl">לפניך מקרא המסביר את הסטטוסים:</p>
 <div class="center">
     <table class="styled-table" dir="rtl">
         <tr>    

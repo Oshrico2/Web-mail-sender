@@ -15,7 +15,7 @@ const storage = multer.diskStorage({
         );
     },
 });
-  
+
 
 const checkFileType = (file,cb) => {
     const filetypes = /xlsx|csv/;

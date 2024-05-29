@@ -1,8 +1,10 @@
 import xlsx from "xlsx";
 import axios from "axios";
+import dotenv from 'dotenv'
+dotenv.config();
 
 const readExcelFile = () => {
-  const workbook = xlsx.readFile("../uploads/file1.xlsx");
+  const workbook = xlsx.readFile(process.env.FILE_URL);
   const sheetName = workbook.SheetNames[0];
   const worksheet = workbook.Sheets[sheetName];
 
