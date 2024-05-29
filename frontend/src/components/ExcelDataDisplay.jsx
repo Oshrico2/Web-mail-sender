@@ -50,20 +50,72 @@ const ExcelDataDisplay = () => {
     setShow(false);
   };
 
+  const handleBriutStatus = () => {
+    setIsLoading(true); // Activate loader
+
+    axios
+      .post("http://localhost:4000/api/programs/other-services", {
+        weeklyStatus: "בריאות",
+      })
+      .then((response) => {
+        console.log(response);
+      })
+      .catch((err) => {
+        console.error(err);
+      })
+      .finally(() => {
+        setIsLoading(false); // Deactivate loader after request is completed
+      });
+  };
+
+  const handlePensiaStatus = () => {
+    setIsLoading(true); // Activate loader
+
+    axios
+      .post("http://localhost:4000/api/programs/other-services", {
+        weeklyStatus: "פנסיה",
+      })
+      .then((response) => {
+        console.log(response);
+      })
+      .catch((err) => {
+        console.error(err);
+      })
+      .finally(() => {
+        setIsLoading(false); // Deactivate loader after request is completed
+      });
+  };
+
   const handleFileChange = (e) => {
     setIsLoading(true);
     const file = e.target.files[0];
     const formData = new FormData();
 
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const data = new Uint8Array(e.target.result);
-      const workbook = XLSX.read(data, { type: "array" });
-      const sheetName = workbook.SheetNames[0];
-      const worksheet = workbook.Sheets[sheetName];
-      const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+const reader = new FileReader();
+reader.onload = (e) => {
+  const data = new Uint8Array(e.target.result);
+  const workbook = XLSX.read(data, { type: "array" });
+  const sheetName = workbook.SheetNames[0];
+  const worksheet = workbook.Sheets[sheetName];
+  
+  // Get the range of the worksheet
+  const range = XLSX.utils.decode_range(worksheet['!ref']);
+  const jsonData = [];
+  
+  // Iterate through all rows and columns in the range
+  for (let R = range.s.r; R <= range.e.r; ++R) {
+    const row = [];
+    for (let C = range.s.c; C <= range.e.c; ++C) {
+      const cellAddress = { r: R, c: C };
+      const cellRef = XLSX.utils.encode_cell(cellAddress);
+      const cell = worksheet[cellRef];
+      let value = cell ? cell.v : ''; 
+      row.push(value);
+    }
+    jsonData.push(row);
+  }
 
-      setExcelData(jsonData);
+  setExcelData(jsonData);
 
       formData.append("xlsx", file);
       axios
@@ -108,7 +160,9 @@ const ExcelDataDisplay = () => {
                   {excelData.slice(1).map((row, rowIndex) => (
                     <tr key={rowIndex}>
                       {row.map((cell, cellIndex) => (
-                        <td key={cellIndex}>{cell}</td>
+                        <td key={cellIndex}>
+                          {cell !== undefined ? cell : ""}
+                        </td>
                       ))}
                     </tr>
                   ))}
@@ -123,8 +177,18 @@ const ExcelDataDisplay = () => {
                 <Button className="mx-5 btn-options" onClick={handleShow}>
                   כללי
                 </Button>
-                <Button className="mx-5 btn-options">בריאות</Button>
-                <Button className="mx-5 btn-options">פנסיוני</Button>
+                <Button
+                  onClick={handleBriutStatus}
+                  className="mx-5 btn-options"
+                >
+                  בריאות
+                </Button>
+                <Button
+                  onClick={handlePensiaStatus}
+                  className="mx-5 btn-options"
+                >
+                  פנסיוני
+                </Button>
 
                 <Modal show={show} onHide={handleClose}>
                   <Modal.Header

@@ -8,6 +8,7 @@ import agentsRoutes from './routes/agentsRoutes.js'
 import uploadRoutes from './routes/uploadRoutes.js'
 import employeeRoutes from './routes/employeesRoutes.js'
 import programRoutes from './routes/programsRoutes.js'
+import loginRoutes from './routes/loginRoutes.js'
 
 
 dotenv.config();
@@ -23,11 +24,26 @@ app.use('/api/agents',agentsRoutes);
 app.use('/api/upload',uploadRoutes);
 app.use('/api/employees',employeeRoutes);
 app.use('/api/programs',programRoutes);
+app.use('/api/login',loginRoutes);
 
 app.get('/',(req,res) => {
   res.send("API is running...");
 })
 
+app.post('/api/login', async (req, res) => {
+  const { username, password } = req.body;
+  try {
+      const user = await User.findOne({ username }); // Find user by username
+      if (!user || !bcrypt.compareSync(password, user.password)) {
+          return res.status(401).send({ message: 'Invalid credentials' });
+      }
+      const token = jwt.sign({ username: user.username }, process.env.JWT_SECRET, { expiresIn: '1h' });
+      res.send(token);
+  } catch (error) {
+      console.error('Error logging in:', error);
+      res.status(500).send({ message: 'Internal server error' });
+  }
+});
 
 
 const __dirname = path.resolve();

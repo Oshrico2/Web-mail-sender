@@ -37,123 +37,145 @@ const sendMailsWithFile = (agentMap, weeklyStatus) => {
     // Generate HTML table from the worksheet after removing unwanted columns
     const wsData = xlsx.utils.sheet_to_json(ws, { header: 1 });
     const htmlTable = `
-    <html>
-    <head>
-        <style>
-
-            .center {
-                display: flex;
-                justify-content: center;
-            }
-            .styled-table {
-                border-collapse: collapse;
-                margin: 25px 0;
-                font-size: 0.9em;
-                font-family: sans-serif;
-                min-width: 600px;
-                box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
-            }
-            .styled-table thead tr {
-                background-color: #DC5F00;
-                color: #ffffff;
-                text-align: right;
-            }
-            .styled-table th {
-                padding: 12px 15px;
-                text-align: right; /* Aligned text to the right */
-            }
-            .styled-table td {
-                padding: 12px 15px;
-                text-align: right;
-            }
-            .styled-table tbody tr {
-                border-bottom: 1px solid #dddddd;
-            }
-            .styled-table tbody tr:nth-of-type(even) {
-                background-color: #f3f3f3;
-            }
-            .styled-table tbody tr:last-of-type {
-                border-bottom: 2px solid #DC5F00;
-            }
-            .styled-table tbody tr.active-row {
-                font-weight: bold;
-                color: #DC5F00;
-            }
-        </style>
-    </head>
-    <body>
-    <p>לפניך מקרא המסביר את הסטטוסים:</p>
-        <div class="center">
-            <table class="styled-table" dir="rtl">
-                <tr>    
-                    <th>ספרה</th>
-                    <td>1</td>
-                    <td>2</td>
-                    <td>3</td>
-                    <td>4</td>
-                    <td>0/5</td>
-                </tr>
+    <html dir="rtl">
+<head>
+    <style>
+        .center {
+            display: flex;
+            justify-content: center;
+        }
+        .styled-table {
+            border-collapse: collapse;
+            margin: 25px 0;
+            font-size: 0.9em;
+            font-family: sans-serif;
+            min-width: 600px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+        }
+        .styled-table thead tr {
+            background-color: #DC5F00;
+            color: #ffffff;
+            text-align: right;
+        }
+        .styled-table th {
+            padding: 12px 15px;
+            text-align: right; /* Aligned text to the right */
+        }
+        .styled-table td {
+            padding: 12px 15px;
+            text-align: right;
+        }
+        .styled-table tbody tr {
+            border-bottom: 1px solid #dddddd;
+        }
+        .styled-table tbody tr:nth-of-type(even) {
+            background-color: #f3f3f3;
+        }
+        .styled-table tbody tr:last-of-type {
+            border-bottom: 2px solid #DC5F00;
+        }
+        .styled-table tbody tr.active-row {
+            font-weight: bold;
+            color: #DC5F00;
+        }
+    </style>
+</head>
+<body dir="rtl">
+<p>לפניך מקרא המסביר את הסטטוסים:</p>
+<div class="center">
+    <table class="styled-table" dir="rtl">
+        <tr>    
+            <th>ספרה</th>
+            <td>1</td>
+            <td>2</td>
+            <td>3</td>
+            <td>4</td>
+            <td>0/5</td>
+        </tr>
+        <tr>
+            <th>סטטוס</th>
+            <td>ללא מענה</td>
+            <td>הצעה</td>
+            <td>בתהליך</td>
+            <td>הופק</td>
+            <td>סירוב</td>
+        </tr>
+    </table>
+</div>
+<div class="center">
+    <table dir="rtl" class="styled-table">
+        <thead>
+            <tr>
+                <th>#</th>
+                ${wsData[0].map((header) => `<th>${header}</th>`).join("")}
+            </tr>
+        </thead>
+        <tbody>
+            ${wsData.slice(1).map((row, index) => `
                 <tr>
-                    <th>סטטוס</th>
-                    <td>ללא מענה</td>
-                    <td>הצעה</td>
-                    <td>בתהליך</td>
-                    <td>הופק</td>
-                    <td>סירוב</td>
+                    <td>${index + 1}</td>
+                    ${row.map((cell) => `<td>${cell}</td>`).join("")}
                 </tr>
-            </table>
-        </div>
-        <div class="center">
-            <table class="styled-table">
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        ${wsData[0]
-                          .map((header) => `<th>${header}</th>`)
-                          .join("")}
-                    </tr>
-                </thead>
-                <tbody>
-                    ${wsData
-                      .slice(1)
-                      .map(
-                        (row, index) => `
-                        <tr>
-                            <td>${index + 1}</td>
-                            ${row
-                              .map(
-                                (cell) =>
-                                  `<td>${cell !== undefined ? cell : ""}</td>`
-                              )
-                              .join("")}
-                        </tr>
-                    `
-                      )
-                      .join("")}
-                </tbody>
-            </table>
-        </div>
-    </body>
-    </html>
+            `).join("")}
+        </tbody>
+    </table>
+</div>
+<div dir="rtl">
+    <p>בברכה,</p>
+    <p>צוות סינרגיה</p>
+    <br>
+    <br>
+    <p>טלפון: 3743*</p>
+    <b><a href="https://wa.me/9720779912113" style="text-decoration:none">וואטסאפ </a></b>
+    <p>אתר: TLP-INS.CO.IL</p>
+    <p>סניפי תלפיות: בני ברק | פתח תקוה | רחובות | רמת גן | רעננה | חולון | תל אביב | ירושלים | נתניה | מודיעין | ראשון לציון | אשדוד | הרצליה</p>
+</div>
+<br>
+<br>
+<div dir="ltr" style="text-align:center;">
+    <p style="display:inline-block;font-size:11px;color:gray;font-family:Arial;">&copy; Osher Cohen - oshrico2@gmail.com</p>
+</div>
+</body>
+</html>
+
 `;
 
     const mailOptions = {
       from: mailFrom,
       to: `${agentInfo.email}`,
       cc: `${agentInfo.addMail}`,
-      subject:
-        (weeklyStatus ? `סטטוס לקוחות שבועי - ` : "סטטוס לקוחות יומי - ") +
-        ` ${agentInfo.name} ${getCurrentDateFormatted()}`,
-      html: `Dear ${agentInfo.name},<br><br>Please find attached the latest status report.<br><br>Best regards,<br>Your Company<br><br>${htmlTable}`,
+      subject: "",
+      html: "",
       attachments: [
         {
-          filename: weeklyStatus
-            ? `סטטוס לקוחות שבועי ${agentInfo.name}.xlsx`
-            : `סטטוס לקוחות יומי ${agentInfo.name}.xlsx`,
+          filename: "",
           path: excelFileName,
         },
       ],
     };
+
+    if (typeof weeklyStatus === "boolean") {
+      mailOptions.html = `<div dir="rtl"><p>היי ${agentInfo.name},</p>
+      <p>מצ״ב סטטוס לקוחות שלך מתחילת שנה בתחומים פנסיה/בריאות.</p>
+      <p>מצורף קובץ אקסל לנוחיותך.</p></div><br>${htmlTable}
+      `;
+      mailOptions.subject =
+        (weeklyStatus ? `סטטוס לקוחות שבועי - ` : "סטטוס לקוחות יומי - ") +
+        ` ${agentInfo.name} ${getCurrentDateFormatted()}`;
+      mailOptions.attachments[0].filename = weeklyStatus
+        ? `סטטוס לקוחות שבועי ${agentInfo.name}.xlsx`
+        : `סטטוס לקוחות יומי ${agentInfo.name}.xlsx`;
+    } else {
+      mailOptions.html = `<div dir="rtl"><p>היי ${agentInfo.name},</p>
+      <p>מצ"ב סטטוס לקוחות  <b>שהועברו/עודכנו מתחילת שנה</b> ללא תחומי פנסיה ובריאות.</p>
+      <p>פנסיה ובריאות נשלחים אחת לשבוע.</p>
+      <p>מצורף קובץ אקסל לנוחיותך.</p></div><br>${htmlTable}
+      `;
+      mailOptions.subject =
+        `סטטוס לקוחות - ${weeklyStatus}` +
+        ` ${agentInfo.name} ${getCurrentDateFormatted()}`;
+      mailOptions.attachments[0].filename = `סטטוס לקוחות - ${weeklyStatus} - ${agentInfo.name}.xlsx`;
+    }
 
     transporter.sendMail(mailOptions, (error, info) => {
       if (error) {
@@ -184,7 +206,7 @@ const groupDataByAgent = (agentsArray, weeklyStatus) => {
     }
     agentMap.get(agentName).data.push(agent);
   });
-
+  console.log(agentMap.data);
   sendMailsWithFile(agentMap, weeklyStatus);
 };
 
@@ -220,6 +242,36 @@ router.post("/general", async (req, res) => {
     const keyReplacements = {
       "סוכן בכרטיס לקוח": "שם סוכן",
       "שדה כללי 1": "סטטוס",
+    };
+
+    data = replaceKeysInArray(data, keyReplacements);
+    formatDates(data);
+    groupDataByAgent(data, weeklyStatus);
+    res.json(data);
+  } catch (error) {
+    console.error("Error fetching agents:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+router.post("/other-services", async (req, res) => {
+  try {
+    const weeklyStatus = req.body.weeklyStatus;
+    let data = readExcelFile();
+    const agents = await getAgentsFromDB();
+
+    for (const item of data) {
+      const agent = agents.find((agent) => agent.name === item["מקור לקוח"]);
+      if (agent && agent.additionalMail) {
+        item["מייל נוסף"] = agent.additionalMail;
+      }
+      if (agent && agent.email) {
+        item["מייל של סוכן"] = agent.email;
+      }
+    }
+    const keyReplacements = {
+      "מקור לקוח": "שם סוכן",
+      'מת"ל': "שם מטפל",
     };
 
     data = replaceKeysInArray(data, keyReplacements);

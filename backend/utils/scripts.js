@@ -3,11 +3,40 @@ import axios from "axios";
 
 axios.defaults.baseURL = "http://localhost:4000";
 
+
 const readExcelFile = () => {
   const workbook = xlsx.readFile("../uploads/file1.xlsx");
   const sheetName = workbook.SheetNames[0];
   const worksheet = workbook.Sheets[sheetName];
-  const data = xlsx.utils.sheet_to_json(worksheet);
+
+  // Get the range of the worksheet
+  const range = xlsx.utils.decode_range(worksheet['!ref']);
+  const headers = {};
+
+  // Identify headers and initialize them with 'none'
+  for (let C = range.s.c; C <= range.e.c; C++) {
+    const cellAddress = xlsx.utils.encode_cell({ r: range.s.r, c: C });
+    const header = worksheet[cellAddress] ? worksheet[cellAddress].v : '-';
+    headers[header] = 'none';
+  }
+
+  const data = [];
+
+  // Loop through each row
+  for (let R = range.s.r + 1; R <= range.e.r; R++) {
+    const rowData = { ...headers }; // Initialize each row with 'none' values
+
+    // Loop through each cell in the row
+    for (let C = range.s.c; C <= range.e.c; C++) {
+      const cellAddress = xlsx.utils.encode_cell({ r: R, c: C });
+      const cellValue = worksheet[cellAddress] ? worksheet[cellAddress].v : '-';
+      const columnHeader = worksheet[xlsx.utils.encode_cell({ r: range.s.r, c: C })].v;
+      rowData[columnHeader] = cellValue;
+    }
+
+    data.push(rowData);
+  }
+
   return data;
 };
 
@@ -21,15 +50,18 @@ const getCurrentDateFormatted = () => {
 
 const formatDates = (data) => {
   for (const item of data) {
-    const milliseconds1 = (item["תאריך שינוי"] - 25569) * 86400 * 1000;
+    if(item['תאריך שינוי']){
+      const milliseconds1 = (item["תאריך שינוי"] - 25569) * 86400 * 1000;
+      const date1 = new Date(milliseconds1);
+      
+      item["תאריך שינוי"] = date1.toLocaleDateString("he-IL", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+      });
+    }
     const milliseconds2 = (item["תאריך יצירה"] - 25569) * 86400 * 1000;
-    const date1 = new Date(milliseconds1);
     const date2 = new Date(milliseconds2);
-    item["תאריך שינוי"] = date1.toLocaleDateString("he-IL", {
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-    });
     item["תאריך יצירה"] = date2.toLocaleDateString("he-IL", {
       year: "numeric",
       month: "2-digit",
@@ -39,7 +71,7 @@ const formatDates = (data) => {
 };
 
 const removeUnwantedColumns = (data) => {
-  const columnsToRemove = ["טלפון 1", "מייל נוסף", "מייל של סוכן"];
+  const columnsToRemove = ["טלפון 1", "מייל נוסף", "מייל של סוכן","סלולרי לקוח"];
   const wsData = xlsx.utils.sheet_to_json(data, { header: 1 });
   const headers = wsData[0];
   const indicesToRemove = headers
