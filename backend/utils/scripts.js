@@ -6,39 +6,46 @@ import Employee from "../models/employeeModel.js";
 dotenv.config();
 
 const readExcelFile = () => {
-  const workbook = xlsx.readFile(process.env.FILE_URL);
-  const sheetName = workbook.SheetNames[0];
-  const worksheet = workbook.Sheets[sheetName];
+  try {
+    const workbook = xlsx.readFile(process.env.FILE_URL);
+    const sheetName = workbook.SheetNames[0];
+    const worksheet = workbook.Sheets[sheetName];
 
-  // Get the range of the worksheet
-  const range = xlsx.utils.decode_range(worksheet['!ref']);
-  const headers = {};
+    // Get the range of the worksheet
+    const range = xlsx.utils.decode_range(worksheet['!ref']);
+    const headers = {};
 
-  // Identify headers and initialize them with 'none'
-  for (let C = range.s.c; C <= range.e.c; C++) {
-    const cellAddress = xlsx.utils.encode_cell({ r: range.s.r, c: C });
-    const header = worksheet[cellAddress] ? worksheet[cellAddress].v : '-';
-    headers[header] = 'none';
-  }
-
-  const data = [];
-
-  // Loop through each row
-  for (let R = range.s.r + 1; R <= range.e.r; R++) {
-    const rowData = { ...headers }; // Initialize each row with 'none' values
-
-    // Loop through each cell in the row
+    // Identify headers and initialize them with 'none'
     for (let C = range.s.c; C <= range.e.c; C++) {
-      const cellAddress = xlsx.utils.encode_cell({ r: R, c: C });
-      const cellValue = worksheet[cellAddress] ? worksheet[cellAddress].v : '-';
-      const columnHeader = worksheet[xlsx.utils.encode_cell({ r: range.s.r, c: C })].v;
-      rowData[columnHeader] = cellValue;
+      const cellAddress = xlsx.utils.encode_cell({ r: range.s.r, c: C });
+      const header = worksheet[cellAddress] ? worksheet[cellAddress].v : '-';
+      headers[header] = 'none';
     }
 
-    data.push(rowData);
-  }
+    const data = [];
 
-  return data;
+    // Loop through each row
+    for (let R = range.s.r + 1; R <= range.e.r; R++) {
+      const rowData = { ...headers }; // Initialize each row with 'none' values
+
+      // Loop through each cell in the row
+      for (let C = range.s.c; C <= range.e.c; C++) {
+        const cellAddress = xlsx.utils.encode_cell({ r: R, c: C });
+        const cellValue = worksheet[cellAddress] ? worksheet[cellAddress].v : '-';
+        const columnHeader = worksheet[xlsx.utils.encode_cell({ r: range.s.r, c: C })].v;
+        rowData[columnHeader] = cellValue;
+      }
+
+      data.push(rowData);
+    }
+
+    return data;
+  } catch (error) {
+    // Handle the error
+    console.error("Error reading Excel file:", error);
+    // Optionally, you can throw the error again to propagate it
+    throw error;
+  }
 };
 
 const getCurrentDateFormatted = () => {
