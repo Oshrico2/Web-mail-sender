@@ -148,7 +148,7 @@ const ExcelDataDisplay = () => {
               </Table>{" "}
             </div>
           )}
-          {jsonData && (
+          {jsonData.length > 0 && (
             <div>
               <h3>בחר תוכנית להפעלה:</h3>
               <div style={{ display: "flex", justifyContent: "center" }}>
