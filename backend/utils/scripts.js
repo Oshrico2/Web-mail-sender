@@ -1,6 +1,8 @@
 import xlsx from "xlsx";
 import axios from "axios";
 import dotenv from 'dotenv'
+import Agent from "../models/agentModel.js";
+import Employee from "../models/employeeModel.js";
 dotenv.config();
 
 const readExcelFile = () => {
@@ -83,14 +85,34 @@ const removeUnwantedColumns = (data) => {
   return xlsx.utils.aoa_to_sheet(filteredWsData);
 };
 
-const getAgentsFromDB = async () => {
-  const response = await axios.get("/api/agents");
-  return response.data;
+// const getAgentsFromDB = async () => {
+//   const response = await axios.get("/api/agents");
+//   return response.data;
+// };
+
+const fetchAgents= async () => {
+  try {
+    const agents = await Agent.find({}).sort({ name: 1 }); // 1 for ascending order
+    return agents;
+  } catch (error) {
+    console.error("Error fetching agents:", error);
+    res.status(500).json({ message: "Server Error" });
+  }
 };
 
-const getEmployeesFromDB = async () => {
-  const response = await axios.get("/api/employees");
-  return response.data;
+// const getEmployeesFromDB = async () => {
+//   const response = await axios.get("/api/employees");
+//   return response.data;
+// };
+
+const fetchEmployees = async () => {
+  try {
+    const employees = await Employee.find({}).sort({ name: 1 }); // 1 for ascending order
+    return employees
+  } catch (error) {
+    console.error("Error fetching employees:", error);
+    res.status(500).json({ message: "Server Error" });
+  }
 };
 
 const replaceKeysInArray = (array, keyMap) => {
@@ -112,7 +134,9 @@ export {
   getCurrentDateFormatted,
   formatDates,
   removeUnwantedColumns,
-  getAgentsFromDB,
-  getEmployeesFromDB,
+  // getAgentsFromDB,
+  // getEmployeesFromDB,
+  fetchAgents,
+  fetchEmployees,
   replaceKeysInArray,
 };

@@ -12,10 +12,10 @@ const ExcelDataDisplay = () => {
   const handleShow = () => setShow(true);
   const handleClose = () => setShow(false);
 
-  const handleDailyStatus = () => {
+  const handleDailyStatus = async () => {
     setIsLoading(true); // Activate loader
 
-    axios
+   await axios
       .post("/api/programs/general", {
         weeklyStatus: false,
       })
@@ -31,10 +31,10 @@ const ExcelDataDisplay = () => {
     setShow(false);
   };
 
-  const handleWeeklyStatus = () => {
+  const handleWeeklyStatus = async () => {
     setIsLoading(true); // Activate loader
 
-    axios
+    await axios
       .post("/api/programs/general", {
         weeklyStatus: true,
       })
@@ -50,10 +50,10 @@ const ExcelDataDisplay = () => {
     setShow(false);
   };
 
-  const handleBriutStatus = () => {
+  const handleBriutStatus = async () => {
     setIsLoading(true); // Activate loader
 
-    axios
+    await axios
       .post("/api/programs/other-services", {
         weeklyStatus: "בריאות",
       })
@@ -68,10 +68,10 @@ const ExcelDataDisplay = () => {
       });
   };
 
-  const handlePensiaStatus = () => {
+  const handlePensiaStatus = async () => {
     setIsLoading(true); // Activate loader
 
-    axios
+    await axios
       .post("/api/programs/other-services", {
         weeklyStatus: "פנסיה",
       })

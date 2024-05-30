@@ -8,8 +8,10 @@ import {
   getCurrentDateFormatted,
   formatDates,
   removeUnwantedColumns,
-  getAgentsFromDB,
-  getEmployeesFromDB,
+  // getAgentsFromDB,
+  // getEmployeesFromDB,
+  fetchAgents,
+  fetchEmployees,
   replaceKeysInArray,
 } from "../utils/scripts.js";
 
@@ -214,8 +216,8 @@ router.post("/general", async (req, res) => {
   try {
     const weeklyStatus = req.body.weeklyStatus;
     let data = readExcelFile();
-    const agents = await getAgentsFromDB();
-    const employees = await getEmployeesFromDB();
+    const agents = await fetchAgents();
+    const employees = await fetchEmployees();
 
     for (const item of data) {
       const agent = agents.find(
@@ -258,7 +260,7 @@ router.post("/other-services", async (req, res) => {
   try {
     const weeklyStatus = req.body.weeklyStatus;
     let data = readExcelFile();
-    const agents = await getAgentsFromDB();
+    const agents = await fetchAgents();
 
     for (const item of data) {
       const agent = agents.find((agent) => agent.name === item["מקור לקוח"]);
