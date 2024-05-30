@@ -2,6 +2,7 @@ import express from "express";
 import xlsx from "xlsx";
 import nodemailer from "nodemailer";
 import dotenv from "dotenv";
+import stream from "stream";
 dotenv.config();
 import {
   readExcelFile,
@@ -31,10 +32,8 @@ const sendMailsWithFile = (agentMap, weeklyStatus) => {
     const wb = xlsx.utils.book_new();
     let ws = xlsx.utils.json_to_sheet(agentInfo.data);
     ws = removeUnwantedColumns(ws);
+    ws["!margins"] = { rtl: true };
     xlsx.utils.book_append_sheet(wb, ws, "Agent Data");
-    const excelFileName = process.env.UPLOAD_PATH_AGENT_FILE;
-    xlsx.writeFile(wb, excelFileName);
-    console.log(`Excel file saved for ${agentInfo.name}`);
 
     // Generate HTML table from the worksheet after removing unwanted columns
     const wsData = xlsx.utils.sheet_to_json(ws, { header: 1 });
@@ -85,7 +84,7 @@ const sendMailsWithFile = (agentMap, weeklyStatus) => {
 <body dir="rtl">
 <p dir="rtl">לפניך מקרא המסביר את הסטטוסים:</p>
 <div class="center">
-    <table class="styled-table" dir="rtl">
+    <table class="styled-table" dir="rtl" >
         <tr>    
             <th>ספרה</th>
             <td>1</td>
@@ -113,12 +112,17 @@ const sendMailsWithFile = (agentMap, weeklyStatus) => {
             </tr>
         </thead>
         <tbody>
-            ${wsData.slice(1).map((row, index) => `
+            ${wsData
+              .slice(1)
+              .map(
+                (row, index) => `
                 <tr>
                     <td>${index + 1}</td>
                     ${row.map((cell) => `<td>${cell}</td>`).join("")}
                 </tr>
-            `).join("")}
+            `
+              )
+              .join("")}
         </tbody>
     </table>
 </div>
@@ -141,6 +145,12 @@ const sendMailsWithFile = (agentMap, weeklyStatus) => {
 </html>
 
 `;
+    let typeOfFile;
+    if (typeof weeklyStatus === "boolean") {
+      typeOfFile = weeklyStatus ? "שבועי" : "יומי";
+    } else {
+      typeOfFile = weeklyStatus === "פנסיה" ? "פנסיה" : "בריאות";
+    }
 
     const mailOptions = {
       from: mailFrom,
@@ -150,42 +160,41 @@ const sendMailsWithFile = (agentMap, weeklyStatus) => {
       html: "",
       attachments: [
         {
-          filename: "",
-          path: excelFileName,
+          filename: "סטטוס לקוחות " + typeOfFile + '.xlsx',
+          content: Buffer.from(xlsx.write(wb, { type: "buffer" })),
+          contentType:
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
         },
       ],
     };
 
     if (typeof weeklyStatus === "boolean") {
       mailOptions.html = `<div dir="rtl"><p>היי ${agentInfo.name},</p>
-      <p>מצ״ב סטטוס לקוחות שלך מתחילת שנה בתחומים פנסיה/בריאות.</p>
-      <p>מצורף קובץ אקסל לנוחיותך.</p></div><br>${htmlTable}
-      `;
-      mailOptions.subject =
-        (weeklyStatus ? `סטטוס לקוחות שבועי - ` : "סטטוס לקוחות יומי - ") +
-        ` ${agentInfo.name} ${getCurrentDateFormatted()}`;
-      mailOptions.attachments[0].filename = weeklyStatus
-        ? `סטטוס לקוחות שבועי ${agentInfo.name}.xlsx`
-        : `סטטוס לקוחות יומי ${agentInfo.name}.xlsx`;
-    } else {
-      mailOptions.html = `<div dir="rtl"><p>היי ${agentInfo.name},</p>
       <p>מצ"ב סטטוס לקוחות  <b>שהועברו/עודכנו מתחילת שנה</b> ללא תחומי פנסיה ובריאות.</p>
       <p>פנסיה ובריאות נשלחים אחת לשבוע.</p>
       <p>מצורף קובץ אקסל לנוחיותך.</p></div><br>${htmlTable}
       `;
       mailOptions.subject =
+        (weeklyStatus ? `סטטוס לקוחות שבועי - ` : "סטטוס לקוחות יומי - ") +
+        ` ${agentInfo.name} ${getCurrentDateFormatted()}`;
+    } else {
+      mailOptions.html = `<div dir="rtl"><p>היי ${agentInfo.name},</p>
+      <p>מצ"ב סטטוס לקוחות שלך מתחילת שנה בתחום ה${weeklyStatus}</p>
+      <p>מצורף קובץ אקסל לנוחיותך.</p></div><br>${htmlTable}
+      `;
+      mailOptions.subject =
         `סטטוס לקוחות - ${weeklyStatus}` +
         ` ${agentInfo.name} ${getCurrentDateFormatted()}`;
-      mailOptions.attachments[0].filename = `סטטוס לקוחות - ${weeklyStatus} - ${agentInfo.name}.xlsx`;
     }
 
+    let noMailAgents = [];
     transporter.sendMail(mailOptions, (error, info) => {
       if (error) {
-        return console.log(
-          `Error sending email to ${agentInfo.name}: ${error}`
-        );
+        console.log(`Error sending email to ${agentInfo.name}: ${error}`);
+        noMailAgents.push({ name: agentInfo.name, email: agentInfo.email });
+      } else {
+        console.log(`Email sent to ${agentInfo.name}`);
       }
-      console.log(`Email sent to ${agentInfo.name}: ${info.response}`);
     });
   });
 };
@@ -215,7 +224,9 @@ const groupDataByAgent = (agentsArray, weeklyStatus) => {
 router.post("/general", async (req, res) => {
   try {
     const weeklyStatus = req.body.weeklyStatus;
-    let data = readExcelFile();
+    let data = req.body.data;
+
+    console.log(data);
     const agents = await fetchAgents();
     const employees = await fetchEmployees();
 
@@ -247,7 +258,6 @@ router.post("/general", async (req, res) => {
     };
 
     data = replaceKeysInArray(data, keyReplacements);
-    formatDates(data);
     groupDataByAgent(data, weeklyStatus);
     res.json(data);
   } catch (error) {
@@ -259,7 +269,7 @@ router.post("/general", async (req, res) => {
 router.post("/other-services", async (req, res) => {
   try {
     const weeklyStatus = req.body.weeklyStatus;
-    let data = readExcelFile();
+    let data = req.body.data;
     const agents = await fetchAgents();
 
     for (const item of data) {
@@ -277,7 +287,6 @@ router.post("/other-services", async (req, res) => {
     };
 
     data = replaceKeysInArray(data, keyReplacements);
-    formatDates(data);
     groupDataByAgent(data, weeklyStatus);
     res.json(data);
   } catch (error) {

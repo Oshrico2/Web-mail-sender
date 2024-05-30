@@ -1,5 +1,4 @@
 import xlsx from "xlsx";
-import axios from "axios";
 import dotenv from 'dotenv'
 import Agent from "../models/agentModel.js";
 import Employee from "../models/employeeModel.js";

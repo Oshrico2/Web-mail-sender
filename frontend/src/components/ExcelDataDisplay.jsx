@@ -1,11 +1,14 @@
 import React, { useState } from "react";
-import * as XLSX from "xlsx"; // Import all named exports as XLSX
+import * as XLSX from "xlsx";
 import { Table, Button, Modal } from "react-bootstrap";
-import axios from "axios"; // Import Axios
+import axios from "axios";
 import Loader from "./Loader";
+import { formatDates } from "../utils/scripts";
+import {toast,ToastContainer} from 'react-toastify';
 
 const ExcelDataDisplay = () => {
-  const [excelData, setExcelData] = useState(null);
+  const [jsonData, setJsonData] = useState([]);
+
   const [show, setShow] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -15,14 +18,16 @@ const ExcelDataDisplay = () => {
   const handleDailyStatus = async () => {
     setIsLoading(true); // Activate loader
 
-   await axios
+    await axios
       .post("/api/programs/general", {
         weeklyStatus: false,
+        data:jsonData,
       })
       .then((response) => {
         console.log(response);
       })
       .catch((err) => {
+        toast.error('שגיאה בשליחת הקובץ - אנא בדוק שהפורמט מתאים');
         console.error(err);
       })
       .finally(() => {
@@ -37,11 +42,13 @@ const ExcelDataDisplay = () => {
     await axios
       .post("/api/programs/general", {
         weeklyStatus: true,
+        data:jsonData,
       })
       .then((response) => {
         console.log(response);
       })
       .catch((err) => {
+        toast.error('שגיאה בשליחת הקובץ - אנא בדוק שהפורמט מתאים');
         console.error(err);
       })
       .finally(() => {
@@ -56,11 +63,13 @@ const ExcelDataDisplay = () => {
     await axios
       .post("/api/programs/other-services", {
         weeklyStatus: "בריאות",
+        data:jsonData
       })
       .then((response) => {
         console.log(response);
       })
       .catch((err) => {
+        toast.error('שגיאה בשליחת הקובץ - אנא בדוק שהפורמט מתאים');
         console.error(err);
       })
       .finally(() => {
@@ -74,6 +83,7 @@ const ExcelDataDisplay = () => {
     await axios
       .post("/api/programs/other-services", {
         weeklyStatus: "פנסיה",
+        data:jsonData
       })
       .then((response) => {
         console.log(response);
@@ -87,63 +97,32 @@ const ExcelDataDisplay = () => {
   };
 
   const handleFileChange = (e) => {
-    setIsLoading(true);
     const file = e.target.files[0];
-    const formData = new FormData();
+    const reader = new FileReader();
 
-const reader = new FileReader();
-reader.onload = (e) => {
-  const data = new Uint8Array(e.target.result);
-  const workbook = XLSX.read(data, { type: "array" });
-  const sheetName = workbook.SheetNames[0];
-  const worksheet = workbook.Sheets[sheetName];
-  
-  // Get the range of the worksheet
-  const range = XLSX.utils.decode_range(worksheet['!ref']);
-  const jsonData = [];
-  
-  // Iterate through all rows and columns in the range
-  for (let R = range.s.r; R <= range.e.r; ++R) {
-    const row = [];
-    for (let C = range.s.c; C <= range.e.c; ++C) {
-      const cellAddress = { r: R, c: C };
-      const cellRef = XLSX.utils.encode_cell(cellAddress);
-      const cell = worksheet[cellRef];
-      let value = cell ? cell.v : ''; 
-      row.push(value);
-    }
-    jsonData.push(row);
-  }
-
-  setExcelData(jsonData);
-
-      formData.append("xlsx", file);
-      axios
-        .post("/api/upload", formData)
-        .then((response) => {
-          console.log(response.data);
-          // Handle success response here
-        })
-        .catch((error) => {
-          console.error("Error uploading file:", error);
-          // Handle error here
-        })
-        .finally(() => {
-          setIsLoading(false);
-        });
+    reader.onload = (event) => {
+      const data = new Uint8Array(event.target.result);
+      const workbook = XLSX.read(data, { type: "array" });
+      const sheetName = workbook.SheetNames[0];
+      const sheet = workbook.Sheets[sheetName];
+      const json = XLSX.utils.sheet_to_json(sheet, { defval: "-" });
+      formatDates(json);
+      setJsonData(json);
     };
 
     reader.readAsArrayBuffer(file);
+    console.log(jsonData);
   };
 
   return (
     <div>
+      <ToastContainer />
       <input type="file" onChange={handleFileChange} className="me-2 my-4" />
       {isLoading ? ( // Render Loader if isLoading is true
         <Loader />
       ) : (
         <div>
-          {excelData && (
+          {jsonData && (
             <div
               className="table table-responsive mt-4"
               style={{ overflowY: "auto", height: "40vh" }}
@@ -151,26 +130,25 @@ reader.onload = (e) => {
               <Table striped bordered hover>
                 <thead>
                   <tr>
-                    {excelData[0].map((cell, index) => (
-                      <th key={index}>{cell}</th>
-                    ))}
+                    {jsonData.length > 0 &&
+                      Object.keys(jsonData[0]).map((key) => (
+                        <th key={key}>{key}</th>
+                      ))}
                   </tr>
                 </thead>
                 <tbody>
-                  {excelData.slice(1).map((row, rowIndex) => (
-                    <tr key={rowIndex}>
-                      {row.map((cell, cellIndex) => (
-                        <td key={cellIndex}>
-                          {cell !== undefined ? cell : ""}
-                        </td>
+                  {jsonData.map((row, index) => (
+                    <tr key={index}>
+                      {Object.values(row).map((value, index) => (
+                        <td key={index}>{value}</td>
                       ))}
                     </tr>
                   ))}
                 </tbody>
-              </Table>
+              </Table>{" "}
             </div>
           )}
-          {excelData && (
+          {jsonData && (
             <div>
               <h3>בחר תוכנית להפעלה:</h3>
               <div style={{ display: "flex", justifyContent: "center" }}>
