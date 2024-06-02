@@ -27,13 +27,23 @@ const transporter = nodemailer.createTransport({
 
 const router = express.Router();
 
-const sendMailsWithFile = (agentMap, weeklyStatus) => {
-  agentMap.forEach((agentInfo) => {
-    const wb = xlsx.utils.book_new();
-    let ws = xlsx.utils.json_to_sheet(agentInfo.data);
-    ws = removeUnwantedColumns(ws);
-    ws["!margins"] = { rtl: true };
-    xlsx.utils.book_append_sheet(wb, ws, "Agent Data");
+const sendMail = async (mailOptions,agentName) => {
+  try {
+    await transporter.sendMail(mailOptions);
+    console.log(`Email sent to ${mailOptions.to} - ${agentName}`);
+  } catch (error) {
+    console.log(`Error sending email to ${mailOptions.to}: ${error} - ${agentName}`);
+  }
+};
+
+const sendMailsWithFile = async (agentMap, weeklyStatus) => {
+  for (const agentInfo of agentMap.values()) {
+    try {
+      const wb = xlsx.utils.book_new();
+      let ws = xlsx.utils.json_to_sheet(agentInfo.data);
+      ws = removeUnwantedColumns(ws);
+      ws["!margins"] = { rtl: true };
+      xlsx.utils.book_append_sheet(wb, ws, "Agent Data");
 
     // Generate HTML table from the worksheet after removing unwanted columns
     const wsData = xlsx.utils.sheet_to_json(ws, { header: 1 });
@@ -187,18 +197,14 @@ const sendMailsWithFile = (agentMap, weeklyStatus) => {
         ` ${agentInfo.name} ${getCurrentDateFormatted()}`;
     }
 
-    transporter.sendMail(mailOptions, (error, info) => {
-      if (error) {
-        console.log(`Error sending email to ${agentInfo.name}: ${error}`);
-      } else {
-        console.log(`Email sent to ${agentInfo.name}`);
-      }
-    });
-  });
+    await sendMail(mailOptions,agentInfo.name);
+  } catch (error) {
+    console.log(`Error sending email to ${agentInfo.name}: ${error}`);
+  }
+}
 };
 
-
-const groupDataByAgent = (agentsArray, weeklyStatus) => {
+const groupDataByAgent = async (agentsArray, weeklyStatus) => {
   // Create a map to group agents by their name
   const agentMap = new Map();
 
@@ -222,7 +228,7 @@ const groupDataByAgent = (agentsArray, weeklyStatus) => {
       noMailAgents.push(agentInfo);
     }
   })
- sendMailsWithFile(agentMap, weeklyStatus);
+ await sendMailsWithFile(agentMap, weeklyStatus);
  return noMailAgents;
 };
 
@@ -240,18 +246,18 @@ router.post("/general", async (req, res) => {
       const employee = employees.find(
         (employee) => employee.name === item["שם מטפל"]
       );
-      if (!agent || !employee) {
-        continue;
-      }
-      if (
-        agent && agent.additionalMail && !weeklyStatus
-          ? !agent.weeklyStatus
-          : true
-      ) {
-        item["מייל נוסף"] = agent.additionalMail;
-      }
-      if (agent && agent.email && !weeklyStatus ? !agent.weeklyStatus : true) {
-        item["מייל של סוכן"] = agent.email;
+      if(agent){
+        if (
+          agent.additionalMail && !weeklyStatus
+            ? !agent.weeklyStatus
+            : true
+        ) {
+          item["מייל נוסף"] = agent.additionalMail;
+        }
+        if (agent.email && !weeklyStatus ? !agent.weeklyStatus : true) {
+          item["מייל של סוכן"] = agent.email;
+        }
+
       }
       if (employee && employee.subject) {
         item["תחום"] = employee.subject;
@@ -264,7 +270,7 @@ router.post("/general", async (req, res) => {
     };
 
     data = replaceKeysInArray(data, keyReplacements);
-    const noMailAgents = groupDataByAgent(data, weeklyStatus);
+    const noMailAgents = await groupDataByAgent(data, weeklyStatus);
     res.json(noMailAgents);
   } catch (error) {
     console.error("Error fetching agents:", error);
