@@ -28,7 +28,6 @@ const transporter = nodemailer.createTransport({
 const router = express.Router();
 
 const sendMailsWithFile = (agentMap, weeklyStatus) => {
-  let noMailAgents = [];
   agentMap.forEach((agentInfo) => {
     const wb = xlsx.utils.book_new();
     let ws = xlsx.utils.json_to_sheet(agentInfo.data);
@@ -191,14 +190,13 @@ const sendMailsWithFile = (agentMap, weeklyStatus) => {
     transporter.sendMail(mailOptions, (error, info) => {
       if (error) {
         console.log(`Error sending email to ${agentInfo.name}: ${error}`);
-        noMailAgents.push({ name: agentInfo.name, email: agentInfo.email });
       } else {
         console.log(`Email sent to ${agentInfo.name}`);
       }
     });
   });
-  return noMailAgents;
 };
+
 
 const groupDataByAgent = (agentsArray, weeklyStatus) => {
   // Create a map to group agents by their name
@@ -218,9 +216,14 @@ const groupDataByAgent = (agentsArray, weeklyStatus) => {
     }
     agentMap.get(agentName).data.push(agent);
   });
-  const noMailAgents = sendMailsWithFile(agentMap, weeklyStatus);
-  console.log(noMailAgents);
-  return noMailAgents;
+  let noMailAgents = [];
+  agentMap.forEach((agentInfo) => {
+    if(!agentInfo.email){
+      noMailAgents.push(agentInfo);
+    }
+  })
+ sendMailsWithFile(agentMap, weeklyStatus);
+ return noMailAgents;
 };
 
 router.post("/general", async (req, res) => {
@@ -237,6 +240,9 @@ router.post("/general", async (req, res) => {
       const employee = employees.find(
         (employee) => employee.name === item["שם מטפל"]
       );
+      if (!agent || !employee) {
+        continue;
+      }
       if (
         agent && agent.additionalMail && !weeklyStatus
           ? !agent.weeklyStatus
@@ -259,7 +265,7 @@ router.post("/general", async (req, res) => {
 
     data = replaceKeysInArray(data, keyReplacements);
     const noMailAgents = groupDataByAgent(data, weeklyStatus);
-    res.send(noMailAgents);
+    res.json(noMailAgents);
   } catch (error) {
     console.error("Error fetching agents:", error);
     res.status(500).json({ error: "Internal Server Error" });
@@ -287,8 +293,8 @@ router.post("/other-services", async (req, res) => {
     };
 
     data = replaceKeysInArray(data, keyReplacements);
-    groupDataByAgent(data, weeklyStatus);
-    res.json(data);
+    const noMailAgents = groupDataByAgent(data, weeklyStatus);
+    res.json(noMailAgents);
   } catch (error) {
     console.error("Error fetching agents:", error);
     res.status(500).json({ error: "Internal Server Error" });

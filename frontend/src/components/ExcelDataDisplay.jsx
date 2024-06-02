@@ -5,11 +5,14 @@ import axios from "axios";
 import Loader from "./Loader";
 import { formatDates } from "../utils/scripts";
 import {toast,ToastContainer} from 'react-toastify';
+import AgentsWithoutMailModal from "./AgentsWithoutMailModal";
 
 const ExcelDataDisplay = () => {
   const [jsonData, setJsonData] = useState([]);
+  const [noMailAgents,setNoMailAgents] = useState([]);
 
   const [show, setShow] = useState(false);
+  const [showModalNoAgents, setShowModalNoAgents] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   const handleShow = () => setShow(true);
@@ -25,6 +28,7 @@ const ExcelDataDisplay = () => {
       })
       .then((response) => {
         console.log(response);
+        setNoMailAgents(response.data);
       })
       .catch((err) => {
         toast.error('שגיאה בשליחת הקובץ - אנא בדוק שהפורמט מתאים');
@@ -46,6 +50,7 @@ const ExcelDataDisplay = () => {
       })
       .then((response) => {
         console.log(response);
+        setNoMailAgents(response.data);
       })
       .catch((err) => {
         toast.error('שגיאה בשליחת הקובץ - אנא בדוק שהפורמט מתאים');
@@ -67,6 +72,7 @@ const ExcelDataDisplay = () => {
       })
       .then((response) => {
         console.log(response);
+        setNoMailAgents(response.data);
       })
       .catch((err) => {
         toast.error('שגיאה בשליחת הקובץ - אנא בדוק שהפורמט מתאים');
@@ -87,6 +93,7 @@ const ExcelDataDisplay = () => {
       })
       .then((response) => {
         console.log(response);
+        setNoMailAgents(response.data);
       })
       .catch((err) => {
         console.error(err);
@@ -118,86 +125,92 @@ const ExcelDataDisplay = () => {
     <div>
       <ToastContainer />
       <input type="file" onChange={handleFileChange} className="me-2 my-4" />
-      {isLoading ? ( // Render Loader if isLoading is true
+      {isLoading ? (
         <Loader />
       ) : (
         <div>
-          {jsonData && (
-            <div
-              className="table table-responsive mt-4"
-              style={{ overflowY: "auto", height: "40vh" }}
-            >
-              <Table striped bordered hover>
-                <thead>
-                  <tr>
-                    {jsonData.length > 0 &&
-                      Object.keys(jsonData[0]).map((key) => (
-                        <th key={key}>{key}</th>
-                      ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {jsonData.map((row, index) => (
-                    <tr key={index}>
-                      {Object.values(row).map((value, index) => (
-                        <td key={index}>{value}</td>
-                      ))}
-                    </tr>
-                  ))}
-                </tbody>
-              </Table>{" "}
-            </div>
-          )}
-          {jsonData.length > 0 && (
+          {noMailAgents.length > 0 ? (
             <div>
-              <h3>בחר תוכנית להפעלה:</h3>
-              <div style={{ display: "flex", justifyContent: "center" }}>
-                <Button className="mx-5 btn-options" onClick={handleShow}>
-                  כללי
-                </Button>
-                <Button
-                  onClick={handleBriutStatus}
-                  className="mx-5 btn-options"
+              <AgentsWithoutMailModal
+                show={true}
+                onHide={() => setShowModalNoAgents(false)}
+                agents={noMailAgents}
+              />
+            </div>
+          ) : (
+            <div>
+              {jsonData && (
+                <div
+                  className="table table-responsive mt-4"
+                  style={{ overflowY: "auto", height: "40vh" }}
                 >
-                  בריאות
-                </Button>
-                <Button
-                  onClick={handlePensiaStatus}
-                  className="mx-5 btn-options"
-                >
-                  פנסיוני
-                </Button>
-
-                <Modal show={show} onHide={handleClose}>
-                  <Modal.Header
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      flexDirection: "row-reverse",
-                    }}
-                    closeButton
-                  >
-                    <Modal.Title style={{ flexGrow: 1, textAlign: "right" }}>
-                      סטטוס לקוחות כללי
-                    </Modal.Title>
-                  </Modal.Header>
-                  <Modal.Body dir="rtl">איזה סטטוס לקוחות תעדיף?</Modal.Body>
-                  <Modal.Footer>
-                    <Button variant="secondary" onClick={handleDailyStatus}>
-                      סטטוס יומי
+                  <Table striped bordered hover>
+                    <thead>
+                      <tr>
+                        {jsonData.length > 0 &&
+                          Object.keys(jsonData[0]).map((key) => (
+                            <th key={key}>{key}</th>
+                          ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {jsonData.map((row, index) => (
+                        <tr key={index}>
+                          {Object.values(row).map((value, index) => (
+                            <td key={index}>{value}</td>
+                          ))}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </Table>
+                </div>
+              )}
+              {jsonData && jsonData.length > 0 && (
+                <div>
+                  <h3>בחר תוכנית להפעלה:</h3>
+                  <div style={{ display: "flex", justifyContent: "center" }}>
+                    <Button className="mx-5 btn-options" onClick={handleShow}>
+                      כללי
                     </Button>
-                    <Button variant="info" onClick={handleWeeklyStatus}>
-                      סטטוס שבועי
+                    <Button onClick={handleBriutStatus} className="mx-5 btn-options">
+                      בריאות
                     </Button>
-                  </Modal.Footer>
-                </Modal>
-              </div>
+                    <Button onClick={handlePensiaStatus} className="mx-5 btn-options">
+                      פנסיוני
+                    </Button>
+                    <Modal show={show} onHide={handleClose}>
+                      <Modal.Header
+                        style={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                          flexDirection: "row-reverse",
+                        }}
+                        closeButton
+                      >
+                        <Modal.Title style={{ flexGrow: 1, textAlign: "right" }}>
+                          סטטוס לקוחות כללי
+                        </Modal.Title>
+                      </Modal.Header>
+                      <Modal.Body dir="rtl">איזה סטטוס לקוחות תעדיף?</Modal.Body>
+                      <Modal.Footer>
+                        <Button variant="secondary" onClick={handleDailyStatus}>
+                          סטטוס יומי
+                        </Button>
+                        <Button variant="info" onClick={handleWeeklyStatus}>
+                          סטטוס שבועי
+                        </Button>
+                      </Modal.Footer>
+                    </Modal>
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </div>
       )}
     </div>
   );
+  
 };
 
 export default ExcelDataDisplay;
