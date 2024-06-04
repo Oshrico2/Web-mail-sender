@@ -1,4 +1,4 @@
-import { Row, Col, Container } from "react-bootstrap";
+import { Row, Col, Container, ButtonGroup, Button } from "react-bootstrap";
 import UserMenu from "../components/UserMenu";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
@@ -11,6 +11,7 @@ import Footer from "../components/Footer";
 const ConfirmedMailingAgentsScreen = () => {
   const [agents, setAgents] = useState([]);
   const [isLoading, setIsLoading] = useState(false); // Add loading state
+  const [agentConfirmedMailing, setAgentConfirmedMailing] = useState(true);
 
   const columns = ["name", "agentNumber", "email", "additionalMail"];
   const columnsHebrew = ["שם", "מספר סוכן", "דואר אלקטרוני", "מייל נוסף"];
@@ -19,7 +20,7 @@ const ConfirmedMailingAgentsScreen = () => {
     const fetchAgents = async () => {
       setIsLoading(true); // Set loading state to true before fetching
       try {
-        const response = await axios.get("/api/agents/confirmed-mailing");
+        const response = await axios.get("/api/agents");
         setAgents(response.data);
       } catch (error) {
         console.error("There was a problem fetching the agents:", error);
@@ -35,6 +36,14 @@ const ConfirmedMailingAgentsScreen = () => {
     toast.warning('לשינוי שדות סוכן, עבור ללשונית "רשימת סוכנים".');
   };
 
+  const handleClick1 = () =>{
+    setAgentConfirmedMailing(true);
+  }
+
+  const handleClick2 = () =>{
+    setAgentConfirmedMailing(false);
+  }
+
   return (
     <div>
       <ToastContainer />
@@ -48,15 +57,29 @@ const ConfirmedMailingAgentsScreen = () => {
             {isLoading ? (
               <Loader />
             ) : (
-              <AgentsTable
-                columns={columns}
-                data={agents}
-                columnsHebrew={columnsHebrew}
-                onRowClick={handleRowClick}
-              />
+              <div>
+                <ButtonGroup>
+                  <Button className="rounded-0 rounded-end-4" variant="success" onClick={handleClick1}>מקבל דיוור</Button>
+                  <Button className="rounded-0 rounded-start-4"  variant="danger" onClick={handleClick2}>לא מקבל דיוור</Button>
+                </ButtonGroup>
+                <AgentsTable
+                  columns={columns}
+                  data={
+                    agentConfirmedMailing
+                      ? agents.filter((agent) => agent.confirmedMailing === true)
+                      : agents.filter((agent) => agent.confirmedMailing === false)
+                  }
+                  columnsHebrew={columnsHebrew}
+                  onRowClick={handleRowClick}
+                />
+              </div>
             )}
             {!isLoading && (
-              <h3 dir="rtl">סה״כ סוכנים ברשימת תפוצה:{agents.length}</h3>
+                <div className="info-agents">
+              <h3 dir="rtl">סה״כ סוכנים: {agents.length}</h3>
+              <h3 dir="rtl">סה״כ סוכנים ברשימת תפוצה: {agents.filter(agent => agent.confirmedMailing === true).length}</h3>
+              <h3 dir="rtl">סה״כ סוכנים שלא נמצאים ברשימת תפוצה: {agents.filter(agent => agent.confirmedMailing === false).length}</h3>
+              </div>
             )}
           </Container>
         </Col>
