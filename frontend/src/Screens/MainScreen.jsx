@@ -2,6 +2,7 @@ import React from "react";
 import { Row, Col, Container } from "react-bootstrap";
 import UserMenu from "../components/UserMenu";
 import Header from "../components/Header";
+import Footer from "../components/Footer";
 
 const MainScreen = () => {
   return (
@@ -30,6 +31,7 @@ const MainScreen = () => {
           </Container>
         </Col>
       </Row>
+      <Footer />
     </>
   );
 };

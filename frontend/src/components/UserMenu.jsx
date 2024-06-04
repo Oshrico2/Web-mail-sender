@@ -3,6 +3,7 @@ import { Sidenav, Nav /*, Toggle*/ } from "rsuite";
 import GroupIcon from "@rsuite/icons/legacy/Group";
 import EmailIcon from '@rsuite/icons/Email';
 import MemberIcon from "@rsuite/icons/Member";
+import SendIcon from '@rsuite/icons/Send';
 import { LinkContainer } from "react-router-bootstrap";
 
 const UserMenu = () => {
@@ -62,6 +63,22 @@ const UserMenu = () => {
             </LinkContainer>
             <LinkContainer to="/employees/add">
               <Nav.Item eventKey="4-2">הוספת עובד</Nav.Item>
+            </LinkContainer>
+          </Nav.Menu>
+
+          <Nav.Menu
+            placement="rightStart"
+            eventKey="5"
+            title="הודעות תפוצה"
+            icon={<SendIcon />}
+          >
+            <LinkContainer to="/mailing">
+              <Nav.Item eventKey="5-1" src="/login">
+                 שלח תפוצה
+              </Nav.Item>
+            </LinkContainer>
+            <LinkContainer to="/agents/confirmed-mailing">
+              <Nav.Item eventKey="5-2">סוכנים שנמצאים ברשימת תפוצה</Nav.Item>
             </LinkContainer>
           </Nav.Menu>
         </Nav>

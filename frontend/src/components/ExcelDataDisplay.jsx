@@ -27,7 +27,6 @@ const ExcelDataDisplay = () => {
         data:jsonData,
       })
       .then((response) => {
-        console.log(response);
         setNoMailAgents(response.data);
       })
       .catch((err) => {

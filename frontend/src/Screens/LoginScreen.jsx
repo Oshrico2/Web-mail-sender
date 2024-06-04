@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Form, Button } from "rsuite";
 import axios from "axios";
 import { ToastContainer,toast } from "react-toastify";
+import Footer from "../components/Footer";
 
 const LoginScreen = ({setIsAuthenticated}) => {
   const [username, setUsername] = useState("");
@@ -13,7 +14,6 @@ const LoginScreen = ({setIsAuthenticated}) => {
 
     axios.post('/api/login', userData)
     .then(response => {
-        console.log('Login successful:', response.data);
         const token = response.data; // Extract token from response data
         localStorage.setItem('token', token); // Set token in localStorage
         setIsAuthenticated(true); // Set isAuthenticated state to true
@@ -63,6 +63,7 @@ const LoginScreen = ({setIsAuthenticated}) => {
           התחבר
         </Button>
       </Form>
+      <Footer />
     </div>
   );
 };

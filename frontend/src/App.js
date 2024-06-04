@@ -10,6 +10,7 @@ import EmployeesScreen from './Screens/EmployeesScreen';
 import LoginScreen from './Screens/LoginScreen';
 import Loader from './components/Loader';
 import './App.css'
+import ConfirmedMailingAgentsScreen from './Screens/ConfirmedMailingAgentsScreen';
 
 
 const App = () => {
@@ -41,6 +42,7 @@ const App = () => {
         <Route path="/agents" element={<AgentsScreen />} />
         <Route path="/agents/add" element={<AddAgentScreen />} />
         <Route path="/agents/per-week" element={<WeeklyAgentsScreen />} />
+        <Route path="/agents/confirmed-mailing" element={<ConfirmedMailingAgentsScreen />} />
         <Route path="/employees" element={<EmployeesScreen />} />
         <Route path="/send-mail" element={<SendMailScreen />} />
         <Route path="/employees/add" element={<AddEmployeeScreen />} />

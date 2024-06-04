@@ -3,6 +3,7 @@ import { Row, Col, Container, Button } from 'react-bootstrap';
 import AddEmployeeModal from '../components/AddEmployeeModal';
 import UserMenu from '../components/UserMenu';
 import Header from '../components/Header';
+import Footer from '../components/Footer';
 
 const AddEmployeeScreen = () => {
   const [showModal, setShowModal] = useState(false);
@@ -29,6 +30,7 @@ const AddEmployeeScreen = () => {
         </Container>
       </Col>
     </Row>
+    <Footer />
     </div>
   );
 };

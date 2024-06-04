@@ -7,6 +7,7 @@ import AgentsModal from "../components/AgentsModal";
 import Header from "../components/Header";
 import SearchBox from '../components/SearchBox'
 import Loader from '../components/Loader';
+import Footer from "../components/Footer";
 
 
 const AgentsScreen = () => {
@@ -92,6 +93,9 @@ const AgentsScreen = () => {
                 onRowClick={handleRowClick}
               />
             )}
+            {!isLoading && (
+              <h3 dir="rtl">סה״כ סוכנים:{agents.length}</h3>
+            )}
         </Container>
         <AgentsModal
           show={showModal}
@@ -101,6 +105,7 @@ const AgentsScreen = () => {
         />
       </Col>
     </Row>
+    <Footer />
     </div>
   );
 };

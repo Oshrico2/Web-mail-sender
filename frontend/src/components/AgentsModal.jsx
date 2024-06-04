@@ -11,7 +11,8 @@ const AgentsModal = ({ show, onHide, agent, onDelete }) => {
     agentNumber: '',
     email: '',
     additionalMail: '',
-    weeklyStatus: false
+    weeklyStatus: false,
+    confirmedMailing:true,
   });
 
   useEffect(() => {
@@ -21,7 +22,8 @@ const AgentsModal = ({ show, onHide, agent, onDelete }) => {
         agentNumber: agent.agentNumber || '',
         email: agent.email || '',
         additionalMail: agent.additionalMail || '',
-        weeklyStatus: agent.weeklyStatus || false
+        weeklyStatus: agent.weeklyStatus || false,
+        confirmedMailing: agent.confirmedMailing !== undefined ? agent.confirmedMailing : true
       });
     }
   }, [agent]);
@@ -109,14 +111,23 @@ const AgentsModal = ({ show, onHide, agent, onDelete }) => {
               />
             </Form.Group>
             <Form.Group controlId="formWeeklyStatus" className="my-2">
-              <Form.Check
-                type="switch"
-                label={<strong>הסוכן רוצה לקבל סטטוס פעם בשבוע:</strong>}
-                name="weeklyStatus"
-                checked={formData.weeklyStatus}
-                onChange={handleChange}
-              />
-            </Form.Group>
+            <Form.Check
+              type="switch"
+              label={<strong>הסוכן רוצה לקבל סטטוס פעם בשבוע:</strong>}
+              name="weeklyStatus"
+              checked={formData.weeklyStatus}
+              onChange={handleChange}
+            />
+          </Form.Group>
+          <Form.Group controlId="formConfirmedMailing" className="my-2">
+            <Form.Check
+              type="switch"
+              label={<strong>הסוכן רוצה לקבל דיוור:</strong>}
+              name="confirmedMailing"
+              checked={formData.confirmedMailing} // Corrected spelling
+              onChange={handleChange}
+            />
+          </Form.Group>
             <Button variant="danger" onClick={handleDelete}>מחק סוכן <TrashIcon /></Button>
             <Button variant="primary" type="submit" className="mx-2">שמור</Button>
           </Form>

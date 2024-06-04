@@ -26,6 +26,19 @@ const getAllWeeklyAgents = async (req, res) => {
   }
 };
 
+// @desc    Get confirmed Mailing agents
+// @route   GET /api/agents/confirmed-mailing
+// @access  Private
+const getAllConfirmedMailingAgents = async (req, res) => {
+  try {
+    const agents = await Agent.find({ confirmedMailing: { $ne: false } }).sort({ name: 1 });
+    res.json(agents);
+  } catch (error) {
+    console.error("Error fetching agents:", error);
+    res.status(500).json({ message: "Server Error" });
+  }
+};
+
 // @desc    Search agents by name
 // @route   GET /api/agents/search/:name
 // @access  Private
@@ -44,11 +57,11 @@ const searchAgentsByName = async (req, res) => {
 // @route   POST /api/agents/add
 // @access  Private
 const addAgent = async (req, res) => {
-  const { name, email, number, addMail } = req.body;
+  const { name, email, agentNumber, addMail } = req.body;
   const agent = new Agent({
     name: name,
     email: email,
-    agentNumber: number,
+    agentNumber: agentNumber,
     additionalMail: addMail,
   });
 
@@ -74,7 +87,7 @@ const getAgentById = async (req, res) => {
 // @route   PUT /api/agents/:id
 // @access  Private
 const updateAgentById = async (req, res) => {
-  const { name, email, agentNumber, additionalMail, weeklyStatus } = req.body;
+  const { name, email, agentNumber, additionalMail, weeklyStatus,confirmedMailing } = req.body;
 
   const agent = await Agent.findById(req.params.id);
 
@@ -86,6 +99,8 @@ const updateAgentById = async (req, res) => {
     additionalMail !== undefined ? additionalMail : agent.additionalMail;
     agent.weeklyStatus =
       weeklyStatus !== undefined ? weeklyStatus : agent.weeklyStatus;
+      agent.confirmedMailing =
+      confirmedMailing !== undefined ? confirmedMailing : agent.confirmedMailing;
 
     const updatedAgent = await agent.save();
     res.json(updatedAgent);
@@ -135,5 +150,6 @@ export {
   deleteAgentById,
   changeToWeeklyStatus,
   getAllWeeklyAgents,
+  getAllConfirmedMailingAgents,
   searchAgentsByName,
 };

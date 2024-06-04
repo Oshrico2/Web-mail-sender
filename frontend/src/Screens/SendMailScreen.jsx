@@ -3,6 +3,7 @@ import { Container, Row, Col } from 'react-bootstrap'
 import UserMenu from '../components/UserMenu'
 import ExcelDataDisplay from '../components/ExcelDataDisplay'
 import Header from '../components/Header'
+import Footer from '../components/Footer'
 
 const SendMailScreen = () => {
   return (
@@ -19,6 +20,7 @@ const SendMailScreen = () => {
         </Container>
       </Col>
     </Row>
+    <Footer />
     </>
   )
 }

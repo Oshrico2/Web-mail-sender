@@ -23,6 +23,11 @@ const agentSchema = mongoose.Schema({
     type:Boolean,
     required:true,
     default:false,
+  },
+  confirmedMailing:{
+    type: Boolean,
+    required:false,
+    default:true,
   }
 });
 

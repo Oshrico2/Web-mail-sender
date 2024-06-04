@@ -7,6 +7,7 @@ import SearchBox from "../components/SearchBox";
 import Header from "../components/Header";
 import EmployeesModal from "../components/EmployeeModal";
 import Loader from "../components/Loader";
+import Footer from "../components/Footer";
 
 const EmployeesScreen = () => {
   const [employees, setEmployees] = useState([]);
@@ -106,6 +107,7 @@ const EmployeesScreen = () => {
           />
         </Col>
       </Row>
+      <Footer />
     </div>
   );
 };
