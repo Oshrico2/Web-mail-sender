@@ -286,11 +286,13 @@ router.post("/other-services", async (req, res) => {
 
     for (const item of data) {
       const agent = agents.find((agent) => agent.name === item["מקור לקוח"]);
-      if (agent && agent.additionalMail) {
-        item["מייל נוסף"] = agent.additionalMail;
-      }
-      if (agent && agent.email) {
-        item["מייל של סוכן"] = agent.email;
+      if (agent){
+        if (agent.additionalMail) {
+          item["מייל נוסף"] = agent.additionalMail;
+        }
+        if (agent.email) {
+          item["מייל של סוכן"] = agent.email;
+        }
       }
     }
     const keyReplacements = {
@@ -299,7 +301,7 @@ router.post("/other-services", async (req, res) => {
     };
 
     data = replaceKeysInArray(data, keyReplacements);
-    const noMailAgents = groupDataByAgent(data, weeklyStatus);
+    const noMailAgents = await groupDataByAgent(data, weeklyStatus);
     res.json(noMailAgents);
   } catch (error) {
     console.error("Error fetching agents:", error);

@@ -96,6 +96,7 @@ const ExcelDataDisplay = () => {
         setNoMailAgents(response.data);
       })
       .catch((err) => {
+        toast.error('שגיאה בשליחת הקובץ - אנא בדוק שהפורמט מתאים');
         console.error(err);
       })
       .finally(() => {
@@ -126,7 +127,10 @@ const ExcelDataDisplay = () => {
       <ToastContainer />
       <input type="file" onChange={handleFileChange} className="me-2 my-4" />
       {isLoading ? (
+        <div>
+        <h4 dir="rtl">המערכת שולחת את הדוח, אין לצאת עד לסיום</h4>
         <Loader />
+        </div>
       ) : (
         <div>
           {noMailAgents.length > 0 ? (
