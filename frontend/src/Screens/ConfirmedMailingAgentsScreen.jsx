@@ -1,4 +1,11 @@
-import { Row, Col, Container, ButtonGroup, Button } from "react-bootstrap";
+import {
+  Row,
+  Col,
+  Container,
+  ButtonGroup,
+  Button,
+  Table,
+} from "react-bootstrap";
 import UserMenu from "../components/UserMenu";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
@@ -36,13 +43,13 @@ const ConfirmedMailingAgentsScreen = () => {
     toast.warning('לשינוי שדות סוכן, עבור ללשונית "רשימת סוכנים".');
   };
 
-  const handleClick1 = () =>{
+  const handleClick1 = () => {
     setAgentConfirmedMailing(true);
-  }
+  };
 
-  const handleClick2 = () =>{
+  const handleClick2 = () => {
     setAgentConfirmedMailing(false);
-  }
+  };
 
   return (
     <div>
@@ -59,15 +66,31 @@ const ConfirmedMailingAgentsScreen = () => {
             ) : (
               <div>
                 <ButtonGroup>
-                  <Button className="rounded-0 rounded-end-4" variant="success" onClick={handleClick1}>מקבל דיוור</Button>
-                  <Button className="rounded-0 rounded-start-4"  variant="danger" onClick={handleClick2}>לא מקבל דיוור</Button>
+                  <Button
+                    className="rounded-0 rounded-end-4"
+                    variant="success"
+                    onClick={handleClick1}
+                  >
+                    מקבל דיוור
+                  </Button>
+                  <Button
+                    className="rounded-0 rounded-start-4"
+                    variant="danger"
+                    onClick={handleClick2}
+                  >
+                    לא מקבל דיוור
+                  </Button>
                 </ButtonGroup>
                 <AgentsTable
                   columns={columns}
                   data={
                     agentConfirmedMailing
-                      ? agents.filter((agent) => agent.confirmedMailing === true)
-                      : agents.filter((agent) => agent.confirmedMailing === false)
+                      ? agents.filter(
+                          (agent) => agent.confirmedMailing === true
+                        )
+                      : agents.filter(
+                          (agent) => agent.confirmedMailing === false
+                        )
                   }
                   columnsHebrew={columnsHebrew}
                   onRowClick={handleRowClick}
@@ -75,10 +98,31 @@ const ConfirmedMailingAgentsScreen = () => {
               </div>
             )}
             {!isLoading && (
-                <div className="info-agents">
-              <h3 dir="rtl">סה״כ סוכנים: {agents.length}</h3>
-              <h3 dir="rtl">סה״כ סוכנים ברשימת תפוצה: {agents.filter(agent => agent.confirmedMailing === true).length}</h3>
-              <h3 dir="rtl">סה״כ סוכנים שלא נמצאים ברשימת תפוצה: {agents.filter(agent => agent.confirmedMailing === false).length}</h3>
+              <div className="info-agents">
+                <Table>
+                  <tr>
+                    <th>סה״כ</th>
+                    <th>מקבלים דיוור</th>
+                    <th>לא מקבלים דיוור</th>
+                  </tr>
+                  <tr>
+                    <td>{agents.length}</td>
+                    <td>
+                      {
+                        agents.filter(
+                          (agent) => agent.confirmedMailing === true
+                        ).length
+                      }
+                    </td>
+                    <td>
+                      {
+                        agents.filter(
+                          (agent) => agent.confirmedMailing === false
+                        ).length
+                      }
+                    </td>
+                  </tr>
+                </Table>
               </div>
             )}
           </Container>

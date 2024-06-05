@@ -8,7 +8,7 @@ import {
   changeToWeeklyStatus,
   getAllWeeklyAgents,
   getAllConfirmedMailingAgents,
-  searchAgentsByName
+  searchAgentsByName,
 } from "../controllers/agentsController.js";
 
 const router = express.Router();

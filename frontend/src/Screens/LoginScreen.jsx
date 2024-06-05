@@ -30,6 +30,7 @@ const LoginScreen = ({setIsAuthenticated}) => {
 };
 
   return (
+    <>
     <div
       style={{
         display: "flex",
@@ -63,8 +64,9 @@ const LoginScreen = ({setIsAuthenticated}) => {
           התחבר
         </Button>
       </Form>
-      <Footer />
     </div>
+      <Footer />
+      </>
   );
 };
 

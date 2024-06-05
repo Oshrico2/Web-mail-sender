@@ -41,7 +41,7 @@ const UserMenu = () => {
             icon={<GroupIcon />}
           >
             <LinkContainer to="/agents">
-              <Nav.Item eventKey="3-1" src="/login">
+              <Nav.Item eventKey="3-1">
                 רשימת סוכנים
               </Nav.Item>
             </LinkContainer>
@@ -73,7 +73,7 @@ const UserMenu = () => {
             icon={<SendIcon />}
           >
             <LinkContainer to="/mailing">
-              <Nav.Item eventKey="5-1" src="/login">
+              <Nav.Item eventKey="5-1">
                  שלח תפוצה
               </Nav.Item>
             </LinkContainer>

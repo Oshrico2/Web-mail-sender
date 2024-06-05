@@ -9,6 +9,7 @@ import uploadRoutes from './routes/uploadRoutes.js'
 import employeeRoutes from './routes/employeesRoutes.js'
 import programRoutes from './routes/programsRoutes.js'
 import loginRoutes from './routes/loginRoutes.js'
+import mailingRoutes from './routes/mailingRoutes.js'
 
 
 dotenv.config();
@@ -25,6 +26,7 @@ app.use('/api/upload',uploadRoutes);
 app.use('/api/employees',employeeRoutes);
 app.use('/api/programs',programRoutes);
 app.use('/api/login',loginRoutes);
+app.use('/api/mailing',mailingRoutes);
 
 const __dirname = path.resolve();
 app.use('/uploads', express.static(path.join(__dirname,'/uploads')));
