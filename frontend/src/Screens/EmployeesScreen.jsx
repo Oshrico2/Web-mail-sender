@@ -8,6 +8,7 @@ import Header from "../components/Header";
 import EmployeesModal from "../components/EmployeeModal";
 import Loader from "../components/Loader";
 import Footer from "../components/Footer";
+import ExportToXlsx from "../components/ExportToXlsxBtn";
 
 const EmployeesScreen = () => {
   const [employees, setEmployees] = useState([]);
@@ -98,7 +99,18 @@ const EmployeesScreen = () => {
                 onRowClick={handleRowClick}
               />
             )}
+            {!isLoading && (
+              <Row className="mt-2">
+                <Col md={10}>
+                  <h3 dir="rtl">סה״כ עובדים:{employees.length}</h3>
+                </Col>
+                <Col md={2}>
+                <ExportToXlsx jsonData={employees} fileName={'רשימת עובדים'} />
+                </Col>
+              </Row>
+            )}
           </Container>
+        
           <EmployeesModal
             show={showModal}
             onHide={handleCloseModal}
