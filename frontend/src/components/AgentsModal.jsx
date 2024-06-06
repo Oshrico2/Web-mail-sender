@@ -133,7 +133,7 @@ const AgentsModal = ({ show, onHide, agent, onDelete }) => {
           </Form>
         </Modal.Body>
       </Modal>
-      <ToastContainer />
+      <ToastContainer rtl={true}/>
     </>
   );
 };

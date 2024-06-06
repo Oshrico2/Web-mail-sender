@@ -53,7 +53,7 @@ const ConfirmedMailingAgentsScreen = () => {
 
   return (
     <div>
-      <ToastContainer />
+      <ToastContainer rtl={true}/>
       <Header title="סוכנים ברשימת תפוצה" />
       <Row>
         <Col md={2}>

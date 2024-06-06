@@ -75,7 +75,7 @@ const AddEmployeeModal = ({ show, onHide }) => {
           </Modal.Footer>
         </Form>
       </Modal.Body>
-      <ToastContainer />
+      <ToastContainer rtl={true}/>
     </Modal>
   );
 };

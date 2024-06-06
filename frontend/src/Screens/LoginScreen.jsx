@@ -39,7 +39,7 @@ const LoginScreen = ({setIsAuthenticated}) => {
         height: "60vh",
       }}
     >
-    <ToastContainer />
+    <ToastContainer rtl={true}/>
       <Form className="center my-5" dir="rtl">
         <Form.Control
           value={username}

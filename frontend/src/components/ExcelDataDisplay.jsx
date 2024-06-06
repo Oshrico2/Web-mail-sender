@@ -123,7 +123,7 @@ const ExcelDataDisplay = () => {
 
   return (
     <div>
-      <ToastContainer />
+      <ToastContainer rtl={true}/>
       <input type="file" onChange={handleFileChange} className="me-2 my-4" />
       {isLoading ? (
         <div>

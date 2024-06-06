@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
 import Header from "../components/Header";
 import { Row, Col, Form, Button } from "react-bootstrap";
 import UserMenu from "../components/UserMenu";
@@ -8,6 +10,7 @@ import { toast, ToastContainer } from "react-toastify";
 
 const SendMailingScreen = () => {
   const [isLoading, setIsLoading] = useState(false);
+  const [content, setContent] = useState("");
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -15,33 +18,32 @@ const SendMailingScreen = () => {
 
     const formData = new FormData();
     formData.append("title", event.target.title.value);
-    formData.append("content", event.target.content.value);
-    if(attachment){
-        formData.append(
-          "attachment",
-          attachment,
-          encodeURIComponent(attachment.name)
-        );
+    formData.append("content", content);
+    if (attachment) {
+      formData.append(
+        "attachment",
+        attachment,
+        encodeURIComponent(attachment.name)
+      );
     }
 
     setIsLoading(true);
-    await axios
+    try {
+      await axios
       .post("/api/mailing", formData, {
         headers: {
           "Content-Type": "multipart/form-data; charset=utf-8",
         },
       })
-      .then((response) => {
-        console.log(response);
-      })
-      .catch((err) => {
-        toast.error("בעייה בשליחת המייל");
-        console.error(err);
-      })
-      .finally(() => {
-        setIsLoading(false); // Deactivate loader after request is completed
-        toast.success('השליחה הסתיימה בהצלחה')
-      });
+      toast.success("השליחה הסתיימה בהצלחה");
+    } catch (error) {
+      toast.error("בעייה בשליחת המייל");
+      console.error(error);
+    }finally{
+      setIsLoading(false); // Deactivate loader after request is completed
+
+    }
+  
   };
 
   return (
@@ -61,12 +63,11 @@ const SendMailingScreen = () => {
             <div
               className="mailing-form mt-5"
               style={{ maxWidth: "800px", width: "100%" }}
-              dir="rtl"
             >
               <Form onSubmit={handleSubmit}>
                 <Row>
                   <Col md={3}>
-                    <Form.Group className="my-2">
+                    <Form.Group dir="rtl" className="my-2">
                       <input
                         className="rounded-4"
                         type="file"
@@ -75,7 +76,7 @@ const SendMailingScreen = () => {
                     </Form.Group>
                   </Col>
                   <Col md={9}>
-                    <Form.Group className="my-2">
+                    <Form.Group dir="rtl" className="my-2">
                       <Form.Control
                         className="rounded-3"
                         placeholder="נושא המייל"
@@ -87,23 +88,48 @@ const SendMailingScreen = () => {
                   </Col>
                 </Row>
                 <Form.Group className="my-2">
-                  <Form.Control
-                    className="rounded-3"
-                    placeholder="תוכן המייל"
-                    as="textarea"
-                    rows={5}
-                    type="text"
-                    name="content"
-                    required
-                  />
-                </Form.Group>
-                <Button
-                  type="submit"
-                  className="mt-2 rounded-3"
-                  style={{ width: "100%" }}
-                >
-                  שליחת תפוצה
-                </Button>
+        <ReactQuill
+          value={content}
+          onChange={setContent}
+          placeholder="תוכן המייל"
+          theme="snow"
+          style={{ height: "300px" }}
+          modules={{
+            toolbar: [
+              [{ header: "1" }, { header: "2" }, { font: [] }],
+              [{ list: "ordered" }, { list: "bullet" }],
+              ["bold", "italic", "underline"],
+              [{ align: [] }],
+              [{ color: [] }, { background: [] }],
+              ["link"], // Add the link button to the toolbar
+              ["clean"],
+            ],
+          }}
+          formats={[
+            "header",
+            "font",
+            "list",
+            "bullet",
+            "bold",
+            "italic",
+            "underline",
+            "indent",
+            "align",
+            "color",
+            "background",
+            "link", // Add support for the link format
+          ]}
+        />
+        <Button
+          type="submit"
+          className="mt-5 rounded-3"
+          style={{ width: "100%" }}
+        >
+          שליחת תפוצה
+        </Button>
+      </Form.Group>
+
+
               </Form>
             </div>
           </div>
@@ -111,9 +137,9 @@ const SendMailingScreen = () => {
       </Row>
       {isLoading && (
         <div>
-          <Loader text={'אנא המתן בעת שליחת התפוצה'}/>
+          <Loader text={"אנא המתן בעת שליחת התפוצה"} />
         </div>
-      ) }
+      )}
     </div>
   );
 };

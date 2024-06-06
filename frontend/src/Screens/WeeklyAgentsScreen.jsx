@@ -37,7 +37,7 @@ const WeeklyAgentsScreen = () => {
 
   return (
     <>
-    <ToastContainer />
+    <ToastContainer rtl={true}/>
     <Header title='סוכנים שמקבלים סטטוס שבועי'/>
       <Row>
         <Col md={2}>

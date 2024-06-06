@@ -30,7 +30,7 @@ const RemoveMailingScreen = () => {
 
   return (
     <div dir='rtl'>
-    <ToastContainer />
+    <ToastContainer rtl={true}/>
       <Header title={'הסרה מדיוור'} />
       <h3 className='my-3 me-4'>להסרה מדיוור תלפיות הכנס פרטים ולחץ על שליחה</h3>
       <Row className='justify-content-center mt-5'>

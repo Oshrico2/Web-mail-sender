@@ -32,3 +32,11 @@ input[type="file"]::file-selector-button {
     border-radius:8px;
     width: 300px;
   }
+
+  /* Text Editor */
+
+  .ql-editor {
+    direction: rtl;
+    text-align: right;
+  }
+  

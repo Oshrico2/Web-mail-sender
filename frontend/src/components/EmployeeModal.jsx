@@ -123,7 +123,7 @@ const EmployeesModal = ({ show, onHide, employee, onDelete }) => {
           </Form>
         </Modal.Body>
       </Modal>
-      <ToastContainer />
+      <ToastContainer rtl={true}/>
     </>
   );
 };
