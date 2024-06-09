@@ -3,7 +3,7 @@ import React from 'react'
 const Footer = () => {
   return (
     <center>
-    <span style={{color:"gray"}}>Copyrights: &copy;Osher Cohen</span>
+    <p style={{color:"gray",marginTop:'100px'}}>&copy;Osher Cohen - oshrico2@gmail.com</p>
     </center>
   )
 }
