@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { Sidenav, Nav /*, Toggle*/ } from "rsuite";
 import GroupIcon from "@rsuite/icons/legacy/Group";
-import EmailIcon from '@rsuite/icons/Email';
+import EmailIcon from "@rsuite/icons/Email";
 import MemberIcon from "@rsuite/icons/Member";
-import SendIcon from '@rsuite/icons/Send';
+import SendIcon from "@rsuite/icons/Send";
 import { LinkContainer } from "react-router-bootstrap";
 
 const UserMenu = () => {
@@ -21,13 +21,8 @@ const UserMenu = () => {
     <Sidenav expanded={expanded} defaultOpenKeys={["3", "4"]}>
       <Sidenav.Body>
         <Nav activeKey={activeKey} onSelect={setActiveKey}>
-          <LinkContainer to='/'>
-          <Nav.Item
-            eventKey="1"
-            
-          >
-            דף הבית
-          </Nav.Item>
+          <LinkContainer to="/">
+            <Nav.Item eventKey="1">דף הבית</Nav.Item>
           </LinkContainer>
           <LinkContainer to="/send-mail">
             <Nav.Item eventKey="2" icon={<EmailIcon />}>
@@ -41,9 +36,7 @@ const UserMenu = () => {
             icon={<GroupIcon />}
           >
             <LinkContainer to="/agents">
-              <Nav.Item eventKey="3-1">
-                רשימת סוכנים
-              </Nav.Item>
+              <Nav.Item eventKey="3-1">רשימת סוכנים</Nav.Item>
             </LinkContainer>
             <LinkContainer to="/agents/add">
               <Nav.Item eventKey="3-2">הוספת סוכנים</Nav.Item>
@@ -73,9 +66,7 @@ const UserMenu = () => {
             icon={<SendIcon />}
           >
             <LinkContainer to="/mailing">
-              <Nav.Item eventKey="5-1">
-                 שלח תפוצה
-              </Nav.Item>
+              <Nav.Item eventKey="5-1">שלח תפוצה</Nav.Item>
             </LinkContainer>
             <LinkContainer to="/agents/confirmed-mailing">
               <Nav.Item eventKey="5-2">סוכנים שנמצאים ברשימת תפוצה</Nav.Item>

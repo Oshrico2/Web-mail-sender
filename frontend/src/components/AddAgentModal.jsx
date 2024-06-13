@@ -1,48 +1,61 @@
-import React, { useState } from 'react';
-import { Modal, Button, Form } from 'react-bootstrap';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import axios from 'axios';
+import React, { useState } from "react";
+import { Modal, Button, Form, Row, Col } from "react-bootstrap";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import axios from "axios";
 
 const AddAgentModal = ({ show, onHide }) => {
   const [formData, setFormData] = useState({
-    name: '',
-    agentNumber: '',
-    email: '',
-    additionalMail: ''
+    name: "",
+    firstName: "",
+    lastName: "",
+    agentNumber: "",
+    email: "",
+    additionalMail: "",
   });
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prevState => ({
+    setFormData((prevState) => ({
       ...prevState,
-      [name]: value
+      [name]: value,
     }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('/api/agents/add', formData);
-      toast.success('הסוכן נוסף בהצלחה!');
+      await axios.post("/api/agents/add", formData);
+      toast.success("הסוכן נוסף בהצלחה!");
       setTimeout(() => {
         window.location.reload();
-    }, 1000);
+      }, 1000);
     } catch (error) {
-      console.error('Error adding agent:', error);
-      toast.error('Failed to add agent');
+      console.error("Error adding agent:", error);
+      toast.error("Failed to add agent");
     }
   };
 
   return (
     <Modal show={show} onHide={onHide}>
-      <Modal.Header style={{ display: 'flex', justifyContent: 'space-between', flexDirection: 'row-reverse' }} closeButton>
-          <Modal.Title style={{ flexGrow: 1, textAlign: 'right' }}>הוספת סוכן חדש</Modal.Title>
+      <Modal.Header
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          flexDirection: "row-reverse",
+        }}
+        closeButton
+      >
+        <Modal.Title style={{ flexGrow: 1, textAlign: "right" }}>
+          הוספת סוכן חדש
+        </Modal.Title>
       </Modal.Header>
       <Modal.Body dir="rtl">
         <Form onSubmit={handleSubmit}>
           <Form.Group controlId="formName">
-            <Form.Label><strong>שם:</strong></Form.Label>
+            <Form.Label>
+              <strong>שם:</strong>
+            </Form.Label>
             <Form.Control
               type="text"
               name="name"
@@ -51,8 +64,39 @@ const AddAgentModal = ({ show, onHide }) => {
               required
             />
           </Form.Group>
+          <Row>
+            <Col md={6}>
+              <Form.Group controlId="formFirstName" className="my-2">
+                <Form.Label>
+                  <strong>שם פרטי:</strong>
+                </Form.Label>
+                <Form.Control
+                  type="text"
+                  name="firstName"
+                  value={formData.firstName}
+                  onChange={handleChange}
+                />
+              </Form.Group>
+            </Col>
+            <Col md={6}>
+              <Form.Group controlId="formLastName" className="my-2">
+                <Form.Label>
+                  <strong>שם משפחה:</strong>
+                </Form.Label>
+                <Form.Control
+                  type="text"
+                  name="lastName"
+                  value={formData.lastName}
+                  onChange={handleChange}
+                  required
+                />
+              </Form.Group>
+            </Col>
+          </Row>
           <Form.Group controlId="formAgentNumber">
-            <Form.Label><strong>מספר סוכן:</strong></Form.Label>
+            <Form.Label>
+              <strong>מספר סוכן:</strong>
+            </Form.Label>
             <Form.Control
               type="text"
               name="agentNumber"
@@ -61,7 +105,9 @@ const AddAgentModal = ({ show, onHide }) => {
             />
           </Form.Group>
           <Form.Group controlId="formEmail">
-            <Form.Label><strong>דואר אלקטרוני:</strong></Form.Label>
+            <Form.Label>
+              <strong>דואר אלקטרוני:</strong>
+            </Form.Label>
             <Form.Control
               type="email"
               name="email"
@@ -71,7 +117,9 @@ const AddAgentModal = ({ show, onHide }) => {
             />
           </Form.Group>
           <Form.Group controlId="formAdditionalMail">
-            <Form.Label><strong>מייל נוסף:</strong></Form.Label>
+            <Form.Label>
+              <strong>מייל נוסף:</strong>
+            </Form.Label>
             <Form.Control
               type="email"
               name="additionalMail"
@@ -80,12 +128,16 @@ const AddAgentModal = ({ show, onHide }) => {
             />
           </Form.Group>
           <Modal.Footer dir="rtl">
-            <Button variant="secondary" onClick={onHide}>סגירה</Button>
-            <Button variant="success" type="submit">הוספה</Button>
+            <Button variant="secondary" onClick={onHide}>
+              סגירה
+            </Button>
+            <Button variant="success" type="submit">
+              הוספה
+            </Button>
           </Modal.Footer>
         </Form>
       </Modal.Body>
-      <ToastContainer rtl={true}/>
+      <ToastContainer rtl={true} />
     </Modal>
   );
 };

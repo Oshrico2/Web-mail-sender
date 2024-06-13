@@ -31,7 +31,9 @@ const getAllWeeklyAgents = async (req, res) => {
 // @access  Private
 const getAllConfirmedMailingAgents = async (req, res) => {
   try {
-    const agents = await Agent.find({ confirmedMailing: { $ne: false } }).sort({ name: 1 });
+    const agents = await Agent.find({ confirmedMailing: { $ne: false } }).sort({
+      name: 1,
+    });
     res.json(agents);
   } catch (error) {
     console.error("Error fetching agents:", error);
@@ -57,9 +59,11 @@ const searchAgentsByName = async (req, res) => {
 // @route   POST /api/agents/add
 // @access  Private
 const addAgent = async (req, res) => {
-  const { name, email, agentNumber, addMail } = req.body;
+  const { name, firstName, lastName, email, agentNumber, addMail } = req.body;
   const agent = new Agent({
     name: name,
+    firstName: firstName,
+    lastName: lastName,
     email: email,
     agentNumber: agentNumber,
     additionalMail: addMail,
@@ -87,20 +91,34 @@ const getAgentById = async (req, res) => {
 // @route   PUT /api/agents/:id
 // @access  Private
 const updateAgentById = async (req, res) => {
-  const { name, email, agentNumber, additionalMail, weeklyStatus,confirmedMailing } = req.body;
+  const {
+    name,
+    firstName,
+    lastName,
+    email,
+    agentNumber,
+    additionalMail,
+    weeklyStatus,
+    confirmedMailing,
+  } = req.body;
 
   const agent = await Agent.findById(req.params.id);
 
   if (agent) {
     agent.name = name !== undefined ? name : agent.name;
+    agent.firstName = firstName !== undefined ? firstName : agent.firstName;
+    agent.lastName = lastName !== undefined ? lastName : agent.lastName;
     agent.email = email !== undefined ? email : agent.email;
-    agent.agentNumber = agentNumber !== undefined ? agentNumber : agent.agentNumber;
+    agent.agentNumber =
+      agentNumber !== undefined ? agentNumber : agent.agentNumber;
     agent.additionalMail =
-    additionalMail !== undefined ? additionalMail : agent.additionalMail;
+      additionalMail !== undefined ? additionalMail : agent.additionalMail;
     agent.weeklyStatus =
       weeklyStatus !== undefined ? weeklyStatus : agent.weeklyStatus;
-      agent.confirmedMailing =
-      confirmedMailing !== undefined ? confirmedMailing : agent.confirmedMailing;
+    agent.confirmedMailing =
+      confirmedMailing !== undefined
+        ? confirmedMailing
+        : agent.confirmedMailing;
 
     const updatedAgent = await agent.save();
     res.json(updatedAgent);
