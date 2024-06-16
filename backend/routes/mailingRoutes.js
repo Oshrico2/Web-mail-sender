@@ -56,10 +56,9 @@ router.post("/", upload.single("attachment"), async (req, res) => {
   }
 
   try {
-    // for (const chunk of chunks) {
-    //   await sendMails(title, rtlContent, attachment, chunk);
-    // }
-          await sendMails(title, rtlContent, attachment, 'osherc@tlp-ins.co.il');
+    for (const chunk of chunks) {
+      await sendMails(title, rtlContent, attachment, chunk);
+    }
 
     res.send("Message sent successfully");
   } catch (error) {
