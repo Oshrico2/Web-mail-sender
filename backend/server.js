@@ -11,6 +11,7 @@ import programRoutes from './routes/programsRoutes.js'
 import loginRoutes from './routes/loginRoutes.js'
 import mailingRoutes from './routes/mailingRoutes.js'
 import campaignsRoutes from './routes/campaignsRoutes.js'
+import businessManagersRoutes from './routes/businessManagersRoutes.js'
 
 dotenv.config();
 connectDB();
@@ -28,6 +29,7 @@ app.use('/api/campaigns',campaignsRoutes);
 app.use('/api/programs',programRoutes);
 app.use('/api/login',loginRoutes);
 app.use('/api/mailing',mailingRoutes);
+app.use('/api/business-managers',businessManagersRoutes);
 
 const __dirname = path.resolve();
 app.use('/uploads', express.static(path.join(__dirname,'/uploads')));

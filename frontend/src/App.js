@@ -15,6 +15,9 @@ import SendMailingScreen from './Screens/SendMailingScreen';
 import RemoveMailingScreen from './Screens/RemoveMailingScreen';
 import CampaignsScreen from './Screens/CampaignsScreen';
 import AddCampaignScreen from './Screens/AddCampaignScreen';
+import AddBusinessManagerScreen from './Screens/AddBusinessManagerScreen';
+import BusinessManagersScreen from './Screens/BusinessManagersScreen';
+import BusinessManagerReportScreen from './Screens/BusinessManagerReportScreen'
 
 
 const App = () => {
@@ -68,6 +71,9 @@ const RenderRoutes = ({ isAuthenticated, setIsAuthenticated }) => {
       <Route path="/send-mail" element={<SendMailScreen />} />
       <Route path="/employees/add" element={<AddEmployeeScreen />} />
       <Route path="/agents/remove-mailing" element={<RemoveMailingScreen />} />
+      <Route path="/business-managers/add" element={<AddBusinessManagerScreen />} />
+      <Route path="/business-managers" element={<BusinessManagersScreen/>} />
+      <Route path="/business-managers/report" element={<BusinessManagerReportScreen/>} />
     </Routes>
   );
 };

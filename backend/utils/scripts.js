@@ -2,6 +2,8 @@ import xlsx from "xlsx";
 import dotenv from 'dotenv'
 import Agent from "../models/agentModel.js";
 import Employee from "../models/employeeModel.js";
+import Campaigns from "../models/campaignModel.js"
+import BusinessManager from "../models/businessManagerModel.js";
 dotenv.config();
 
 const readExcelFile = () => {
@@ -106,6 +108,16 @@ const fetchAgents= async () => {
   }
 };
 
+const fetchCampaigns = async () => {
+  try {
+    const campaigns = await Campaigns.find({}).sort({ name: 1 }); // 1 for ascending order
+    return campaigns;
+  } catch (error) {
+    console.error("Error fetching campaigns:", error);
+    res.status(500).json({ message: "Server Error" });
+  }
+};
+
 // const getEmployeesFromDB = async () => {
 //   const response = await axios.get("/api/employees");
 //   return response.data;
@@ -115,6 +127,16 @@ const fetchEmployees = async () => {
   try {
     const employees = await Employee.find({}).sort({ name: 1 }); // 1 for ascending order
     return employees
+  } catch (error) {
+    console.error("Error fetching employees:", error);
+    res.status(500).json({ message: "Server Error" });
+  }
+};
+
+const fetchBusinessManagers = async () => {
+  try {
+    const businessManagers = await BusinessManager.find({}).sort({ name: 1 }); // 1 for ascending order
+    return businessManagers
   } catch (error) {
     console.error("Error fetching employees:", error);
     res.status(500).json({ message: "Server Error" });
@@ -135,6 +157,15 @@ const replaceKeysInArray = (array, keyMap) => {
   });
 };
 
+
+// Function to remove fields from each object
+const removeFields = (data, fieldsToRemove) => {
+  return data.map(obj => {
+    fieldsToRemove.forEach(field => delete obj[field]);
+    return obj;
+  });
+};
+
 export {
   readExcelFile,
   getCurrentDateFormatted,
@@ -145,4 +176,7 @@ export {
   fetchAgents,
   fetchEmployees,
   replaceKeysInArray,
+  fetchCampaigns,
+  fetchBusinessManagers,
+  removeFields
 };

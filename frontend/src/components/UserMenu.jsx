@@ -64,18 +64,34 @@ const UserMenu = () => {
               <Nav.Item eventKey="4-2">הוספת עובד</Nav.Item>
             </LinkContainer>
           </Nav.Menu>
-
           <Nav.Menu
             placement="rightStart"
             eventKey="5"
+            title="מנהלי פיתוח עסקי"
+            icon={<MemberIcon />}
+          >
+            <LinkContainer to="/business-managers">
+              <Nav.Item eventKey="5-1">רשימת מנהלי פיתוח עסקי</Nav.Item>
+            </LinkContainer>
+            <LinkContainer to="/business-managers/add">
+              <Nav.Item eventKey="5-2">הוספת מנהל פיתוח עסקי</Nav.Item>
+            </LinkContainer>
+            <LinkContainer to="/business-managers/report">
+              <Nav.Item eventKey="5-3">הכנת דוח</Nav.Item>
+            </LinkContainer>
+          </Nav.Menu>
+
+          <Nav.Menu
+            placement="rightStart"
+            eventKey="6"
             title="הודעות תפוצה"
             icon={<SendIcon />}
           >
             <LinkContainer to="/mailing">
-              <Nav.Item eventKey="5-1">שלח תפוצה</Nav.Item>
+              <Nav.Item eventKey="6-1">שלח תפוצה</Nav.Item>
             </LinkContainer>
             <LinkContainer to="/agents/confirmed-mailing">
-              <Nav.Item eventKey="5-2">סוכנים שנמצאים ברשימת תפוצה</Nav.Item>
+              <Nav.Item eventKey="6-2">סוכנים שנמצאים ברשימת תפוצה</Nav.Item>
             </LinkContainer>
           </Nav.Menu>
         </Nav>
