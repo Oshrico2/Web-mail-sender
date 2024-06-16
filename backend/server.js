@@ -10,7 +10,7 @@ import employeeRoutes from './routes/employeesRoutes.js'
 import programRoutes from './routes/programsRoutes.js'
 import loginRoutes from './routes/loginRoutes.js'
 import mailingRoutes from './routes/mailingRoutes.js'
-
+import campaignsRoutes from './routes/campaignsRoutes.js'
 
 dotenv.config();
 connectDB();
@@ -24,6 +24,7 @@ app.use(bodyParser.json({ limit: '50mb' }));
 app.use('/api/agents',agentsRoutes);
 app.use('/api/upload',uploadRoutes);
 app.use('/api/employees',employeeRoutes);
+app.use('/api/campaigns',campaignsRoutes);
 app.use('/api/programs',programRoutes);
 app.use('/api/login',loginRoutes);
 app.use('/api/mailing',mailingRoutes);

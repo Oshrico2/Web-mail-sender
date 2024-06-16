@@ -13,6 +13,8 @@ import './App.css'
 import ConfirmedMailingAgentsScreen from './Screens/ConfirmedMailingAgentsScreen';
 import SendMailingScreen from './Screens/SendMailingScreen';
 import RemoveMailingScreen from './Screens/RemoveMailingScreen';
+import CampaignsScreen from './Screens/CampaignsScreen';
+import AddCampaignScreen from './Screens/AddCampaignScreen';
 
 
 const App = () => {
@@ -60,6 +62,8 @@ const RenderRoutes = ({ isAuthenticated, setIsAuthenticated }) => {
       <Route path="/agents/per-week" element={<WeeklyAgentsScreen />} />
       <Route path="/agents/confirmed-mailing" element={<ConfirmedMailingAgentsScreen />} />
       <Route path="/mailing" element={<SendMailingScreen />} />
+      <Route path="/campaigns" element={<CampaignsScreen />} />
+      <Route path="/campaigns/add" element={<AddCampaignScreen />} />
       <Route path="/employees" element={<EmployeesScreen />} />
       <Route path="/send-mail" element={<SendMailScreen />} />
       <Route path="/employees/add" element={<AddEmployeeScreen />} />

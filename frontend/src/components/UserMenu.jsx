@@ -37,7 +37,7 @@ const UserMenu = () => {
           <Nav.Menu
             placement="rightStart"
             eventKey="3"
-            title="סוכנים"
+            title="סוכנים וועדים"
             icon={<GroupIcon />}
           >
             <LinkContainer to="/agents">
@@ -50,6 +50,12 @@ const UserMenu = () => {
             </LinkContainer>
             <LinkContainer to="/agents/per-week">
               <Nav.Item eventKey="3-3">סוכנים בסטטוס שבועי</Nav.Item>
+            </LinkContainer>
+            <LinkContainer to="/campaigns">
+              <Nav.Item eventKey="3-4">רשימת קמפיינים וועדים</Nav.Item>
+            </LinkContainer>
+            <LinkContainer to="/campaigns/add">
+              <Nav.Item eventKey="3-5">הוספת קמפיין/ועד</Nav.Item>
             </LinkContainer>
           </Nav.Menu>
           <Nav.Menu
