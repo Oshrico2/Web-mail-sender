@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import Header from "../components/Header";
@@ -11,6 +11,7 @@ import { toast, ToastContainer } from "react-toastify";
 const SendMailingScreen = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [content, setContent] = useState("");
+  const quillRef = useRef(null); // Reference for the Quill editor
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -29,21 +30,63 @@ const SendMailingScreen = () => {
 
     setIsLoading(true);
     try {
-      await axios
-      .post("/api/mailing", formData, {
+      await axios.post("/api/mailing", formData, {
         headers: {
           "Content-Type": "multipart/form-data; charset=utf-8",
         },
-      })
+      });
       toast.success("השליחה הסתיימה בהצלחה");
     } catch (error) {
       toast.error("בעייה בשליחת המייל");
       console.error(error);
-    }finally{
+    } finally {
       setIsLoading(false); // Deactivate loader after request is completed
+    }
+  };
+
+  const modules = {
+    toolbar: [
+      [{ header: "1" }, { header: "2" }, { font: [] }],
+      [{ list: "ordered" }, { list: "bullet" }],
+      ["bold", "italic", "underline"],
+      [{ align: [] }],
+      [{ color: [] }, { background: [] }],
+      ["link"],
+      ["image"], // Add image toolbar button
+      ["clean"],
+    ],
+  };
+
+  const formats = [
+    "header",
+    "font",
+    "list",
+    "bullet",
+    "bold",
+    "italic",
+    "underline",
+    "indent",
+    "align",
+    "color",
+    "background",
+    "link",
+    "image", // Add support for image format
+  ];
+
+  const handleEditorChange = (value) => {
+    setContent(value);
+    if (quillRef.current) {
+      const quill = quillRef.current.getEditor();
+  
+  
+      // Ensure new images inserted also conform to the default styles
+      quill.root.querySelectorAll('img').forEach(img => {
+        img.style.maxWidth = '30%';
+        img.style.height = 'auto';
+      });
+      quill.format('align', 'right');  // Set text alignment to right
 
     }
-  
   };
 
   return (
@@ -62,7 +105,7 @@ const SendMailingScreen = () => {
           <div className="d-flex justify-content-center mt-5">
             <div
               className="mailing-form mt-5"
-              style={{ maxWidth: "800px", width: "100%" }}
+              style={{ maxWidth: "800px", width: "100%"}}
             >
               <Form onSubmit={handleSubmit}>
                 <Row>
@@ -88,48 +131,24 @@ const SendMailingScreen = () => {
                   </Col>
                 </Row>
                 <Form.Group className="my-2">
-        <ReactQuill
-          value={content}
-          onChange={setContent}
-          placeholder="תוכן המייל"
-          theme="snow"
-          style={{ height: "300px" }}
-          modules={{
-            toolbar: [
-              [{ header: "1" }, { header: "2" }, { font: [] }],
-              [{ list: "ordered" }, { list: "bullet" }],
-              ["bold", "italic", "underline"],
-              [{ align: [] }],
-              [{ color: [] }, { background: [] }],
-              ["link"], // Add the link button to the toolbar
-              ["clean"],
-            ],
-          }}
-          formats={[
-            "header",
-            "font",
-            "list",
-            "bullet",
-            "bold",
-            "italic",
-            "underline",
-            "indent",
-            "align",
-            "color",
-            "background",
-            "link", // Add support for the link format
-          ]}
-        />
-        <Button
-          type="submit"
-          className="mt-5 rounded-3"
-          style={{ width: "100%" }}
-        >
-          שליחת תפוצה
-        </Button>
-      </Form.Group>
-
-
+                  <ReactQuill
+                    ref={quillRef} // Attach the ref to the ReactQuill component
+                    value={content}
+                    onChange={handleEditorChange}
+                    placeholder="תוכן המייל"
+                    theme="snow"
+                    style={{ height: "300px" }}
+                    modules={modules}
+                    formats={formats}
+                  />
+                  <Button
+                    type="submit"
+                    className="mt-5 rounded-3"
+                    style={{ width: "100%" }}
+                  >
+                    שליחת תפוצה
+                  </Button>
+                </Form.Group>
               </Form>
             </div>
           </div>

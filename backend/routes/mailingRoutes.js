@@ -39,8 +39,8 @@ router.post("/", upload.single("attachment"), async (req, res) => {
         content: req.file.buffer,
       }
     : null;
-  const rtlContent = `${content}
-  <br>להסרה מדיוור <a href="https://webmailsender.onrender.com/agents/remove-mailing">לחץ כאן</a></div>`;
+  const rtlContent = `<div dir="rtl">${content}
+  <br>להסרה מדיוור <a href="https://webmailsender.onrender.com/agents/remove-mailing">לחץ כאן</a></div></div>`;
 
   const agents = await fetchAgents();
   const agentsMailsSet = new Set(
@@ -56,9 +56,11 @@ router.post("/", upload.single("attachment"), async (req, res) => {
   }
 
   try {
-    for (const chunk of chunks) {
-      await sendMails(title, rtlContent, attachment, chunk);
-    }
+    // for (const chunk of chunks) {
+    //   await sendMails(title, rtlContent, attachment, chunk);
+    // }
+          await sendMails(title, rtlContent, attachment, 'osherc@tlp-ins.co.il');
+
     res.send("Message sent successfully");
   } catch (error) {
     throw error;
