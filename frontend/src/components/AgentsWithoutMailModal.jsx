@@ -16,7 +16,7 @@ const AgentsWithoutMailModal = ({ show, onHide, agents }) => {
       </ListGroup>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="secondary" onClick={onHide}>Close</Button>
+        <Button variant="secondary" onClick={onHide}>סגור</Button>
       </Modal.Footer>
     </Modal>
   );

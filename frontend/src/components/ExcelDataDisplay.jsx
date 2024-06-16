@@ -12,7 +12,7 @@ const ExcelDataDisplay = () => {
   const [noMailAgents,setNoMailAgents] = useState([]);
 
   const [show, setShow] = useState(false);
-  const [showModalNoAgents, setShowModalNoAgents] = useState(false);
+  const [showModalNoAgents, setShowModalNoAgents] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
 
   const handleShow = () => setShow(true);
@@ -135,7 +135,7 @@ const ExcelDataDisplay = () => {
           {noMailAgents.length > 0 ? (
             <div>
               <AgentsWithoutMailModal
-                show={true}
+                show={showModalNoAgents}
                 onHide={() => setShowModalNoAgents(false)}
                 agents={noMailAgents}
               />
