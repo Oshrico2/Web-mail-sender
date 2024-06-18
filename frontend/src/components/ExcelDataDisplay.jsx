@@ -157,7 +157,7 @@ const ExcelDataDisplay = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {jsonData.map((row, index) => (
+                      {jsonData.slice(0,20).map((row, index) => (
                         <tr key={index}>
                           {Object.values(row).map((value, index) => (
                             <td key={index}>{value}</td>
