@@ -15,22 +15,24 @@ const SendMailingScreen = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    const attachment = event.target.attachment.files[0];
 
+    // Get the value of the hidden input to determine which button was pressed
+    const buttonPressed = event.target.buttonPressed.value;
+    let isTest = false;
+    buttonPressed === 'sendMailing' ? isTest = false : isTest = true;
+
+    const attachment = event.target.attachment.files[0];
     const formData = new FormData();
+
     formData.append("title", event.target.title.value);
     formData.append("content", content);
     if (attachment) {
-      formData.append(
-        "attachment",
-        attachment,
-        encodeURIComponent(attachment.name)
-      );
+      formData.append("attachment", attachment, encodeURIComponent(attachment.name));
     }
 
     setIsLoading(true);
     try {
-      await axios.post("/api/mailing", formData, {
+      await axios.post("/api/mailing", {formData:formData,isTest:isTest},{
         headers: {
           "Content-Type": "multipart/form-data; charset=utf-8",
         },
@@ -78,14 +80,12 @@ const SendMailingScreen = () => {
     if (quillRef.current) {
       const quill = quillRef.current.getEditor();
   
-  
       // Ensure new images inserted also conform to the default styles
       quill.root.querySelectorAll('img').forEach(img => {
         img.style.maxWidth = '30%';
         img.style.height = 'auto';
       });
       quill.format('align', 'right');  // Set text alignment to right
-
     }
   };
 
@@ -98,15 +98,13 @@ const SendMailingScreen = () => {
           <UserMenu />
         </Col>
         <Col md={10}>
-          <h4 className="my-4 me-4" dir="rtl">
+          <h4 className="mt-4 me-4" dir="rtl">
             במסך זה ניתן לשלוח מייל תפוצה לכל הסוכנים, יש לבחור נושא קובץ מצורף
             ותוכן.
           </h4>
+          <p className="fs-6 fw-bold mt-2 me-4" dir='rtl'>באפשרותך לבצע בדיקה למייל ספציפי טרם השליחה.</p>
           <div className="d-flex justify-content-center mt-5">
-            <div
-              className="mailing-form mt-5"
-              style={{ maxWidth: "800px", width: "100%"}}
-            >
+            <div className="mailing-form mt-5" style={{ maxWidth: "800px", width: "100%" }}>
               <Form onSubmit={handleSubmit}>
                 <Row>
                   <Col md={3}>
@@ -145,10 +143,25 @@ const SendMailingScreen = () => {
                     type="submit"
                     className="mt-5 rounded-3"
                     style={{ width: "100%" }}
+                    name="sendMailing"
+                    onClick={() => document.getElementById('buttonPressed').value = 'sendMailing'}
                   >
                     שליחת תפוצה
                   </Button>
                 </Form.Group>
+                <Form.Group dir="rtl" style={{height:'40px'}} controlId="testButton" className="my-2  d-flex">
+                  <Form.Control className="rounded-0 rounded-end-3" style={{width:'600px'}} placeholder="המייל אליו תשלח הבדיקה" />
+                  <Button
+                    type="submit"
+                    name="testButton"
+                    variant="success"
+                    style={{width:'200px'}}
+                    onClick={() => document.getElementById('buttonPressed').value = 'testButton'}
+                  >
+                    בצע בדיקה
+                  </Button>
+                </Form.Group>
+                <input type="hidden" id="buttonPressed" name="buttonPressed" value="" />
               </Form>
             </div>
           </div>

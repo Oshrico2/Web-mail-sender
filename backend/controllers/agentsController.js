@@ -98,6 +98,7 @@ const updateAgentById = async (req, res) => {
     email,
     agentNumber,
     additionalMail,
+    customerStatus,
     weeklyStatus,
     confirmedMailing,
   } = req.body;
@@ -113,7 +114,9 @@ const updateAgentById = async (req, res) => {
       agentNumber !== undefined ? agentNumber : agent.agentNumber;
     agent.additionalMail =
       additionalMail !== undefined ? additionalMail : agent.additionalMail;
-    agent.weeklyStatus =
+    agent.customerStatus =
+    customerStatus !== undefined ? customerStatus : agent.customerStatus;
+      agent.weeklyStatus =
       weeklyStatus !== undefined ? weeklyStatus : agent.weeklyStatus;
     agent.confirmedMailing =
       confirmedMailing !== undefined

@@ -29,6 +29,11 @@ const agentSchema = mongoose.Schema({
     type: String,
     required: false,
   },
+  customerStatus:{
+    type:Boolean,
+    required:true,
+    default:true,
+  },
   weeklyStatus:{
     type:Boolean,
     required:true,

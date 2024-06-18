@@ -27,12 +27,14 @@ const transporter = nodemailer.createTransport({
 
 const router = express.Router();
 
-const sendMail = async (mailOptions,agentName) => {
+const sendMail = async (mailOptions, agentName) => {
   try {
     await transporter.sendMail(mailOptions);
     console.log(`Email sent to ${mailOptions.to} - ${agentName}`);
   } catch (error) {
-    console.log(`Error sending email to ${mailOptions.to}: ${error} - ${agentName}`);
+    console.log(
+      `Error sending email to ${mailOptions.to}: ${error} - ${agentName}`
+    );
   }
 };
 
@@ -45,9 +47,9 @@ const sendMailsWithFile = async (agentMap, weeklyStatus) => {
       ws["!margins"] = { rtl: true };
       xlsx.utils.book_append_sheet(wb, ws, "Agent Data");
 
-    // Generate HTML table from the worksheet after removing unwanted columns
-    const wsData = xlsx.utils.sheet_to_json(ws, { header: 1 });
-    const htmlTable = `
+      // Generate HTML table from the worksheet after removing unwanted columns
+      const wsData = xlsx.utils.sheet_to_json(ws, { header: 1 });
+      const htmlTable = `
     <html dir="rtl">
 <head>
     <style>
@@ -155,53 +157,53 @@ const sendMailsWithFile = async (agentMap, weeklyStatus) => {
 </html>
 
 `;
-    let typeOfFile;
-    if (typeof weeklyStatus === "boolean") {
-      typeOfFile = weeklyStatus ? "שבועי" : "יומי";
-    } else {
-      typeOfFile = weeklyStatus === "פנסיה" ? "פנסיה" : "בריאות";
-    }
+      let typeOfFile;
+      if (typeof weeklyStatus === "boolean") {
+        typeOfFile = weeklyStatus ? "שבועי" : "יומי";
+      } else {
+        typeOfFile = weeklyStatus === "פנסיה" ? "פנסיה" : "בריאות";
+      }
 
-    const mailOptions = {
-      from: mailFrom,
-      to: `${agentInfo.email}`,
-      cc: `${agentInfo.addMail}`,
-      subject: "",
-      html: "",
-      attachments: [
-        {
-          filename: "סטטוס לקוחות " + typeOfFile + '.xlsx',
-          content: Buffer.from(xlsx.write(wb, { type: "buffer" })),
-          contentType:
-            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-        },
-      ],
-    };
+      const mailOptions = {
+        from: mailFrom,
+        to: `${agentInfo.email}`,
+        cc: `${agentInfo.addMail}`,
+        subject: "",
+        html: "",
+        attachments: [
+          {
+            filename: "סטטוס לקוחות " + typeOfFile + ".xlsx",
+            content: Buffer.from(xlsx.write(wb, { type: "buffer" })),
+            contentType:
+              "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+          },
+        ],
+      };
 
-    if (typeof weeklyStatus === "boolean") {
-      mailOptions.html = `<div dir="rtl"><p>היי ${agentInfo.name},</p>
+      if (typeof weeklyStatus === "boolean") {
+        mailOptions.html = `<div dir="rtl"><p>היי ${agentInfo.name},</p>
       <p>מצ"ב סטטוס לקוחות  <b>שהועברו/עודכנו מתחילת שנה</b> ללא תחומי פנסיה ובריאות.</p>
       <p>פנסיה ובריאות נשלחים אחת לשבוע.</p>
       <p>מצורף קובץ אקסל לנוחיותך.</p></div><br>${htmlTable}
       `;
-      mailOptions.subject =
-        (weeklyStatus ? `סטטוס לקוחות שבועי - ` : "סטטוס לקוחות יומי - ") +
-        ` ${agentInfo.name} ${getCurrentDateFormatted()}`;
-    } else {
-      mailOptions.html = `<div dir="rtl"><p>היי ${agentInfo.name},</p>
+        mailOptions.subject =
+          (weeklyStatus ? `סטטוס לקוחות שבועי - ` : "סטטוס לקוחות יומי - ") +
+          ` ${agentInfo.name} ${getCurrentDateFormatted()}`;
+      } else {
+        mailOptions.html = `<div dir="rtl"><p>היי ${agentInfo.name},</p>
       <p>מצ"ב סטטוס לקוחות שלך מתחילת שנה בתחום ה${weeklyStatus}</p>
       <p>מצורף קובץ אקסל לנוחיותך.</p></div><br>${htmlTable}
       `;
-      mailOptions.subject =
-        `סטטוס לקוחות - ${weeklyStatus}` +
-        ` ${agentInfo.name} ${getCurrentDateFormatted()}`;
-    }
+        mailOptions.subject =
+          `סטטוס לקוחות - ${weeklyStatus}` +
+          ` ${agentInfo.name} ${getCurrentDateFormatted()}`;
+      }
 
-    await sendMail(mailOptions,agentInfo.name);
-  } catch (error) {
-    console.log(`Error sending email to ${agentInfo.name}: ${error}`);
+      await sendMail(mailOptions, agentInfo.name);
+    } catch (error) {
+      console.log(`Error sending email to ${agentInfo.name}: ${error}`);
+    }
   }
-}
 };
 
 const groupDataByAgent = async (agentsArray, weeklyStatus) => {
@@ -224,12 +226,12 @@ const groupDataByAgent = async (agentsArray, weeklyStatus) => {
   });
   let noMailAgents = [];
   agentMap.forEach((agentInfo) => {
-    if(!agentInfo.email){
+    if (!agentInfo.email) {
       noMailAgents.push(agentInfo);
     }
-  })
- await sendMailsWithFile(agentMap, weeklyStatus);
- return noMailAgents;
+  });
+  await sendMailsWithFile(agentMap, weeklyStatus);
+  return noMailAgents;
 };
 
 router.post("/general", async (req, res) => {
@@ -239,30 +241,28 @@ router.post("/general", async (req, res) => {
     const agents = await fetchAgents();
     const employees = await fetchEmployees();
 
-    for (const item of data) {
-      const agent = agents.find(
-        (agent) => agent.name === item["סוכן בכרטיס לקוח"]
-      );
-      const employee = employees.find(
-        (employee) => employee.name === item["שם מטפל"]
-      );
-      if(agent){
-        if (
-          agent.additionalMail && !weeklyStatus
-            ? !agent.weeklyStatus
-            : true
-        ) {
-          item["מייל נוסף"] = agent.additionalMail;
-        }
-        if (agent.email && !weeklyStatus ? !agent.weeklyStatus : true) {
-          item["מייל של סוכן"] = agent.email;
-        }
-
+    data = data.filter((item) => {
+      const agent = agents.find(agent => agent.name === item["סוכן בכרטיס לקוח"]);
+      if (agent && agent.customerStatus === false) {
+          return false; // Exclude item from filtered data
+      }
+  
+      const employee = employees.find(employee => employee.name === item["שם מטפל"]);
+      
+      if (agent) {
+          if (agent.additionalMail && (!weeklyStatus ? !agent.weeklyStatus : true)) {
+              item["מייל נוסף"] = agent.additionalMail;
+          }
+          if (agent.email && (!weeklyStatus ? !agent.weeklyStatus : true)) {
+              item["מייל של סוכן"] = agent.email;
+          }
       }
       if (employee && employee.subject) {
-        item["תחום"] = employee.subject;
+          item["תחום"] = employee.subject;
       }
-    }
+  
+      return true; // Include item in filtered data
+  });
 
     const keyReplacements = {
       "סוכן בכרטיס לקוח": "שם סוכן",
@@ -286,7 +286,7 @@ router.post("/other-services", async (req, res) => {
 
     for (const item of data) {
       const agent = agents.find((agent) => agent.name === item["מקור לקוח"]);
-      if (agent){
+      if (agent) {
         if (agent.additionalMail) {
           item["מייל נוסף"] = agent.additionalMail;
         }

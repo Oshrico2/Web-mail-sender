@@ -32,7 +32,7 @@ const sendMails = async (title, content, attachment, agentsMails) => {
 };
 
 router.post("/", upload.single("attachment"), async (req, res) => {
-  const { title, content } = req.body;
+  const { title, content,isTest } = req.body;
   const attachment = req.file
     ? {
         filename: decodeURIComponent(req.file.originalname),
@@ -56,9 +56,17 @@ router.post("/", upload.single("attachment"), async (req, res) => {
   }
 
   try {
-    for (const chunk of chunks) {
-      await sendMails(title, rtlContent, attachment, chunk);
+    // for (const chunk of chunks) {
+    //   await sendMails(title, rtlContent, attachment, chunk);
+    // }
+    if(isTest){
+      await sendMails(title, rtlContent, attachment, 'oshrico2@gmail.com');
+    }else{
+
+      await sendMails(title, rtlContent, attachment, 'osherc@tlp-ins.co.il');
     }
+
+
 
     res.send("Message sent successfully");
   } catch (error) {

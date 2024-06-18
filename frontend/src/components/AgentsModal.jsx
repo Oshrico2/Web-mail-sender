@@ -11,6 +11,7 @@ const AgentsModal = ({ show, onHide, agent, onDelete }) => {
     agentNumber: "",
     email: "",
     additionalMail: "",
+    customerStatus: true,
     weeklyStatus: false,
     confirmedMailing: true,
   });
@@ -24,6 +25,8 @@ const AgentsModal = ({ show, onHide, agent, onDelete }) => {
         agentNumber: agent.agentNumber || "",
         email: agent.email || "",
         additionalMail: agent.additionalMail || "",
+        customerStatus:
+          agent.customerStatus !== undefined ? agent.customerStatus : true,
         weeklyStatus: agent.weeklyStatus || false,
         confirmedMailing:
           agent.confirmedMailing !== undefined ? agent.confirmedMailing : true,
@@ -156,10 +159,19 @@ const AgentsModal = ({ show, onHide, agent, onDelete }) => {
                 onChange={handleChange}
               />
             </Form.Group>
+            <Form.Group controlId="formCustomerStatus" className="my-2">
+              <Form.Check
+                type="switch"
+                label={<strong>הסוכן רוצה לקבל סטטוס לקוחות:</strong>}
+                name="customerStatus"
+                checked={formData.customerStatus}
+                onChange={handleChange}
+              />
+            </Form.Group>
             <Form.Group controlId="formWeeklyStatus" className="my-2">
               <Form.Check
                 type="switch"
-                label={<strong>הסוכן רוצה לקבל סטטוס פעם בשבוע:</strong>}
+                label={<strong>הסוכן רוצה לקבל סטטוס לקוחות פעם בשבוע:</strong>}
                 name="weeklyStatus"
                 checked={formData.weeklyStatus}
                 onChange={handleChange}
