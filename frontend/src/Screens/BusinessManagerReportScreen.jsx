@@ -78,7 +78,7 @@ const BusinessManagerReportScreen = () => {
           <Container className="mt-5" dir="rtl">
             <h4>בחר קובץ אקסל להעלאה</h4>
             <input type="file" onChange={handleFileChange} className="me-2 my-4" />
-            {isLoading? <Loader text={'נא המתן לטעינת הקובץ...'}/> : jsonData.length > 0 && fixedJsonData.length === 0 && (
+            {isLoading && jsonData.length === 0 ? <Loader text={'נא המתן לטעינת הקובץ...'}/> : jsonData.length > 0 && fixedJsonData.length === 0 && (
               <div className="table table-responsive mt-4" style={{ overflowY: 'auto', height: '40vh' }}>
                 <Table striped bordered hover>
                   <thead>
@@ -100,7 +100,7 @@ const BusinessManagerReportScreen = () => {
                 </Table>
               </div>
             )}
-            {isLoading ? <Loader /> : (fixedJsonData.length > 0 && (
+            {isLoading && jsonData.length > 0 ? <Loader text={'מכין את הדוח...'} /> : (fixedJsonData.length > 0 && (
               <div>
                 {noFindAgents && noFindAgents.length > 0 && (
                   <div>
