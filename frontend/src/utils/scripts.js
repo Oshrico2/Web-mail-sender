@@ -28,6 +28,5 @@ const formatDates = (data) => {
     const year = today.getFullYear();
     return `${day}/${month}/${year}`;
   };
-  
 
   export {formatDates, getCurrentDateFormatted};
