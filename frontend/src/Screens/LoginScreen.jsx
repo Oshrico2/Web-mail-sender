@@ -3,6 +3,7 @@ import { Form, Button } from "rsuite";
 import axios from "axios";
 import { ToastContainer,toast } from "react-toastify";
 import Footer from "../components/Footer";
+import Header from "../components/Header";
 
 const LoginScreen = ({setIsAuthenticated}) => {
   const [username, setUsername] = useState("");
@@ -33,16 +34,17 @@ const LoginScreen = ({setIsAuthenticated}) => {
 
   return (
     <>
-    <div
+    <Header title={'ברוכים הבאים'} />
+    <div className="background-container"
       style={{
-        display: "flex",
+        display: "grid",
         justifyContent: "center",
         alignItems: "center",
         height: "60vh",
       }}
     >
-    <ToastContainer rtl={true}/>
-      <Form className="center my-5" dir="rtl">
+
+      <Form className="center mb-5" dir="rtl">
         <Form.Control
           value={username}
           placeholder="שם משתמש"
@@ -67,6 +69,7 @@ const LoginScreen = ({setIsAuthenticated}) => {
         </Button>
       </Form>
     </div>
+    <ToastContainer rtl={true}/>
       <Footer />
       </>
   );
