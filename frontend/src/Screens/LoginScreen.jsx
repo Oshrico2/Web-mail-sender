@@ -15,7 +15,9 @@ const LoginScreen = ({setIsAuthenticated}) => {
     axios.post('/api/login', userData)
     .then(response => {
         const token = response.data; // Extract token from response data
+        const expiration = response.data.expiration; // Assuming expiration timestamp is returned
         localStorage.setItem('token', token); // Set token in localStorage
+        localStorage.setItem('tokenExpiration', expiration);
         setIsAuthenticated(true); // Set isAuthenticated state to true
         setTimeout(() => {
             toast.success('התחברת בהצלחה!');

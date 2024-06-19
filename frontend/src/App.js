@@ -26,10 +26,21 @@ const App = () => {
 
   useEffect(() => {
     const token = localStorage.getItem('token');
-    console.log(token);
+    const tokenExpiration = localStorage.getItem('tokenExpiration');
+    console.log('expiration: ',tokenExpiration);
     if (token) {
       setIsAuthenticated(true);
     }
+
+
+    const expirationTime = parseInt(tokenExpiration);
+    console.log('date: ',Date.now());
+        if (!tokenExpiration || Date.now() > expirationTime) {
+          // Token has expired
+          localStorage.removeItem('token');
+          localStorage.removeItem('tokenExpiration');
+          setIsAuthenticated(false);
+        }
     setIsLoading(false); 
   }, []);
 

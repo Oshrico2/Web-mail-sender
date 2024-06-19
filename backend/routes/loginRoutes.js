@@ -15,7 +15,9 @@ router.post('/', async (req, res) => {
             return res.status(401).send({ message: 'Invalid credentials' });
         }
         const token = jwt.sign({ username: user.username }, process.env.JWT_SECRET, { expiresIn: '1h' });
-        res.send(token);
+        const expiration = Date.now() + 3600000; // 1 hour in milliseconds
+
+        res.send({token,expiration});
     } catch (error) {
         console.error('Error logging in:', error);
         res.status(500).send({ message: 'Internal server error' });
