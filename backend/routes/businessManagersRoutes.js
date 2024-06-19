@@ -61,7 +61,7 @@ router
           obj['מנהל פיתוח עסקי'] = '';
         }
       }
-      removeFields(filteredData, ['הערות', 'תאריך יצירה', 'תאריך שינוי', 'שם מטפל', 'טלפון 1']);
+      removeFields(filteredData, ['הערות', 'תאריך יצירה', 'תאריך שינוי', 'טלפון 1']);
       const noAgentInDataList = Array.from(noAgentInDataSet);
       res.json({ filteredData, noAgentInDataList });
     } catch (error) {
