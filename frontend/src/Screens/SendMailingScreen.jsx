@@ -16,23 +16,28 @@ const SendMailingScreen = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    // Get the value of the hidden input to determine which button was pressed
     const buttonPressed = event.target.buttonPressed.value;
-    let isTest = false;
-    buttonPressed === 'sendMailing' ? isTest = false : isTest = true;
+    const sendMailTo = event.target.sendMailTo.value
+    let isTest = buttonPressed === 'testButton';
+  if(sendMailTo === '' && isTest){
+    toast.error('נא הזן מייל לביצוע בדיקה.');
+    return;
+  }
 
     const attachment = event.target.attachment.files[0];
     const formData = new FormData();
-
     formData.append("title", event.target.title.value);
     formData.append("content", content);
+    formData.append("isTest", isTest); 
+    formData.append("sendMailTo", sendMailTo); 
+    
     if (attachment) {
       formData.append("attachment", attachment, encodeURIComponent(attachment.name));
     }
 
     setIsLoading(true);
     try {
-      await axios.post("/api/mailing", {formData:formData,isTest:isTest},{
+      await axios.post("/api/mailing", formData, {
         headers: {
           "Content-Type": "multipart/form-data; charset=utf-8",
         },
@@ -42,10 +47,9 @@ const SendMailingScreen = () => {
       toast.error("בעייה בשליחת המייל");
       console.error(error);
     } finally {
-      setIsLoading(false); // Deactivate loader after request is completed
+      setIsLoading(false);
     }
   };
-
   const modules = {
     toolbar: [
       [{ header: "1" }, { header: "2" }, { font: [] }],
@@ -91,7 +95,7 @@ const SendMailingScreen = () => {
 
   return (
     <div>
-      <ToastContainer />
+      <ToastContainer rtl={true}/>
       <Header title="שליחת הודעת תפוצה" />
       <Row>
         <Col md={2}>
@@ -150,7 +154,7 @@ const SendMailingScreen = () => {
                   </Button>
                 </Form.Group>
                 <Form.Group dir="rtl" style={{height:'40px'}} controlId="testButton" className="my-2  d-flex">
-                  <Form.Control className="rounded-0 rounded-end-3" style={{width:'600px'}} placeholder="המייל אליו תשלח הבדיקה" />
+                  <Form.Control name="sendMailTo" className="rounded-0 rounded-end-3" style={{width:'600px'}} placeholder="המייל אליו תשלח הבדיקה" />
                   <Button
                     type="submit"
                     name="testButton"

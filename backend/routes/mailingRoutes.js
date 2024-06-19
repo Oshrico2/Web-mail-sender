@@ -32,45 +32,49 @@ const sendMails = async (title, content, attachment, agentsMails) => {
 };
 
 router.post("/", upload.single("attachment"), async (req, res) => {
-  const { title, content,isTest } = req.body;
+  const { title, content, isTest } = req.body;
+  let {sendMailTo} = req.body;
+
+  console.log("sendMailTo:", sendMailTo);
+  console.log("isTest:", isTest);
+  console.log("title:", title);
+  console.log("content:", content);
+
+  if(isTest === 'false'){
+    const agents = await fetchAgents();
+    const agentsMailsSet = new Set(
+      agents
+        .filter(agent => agent.confirmedMailing)
+        .map(agent => agent.email)
+    );
+    sendMailTo = [...agentsMailsSet];
+  }
   const attachment = req.file
     ? {
         filename: decodeURIComponent(req.file.originalname),
         content: req.file.buffer,
       }
     : null;
-  const rtlContent = `<div dir="rtl">${content}
-  <br>להסרה מדיוור <a href="https://webmailsender.onrender.com/agents/remove-mailing">לחץ כאן</a></div></div>`;
+  console.log("attachment:", attachment);
 
-  const agents = await fetchAgents();
-  const agentsMailsSet = new Set(
-    agents
-      .filter((agent) => agent.confirmedMailing === true)
-      .map((agent) => agent.email)
-  );
-  const agentsMails = [...agentsMailsSet];
+  const rtlContent = `<div dir="rtl">${content}<br>להסרה מדיוור <a href="https://webmailsender.onrender.com/agents/remove-mailing">לחץ כאן</a></div>`;
 
-  const chunks = [];
-  for (let i = 0; i < agentsMails.length; i += 100) {
-    chunks.push(agentsMails.slice(i, i + 100));
-  }
 
-  try {
-    // for (const chunk of chunks) {
-    //   await sendMails(title, rtlContent, attachment, chunk);
-    // }
-    if(isTest){
-      await sendMails(title, rtlContent, attachment, 'oshrico2@gmail.com');
-    }else{
-
-      await sendMails(title, rtlContent, attachment, 'osherc@tlp-ins.co.il');
+try{
+    const chunks = [];
+    for (let i = 0; i < sendMailTo.length; i += 100) {
+      chunks.push(sendMailTo.slice(i, i + 100));
     }
 
+    for (const chunk of chunks) {
+      await sendMails(title, rtlContent, attachment, chunk);
+    }
 
+    return res.send("Message sent successfully");
 
-    res.send("Message sent successfully");
   } catch (error) {
-    throw error;
+    console.error("Error sending mail:", error);
+    return res.status(500).send("An error occurred while sending the message");
   }
 });
 
