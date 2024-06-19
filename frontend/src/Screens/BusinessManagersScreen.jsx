@@ -7,6 +7,7 @@ import Header from "../components/Header";
 import Loader from "../components/Loader";
 import Footer from "../components/Footer";
 import BusinessManagersModal from "../components/BusinessManagerModal";
+import ExportToXlsx from "../components/ExportToXlsxBtn";
 
 const BusinessManagersScreen = () => {
   const [businessManagers, setBusinessManagers] = useState([]);
@@ -78,6 +79,16 @@ const BusinessManagersScreen = () => {
                 columnsHebrew={columnsHebrew}
                 onRowClick={handleRowClick}
               />
+            )}
+            {!isLoading && (
+              <Row className="mt-2">
+                <Col md={10}>
+                  <h3 dir="rtl">סה״כ מנהלי פיתוח עסקי:{businessManagers.length}</h3>
+                </Col>
+                <Col md={2}>
+                <ExportToXlsx jsonData={businessManagers} fileName={'רשימת מנהלי פיתוח עסקי'} />
+                </Col>
+              </Row>
             )}
           </Container>
           <BusinessManagersModal

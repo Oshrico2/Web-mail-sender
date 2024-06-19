@@ -81,7 +81,7 @@ const EmployeesScreen = () => {
 
   return (
     <div>
-      <Header title="רשימת עובדים" />
+      <Header title={`רשימת עובדים (${employees.length})`} />
       <Row>
         <Col md={2}>
           <UserMenu />

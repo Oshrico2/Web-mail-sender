@@ -78,7 +78,7 @@ const CampaignsScreen = () => {
 
   return (
     <div>
-      <Header title="רשימת קמפיינים/ועדים" />
+      <Header title={`רשימת קמפיינים/ועדים (${campaigns.length})`} />
       <Row>
         <Col md={2}>
           <UserMenu />

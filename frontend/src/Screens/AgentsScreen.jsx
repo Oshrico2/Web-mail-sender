@@ -78,7 +78,7 @@ const AgentsScreen = () => {
 
   return (
     <div>
-      <Header title="רשימת סוכנים" />
+      <Header title={`רשימת סוכנים (${agents.length})`} />
       <Row>
         <Col md={2}>
           <UserMenu />

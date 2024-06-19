@@ -19,7 +19,7 @@ const agentSchema = mongoose.Schema({
   email: {
     type: String,
     required: true,
-    unique:true,
+    unique: true,
   },
   additionalMail: {
     type: String,
@@ -29,21 +29,25 @@ const agentSchema = mongoose.Schema({
     type: String,
     required: false,
   },
-  customerStatus:{
-    type:Boolean,
-    required:true,
-    default:true,
-  },
-  weeklyStatus:{
-    type:Boolean,
-    required:true,
-    default:false,
-  },
-  confirmedMailing:{
+  customerStatus: {
     type: Boolean,
-    required:false,
-    default:true,
-  }
+    required: true,
+    default: true,
+  },
+  weeklyStatus: {
+    type: Boolean,
+    required: true,
+    default: false,
+  },
+  confirmedMailing: {
+    type: Boolean,
+    required: false,
+    default: true,
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
 });
 
 const Agent = mongoose.model("Agent", agentSchema);

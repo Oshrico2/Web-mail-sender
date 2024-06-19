@@ -26,6 +26,32 @@ const getAllWeeklyAgents = async (req, res) => {
   }
 };
 
+// @desc    Get agents that doesnt get customer status
+// @route   GET /api/agents/no-customer-status
+// @access  Private
+const getAllNoCustomerStatusAgents = async (req, res) => {
+  try {
+    const agents = await Agent.find({ customerStatus: false }).sort({ name: 1 });
+    res.json(agents);
+  } catch (error) {
+    console.error("Error fetching agents:", error);
+    res.status(500).json({ message: "Server Error" });
+  }
+};
+
+// @desc    Get 10 recently added agents
+// @route   GET /api/agents/recently-added
+// @access  Private
+const getTenRecentlyAddedAgents = async (req, res) => {
+  try {
+    const agents = await Agent.find({}).sort({ createdAt: -1 }).limit(10);
+    res.json(agents);
+  } catch (error) {
+    console.error("Error fetching agents:", error);
+    res.status(500).json({ message: "Server Error" });
+  }
+};
+
 // @desc    Get confirmed Mailing agents
 // @route   GET /api/agents/confirmed-mailing
 // @access  Private
@@ -173,4 +199,6 @@ export {
   getAllWeeklyAgents,
   getAllConfirmedMailingAgents,
   searchAgentsByName,
+  getAllNoCustomerStatusAgents,
+  getTenRecentlyAddedAgents,
 };
