@@ -1,42 +1,29 @@
 import React, { useState, useEffect } from "react";
-import { Sidenav, Nav, Toggle } from "rsuite";
+import { Sidenav, Nav } from "rsuite";
 import GroupIcon from "@rsuite/icons/legacy/Group";
 import EmailIcon from "@rsuite/icons/Email";
 import MemberIcon from "@rsuite/icons/Member";
 import SendIcon from "@rsuite/icons/Send";
-import AdminIcon from '@rsuite/icons/Admin';
-import PeoplesMapIcon from '@rsuite/icons/PeoplesMap';
+import AdminIcon from "@rsuite/icons/Admin";
+import PeoplesMapIcon from "@rsuite/icons/PeoplesMap";
 import { LinkContainer } from "react-router-bootstrap";
-import GearIcon from '@rsuite/icons/Gear';
-
+import GearIcon from "@rsuite/icons/Gear";
 
 const UserMenu = () => {
-  const [expanded, setExpanded] = useState(true);
   const [activeKey, setActiveKey] = useState("1");
   const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
-    // Check if user is admin from localStorage
     const user = JSON.parse(localStorage.getItem("user"));
     if (user) {
       setIsAdmin(user.isAdmin);
     }
   }, []);
-  
-  const handleToggle = () => {
-    setExpanded(!expanded);
-  };
 
   return (
     <div style={{ width: 240 }}>
-      <Toggle
-        onChange={handleToggle}
-        checked={expanded}
-        checkedChildren="Expand"
-        unCheckedChildren="Collapse"
-      />
       <hr />
-      <Sidenav expanded={expanded} defaultOpenKeys={["3", "4"]}>
+      <Sidenav defaultOpenKeys={["3", "4"]}>
         <Sidenav.Body>
           <Nav activeKey={activeKey} onSelect={setActiveKey}>
             <LinkContainer to="/">
@@ -44,7 +31,7 @@ const UserMenu = () => {
             </LinkContainer>
             <LinkContainer to="/send-mail">
               <Nav.Item eventKey="2" icon={<EmailIcon />}>
-                שליחת מייל לסוכנים
+                שליחת סטטוס לקוחות
               </Nav.Item>
             </LinkContainer>
             <Nav.Menu
@@ -117,12 +104,14 @@ const UserMenu = () => {
               <LinkContainer to="/agents/confirmed-mailing">
                 <Nav.Item eventKey="7-2">סוכנים שנמצאים ברשימת תפוצה</Nav.Item>
               </LinkContainer>
-              </Nav.Menu>
-              {isAdmin && (
-                <LinkContainer to="/users">
-                  <Nav.Item icon={<GearIcon />} eventKey="8">משתמשים</Nav.Item>
-                </LinkContainer>
-              )}
+            </Nav.Menu>
+            {isAdmin && (
+              <LinkContainer to="/users">
+                <Nav.Item icon={<GearIcon />} eventKey="8">
+                  משתמשים
+                </Nav.Item>
+              </LinkContainer>
+            )}
           </Nav>
         </Sidenav.Body>
       </Sidenav>
