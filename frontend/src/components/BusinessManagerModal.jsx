@@ -5,6 +5,7 @@ import "react-toastify/dist/ReactToastify.css";
 import TrashIcon from "@rsuite/icons/legacy/Trash";
 import axios from "axios";
 import { formatDate } from "../utils/scripts";
+import AssociatedAgentsModal from "./AssociatedAgentsModal";
 
 const BusinessManagersModal = ({ show, onHide, businessManager, onDelete }) => {
   const hebrewAlphabet = [
@@ -36,9 +37,10 @@ const BusinessManagersModal = ({ show, onHide, businessManager, onDelete }) => {
     name: "",
     email: "",
     lettersOfLastNamesUnderCare: [],
-    createdAt:'',
-    createdBy:'',
+    createdAt: '',
+    createdBy: '',
   });
+  const [showAgentsModal, setShowAgentsModal] = useState(false);
 
   useEffect(() => {
     if (businessManager) {
@@ -102,9 +104,9 @@ const BusinessManagersModal = ({ show, onHide, businessManager, onDelete }) => {
     e.preventDefault();
     try {
       const existingManagers = await getAllAgents();
-      const conflict = existingManagers.some((manager) => 
-        manager._id !== businessManager._id && 
-        manager.lettersOfLastNamesUnderCare.some((letter) => 
+      const conflict = existingManagers.some((manager) =>
+        manager._id !== businessManager._id &&
+        manager.lettersOfLastNamesUnderCare.some((letter) =>
           formData.lettersOfLastNamesUnderCare.includes(letter)
         )
       );
@@ -185,10 +187,13 @@ const BusinessManagersModal = ({ show, onHide, businessManager, onDelete }) => {
                 ))}
               </div>
             </Form.Group>
-            <Button variant="danger" onClick={handleDelete}>
+            <Button variant="primary" className="mx-1" onClick={() => setShowAgentsModal(true)}>
+              הצג סוכנים משויכים
+            </Button>
+            <Button variant="danger" className="mx-1" onClick={handleDelete}>
               מחק מנהל <TrashIcon />
             </Button>
-            <Button variant="primary" type="submit" className="mx-2">
+            <Button variant="success" type="submit" className="mx-1">
               שמור
             </Button>
           </Form>
@@ -201,6 +206,13 @@ const BusinessManagersModal = ({ show, onHide, businessManager, onDelete }) => {
         </Modal.Footer>
       </Modal>
       <ToastContainer rtl={true} />
+
+      {/* Associated Agents Modal */}
+      <AssociatedAgentsModal
+        show={showAgentsModal}
+        onHide={() => setShowAgentsModal(false)}
+        businessManager={businessManager}
+      />
     </>
   );
 };
