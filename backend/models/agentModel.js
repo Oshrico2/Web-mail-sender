@@ -48,6 +48,10 @@ const agentSchema = mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  createdBy: {
+    type: String,
+    default: 'admin',
+  },
 });
 
 const Agent = mongoose.model("Agent", agentSchema);

@@ -21,6 +21,14 @@ const businessManagerSchema = mongoose.Schema({
       message: (props) => `${props.value} is not a valid Hebrew letter!`,
     },
   },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
+  createdBy: {
+    type: String,
+    default: 'admin',
+  },
 });
 
 const BusinessManager = mongoose.model("BusinessManager", businessManagerSchema);

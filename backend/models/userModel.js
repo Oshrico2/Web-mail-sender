@@ -32,6 +32,14 @@ const userSchema = mongoose.Schema(
       required: true,
       default: false,
     },
+    createdAt: {
+      type: Date,
+      default: Date.now,
+    },
+    createdBy: {
+    type: String,
+    default: 'admin',
+  },
   },
   {
     timestamps: true,

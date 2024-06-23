@@ -4,12 +4,15 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import TrashIcon from "@rsuite/icons/legacy/Trash";
 import axios from "axios";
+import { formatDate } from "../utils/scripts";
 
 const EmployeesModal = ({ show, onHide, employee, onDelete }) => {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     subject:"",
+    createdAt:"",
+    createdBy:"",
   });
 
   useEffect(() => {
@@ -18,6 +21,8 @@ const EmployeesModal = ({ show, onHide, employee, onDelete }) => {
         name: employee.name || "",
         email: employee.email || "",
         subject: employee.subject || "",
+        createdAt: employee.createdAt || "",
+        createdBy: employee.createdBy || "",
 
       });
     }
@@ -122,6 +127,12 @@ const EmployeesModal = ({ show, onHide, employee, onDelete }) => {
             </Button>
           </Form>
         </Modal.Body>
+        <Modal.Footer dir="rtl">
+          <label>
+            נוצר על ידי {formData.createdBy}, בתאריך{" "}
+            {formatDate(formData.createdAt)}
+          </label>
+        </Modal.Footer>
       </Modal>
       <ToastContainer rtl={true}/>
     </>

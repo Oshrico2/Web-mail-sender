@@ -4,16 +4,21 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import TrashIcon from "@rsuite/icons/legacy/Trash";
 import axios from "axios";
+import { formatDate } from "../utils/scripts";
 
 const CampaignsModal = ({ show, onHide, campaign, onDelete }) => {
   const [formData, setFormData] = useState({
     name: "",
+    createdBy:'',
+    createdAt:''
   });
 
   useEffect(() => {
     if (campaign) {
       setFormData({
         name: campaign.name || "",
+        createdBy: campaign.createdBy || "",
+        createdAt: campaign.createdAt || "",
       });
     }
   }, [campaign]);
@@ -43,10 +48,7 @@ const CampaignsModal = ({ show, onHide, campaign, onDelete }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.put(
-        `/api/campaigns/${campaign._id}`,
-        formData
-      );
+      await axios.put(`/api/campaigns/${campaign._id}`, formData);
       toast.success("פרטי הקמפיין עודכנו בהצלחה");
       setTimeout(() => {
         window.location.reload();
@@ -94,8 +96,14 @@ const CampaignsModal = ({ show, onHide, campaign, onDelete }) => {
             </Button>
           </Form>
         </Modal.Body>
+        <Modal.Footer dir="rtl">
+          <label>
+            נוצר על ידי {formData.createdBy}, בתאריך{" "}
+            {formatDate(formData.createdAt)}
+          </label>
+        </Modal.Footer>
       </Modal>
-      <ToastContainer rtl={true}/>
+      <ToastContainer rtl={true} />
     </>
   );
 };

@@ -21,6 +21,12 @@ const formatDates = (data) => {
     return data
   };
 
+  function formatDate(dateString) {
+    var options = { year: 'numeric', month: 'long', day: 'numeric' };
+    var date = new Date(dateString);
+    return date.toLocaleDateString('he-IL', options);
+}
+
   const getCurrentDateFormatted = () => {
     const today = new Date();
     const day = String(today.getDate()).padStart(2, "0");
@@ -29,4 +35,4 @@ const formatDates = (data) => {
     return `${day}/${month}/${year}`;
   };
 
-  export {formatDates, getCurrentDateFormatted};
+  export {formatDates, getCurrentDateFormatted,formatDate};

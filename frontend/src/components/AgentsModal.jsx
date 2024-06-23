@@ -4,6 +4,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import TrashIcon from "@rsuite/icons/legacy/Trash";
 import axios from "axios";
+import { formatDate } from "../utils/scripts";
 
 const AgentsModal = ({ show, onHide, agent, onDelete }) => {
   const [formData, setFormData] = useState({
@@ -14,6 +15,8 @@ const AgentsModal = ({ show, onHide, agent, onDelete }) => {
     customerStatus: true,
     weeklyStatus: false,
     confirmedMailing: true,
+    createdBy:'',
+    createdAt:''
   });
 
   useEffect(() => {
@@ -24,6 +27,8 @@ const AgentsModal = ({ show, onHide, agent, onDelete }) => {
         lastName: agent.lastName || "",
         agentNumber: agent.agentNumber || "",
         email: agent.email || "",
+        createdBy: agent.createdBy || "",
+        createdAt: agent.createdAt || "",
         additionalMail: agent.additionalMail || "",
         customerStatus:
           agent.customerStatus !== undefined ? agent.customerStatus : true,
@@ -194,6 +199,10 @@ const AgentsModal = ({ show, onHide, agent, onDelete }) => {
             </Button>
           </Form>
         </Modal.Body>
+        <Modal.Footer dir="rtl">
+
+            <label>נוצר על ידי {formData.createdBy}, בתאריך {formatDate(formData.createdAt)}</label>
+        </Modal.Footer>
       </Modal>
       <ToastContainer rtl={true} />
     </>

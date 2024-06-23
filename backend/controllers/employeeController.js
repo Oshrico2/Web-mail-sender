@@ -1,4 +1,5 @@
 import Employee from "../models/employeeModel.js";
+import { getUsername } from "../utils/scripts.js";
 
 // @desc    Get all employees
 // @route   GET /api/employees
@@ -55,6 +56,7 @@ const addEmployee = async (req, res) => {
     name: name,
     email: email,
     subject: subject,
+    createdBy:getUsername(req.cookies.token),
   });
 
   await employee.save();

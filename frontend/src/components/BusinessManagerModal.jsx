@@ -4,6 +4,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import TrashIcon from "@rsuite/icons/legacy/Trash";
 import axios from "axios";
+import { formatDate } from "../utils/scripts";
 
 const BusinessManagersModal = ({ show, onHide, businessManager, onDelete }) => {
   const hebrewAlphabet = [
@@ -35,6 +36,8 @@ const BusinessManagersModal = ({ show, onHide, businessManager, onDelete }) => {
     name: "",
     email: "",
     lettersOfLastNamesUnderCare: [],
+    createdAt:'',
+    createdBy:'',
   });
 
   useEffect(() => {
@@ -42,6 +45,8 @@ const BusinessManagersModal = ({ show, onHide, businessManager, onDelete }) => {
       setFormData({
         name: businessManager.name || "",
         email: businessManager.email || "",
+        createdAt: businessManager.createdAt || "",
+        createdBy: businessManager.createdBy || "",
         lettersOfLastNamesUnderCare: businessManager.lettersOfLastNamesUnderCare || [],
       });
     }
@@ -188,6 +193,12 @@ const BusinessManagersModal = ({ show, onHide, businessManager, onDelete }) => {
             </Button>
           </Form>
         </Modal.Body>
+        <Modal.Footer dir="rtl">
+          <label>
+            נוצר על ידי {formData.createdBy}, בתאריך{" "}
+            {formatDate(formData.createdAt)}
+          </label>
+        </Modal.Footer>
       </Modal>
       <ToastContainer rtl={true} />
     </>

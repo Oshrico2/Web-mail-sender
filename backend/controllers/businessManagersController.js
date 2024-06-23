@@ -1,4 +1,5 @@
 import BusinessManager from "../models/businessManagerModel.js";
+import { getUsername } from "../utils/scripts.js";
 
 // @desc    Get all businessManagers
 // @route   GET /api/businessManagers
@@ -13,7 +14,7 @@ const getAllBusinessManagers = async (req, res) => {
   }
 };
 
-// @desc    Add an businessManager
+// @desc    Add a businessManager
 // @route   POST /api/businessManagers/add
 // @access  Private
 const addBusinessManager = async (req, res) => {
@@ -22,6 +23,8 @@ const addBusinessManager = async (req, res) => {
     name: name,
     email: email,
     lettersOfLastNamesUnderCare: lettersOfLastNamesUnderCare,
+    createdBy:getUsername(req.cookies.token),
+
   });
 
   await businessManager.save();

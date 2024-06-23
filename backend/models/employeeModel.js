@@ -13,7 +13,15 @@ const employeeSchema = mongoose.Schema({
   subject:{
     type:String,
     required:true,
-  }
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
+  createdBy: {
+    type: String,
+    default: 'admin',
+  },
 });
 
 const Employee = mongoose.model("Employee", employeeSchema);

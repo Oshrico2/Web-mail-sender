@@ -1,4 +1,5 @@
 import User from "../models/userModel.js";
+import { getUsername } from "../utils/scripts.js";
 
 // @desc    Get all users
 // @route   GET /api/users
@@ -18,6 +19,7 @@ const getAllUsers = async (req, res) => {
 // @access  Private
 const addUser = async (req, res) => {
   const { username, firstName, lastName, email, password, isAdmin } = req.body;
+  console.log(username);
   const user = new User({
     username: username,
     firstName: firstName,
@@ -25,8 +27,9 @@ const addUser = async (req, res) => {
     email: email,
     password: password,
     isAdmin: isAdmin,
+    createdBy:getUsername(req.cookies.token),
   });
-
+  console.log(user);
   await user.save();
   res.status(200).json({ message: "User added successfully" });
 };

@@ -106,11 +106,19 @@ const UserMenu = () => {
               </LinkContainer>
             </Nav.Menu>
             {isAdmin && (
+              <Nav.Menu
+              placement="rightStart"
+              eventKey="8"
+              title="משתמשים"
+              icon={<GearIcon />}
+            >
               <LinkContainer to="/users">
-                <Nav.Item icon={<GearIcon />} eventKey="8">
-                  משתמשים
-                </Nav.Item>
+                <Nav.Item eventKey="8-1">רשימת משתמשים</Nav.Item>
               </LinkContainer>
+              <LinkContainer to="/users/add">
+                <Nav.Item eventKey="8-2">הוסף משתמש חדש</Nav.Item>
+              </LinkContainer>
+            </Nav.Menu>
             )}
           </Nav>
         </Sidenav.Body>

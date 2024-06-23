@@ -1,4 +1,5 @@
 import Campaign from "../models/campaignModel.js";
+import { getUsername } from "../utils/scripts.js";
 
 // @desc    Get all campaigns
 // @route   GET /api/campaigns
@@ -36,6 +37,8 @@ const addCampaign = async (req, res) => {
   const { name } = req.body;
   const campaign = new Campaign({
     name: name,
+    createdBy:getUsername(req.cookies.token),
+
   });
 
   await campaign.save();

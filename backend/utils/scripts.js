@@ -4,6 +4,8 @@ import Agent from "../models/agentModel.js";
 import Employee from "../models/employeeModel.js";
 import Campaigns from "../models/campaignModel.js"
 import BusinessManager from "../models/businessManagerModel.js";
+import jwt from 'jsonwebtoken'
+
 dotenv.config();
 
 const readExcelFile = () => {
@@ -166,6 +168,12 @@ const removeFields = (data, fieldsToRemove) => {
   });
 };
 
+const getUsername = (i_Token) =>{
+  const token = i_Token;
+  const decoded = jwt.verify(token, process.env.JWT_SECRET);
+  return decoded.user.username;
+}
+
 export {
   readExcelFile,
   getCurrentDateFormatted,
@@ -178,5 +186,6 @@ export {
   replaceKeysInArray,
   fetchCampaigns,
   fetchBusinessManagers,
-  removeFields
+  removeFields,
+  getUsername
 };

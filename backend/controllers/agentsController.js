@@ -1,4 +1,5 @@
 import Agent from "../models/agentModel.js";
+import { getUsername } from "../utils/scripts.js";
 
 // @desc    Get all agents
 // @route   GET /api/agents/all
@@ -93,6 +94,7 @@ const addAgent = async (req, res) => {
     email: email,
     agentNumber: agentNumber,
     additionalMail: additionalMail,
+    createdBy:getUsername(req.cookies.token),
   });
 
   await agent.save();
