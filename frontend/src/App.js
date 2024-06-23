@@ -18,6 +18,7 @@ import AddCampaignScreen from './Screens/AddCampaignScreen';
 import AddBusinessManagerScreen from './Screens/AddBusinessManagerScreen';
 import BusinessManagersScreen from './Screens/BusinessManagersScreen';
 import BusinessManagerReportScreen from './Screens/BusinessManagerReportScreen'
+import UsersScreen from './Screens/UsersScreen';
 
 
 const App = () => {
@@ -85,6 +86,7 @@ const RenderRoutes = ({ isAuthenticated, setIsAuthenticated }) => {
       <Route path="/business-managers/add" element={<AddBusinessManagerScreen />} />
       <Route path="/business-managers" element={<BusinessManagersScreen/>} />
       <Route path="/business-managers/report" element={<BusinessManagerReportScreen/>} />
+      <Route path="/users" element={<UsersScreen/>} />
     </Routes>
   );
 };

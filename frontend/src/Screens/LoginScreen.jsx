@@ -15,14 +15,14 @@ const LoginScreen = ({setIsAuthenticated}) => {
 
     axios.post('/api/login', userData)
     .then(response => {
-        const token = response.data; // Extract token from response data
-        const expiration = response.data.expiration; // Assuming expiration timestamp is returned
-        localStorage.setItem('token', token); // Set token in localStorage
+        const { token, expiration, user } = response.data;
+        localStorage.setItem('token', token);
         localStorage.setItem('tokenExpiration', expiration);
-        setIsAuthenticated(true); // Set isAuthenticated state to true
+        localStorage.setItem('user', JSON.stringify(user));
+        setIsAuthenticated(true);
         setTimeout(() => {
             toast.success('התחברת בהצלחה!');
-            window.location.href = '/'; // Redirect user after toast message
+            // window.location.href = '/';
         }, 1000);
     })
     .catch(error => {
