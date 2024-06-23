@@ -1,5 +1,13 @@
-import React, { useState } from "react";
-import { Container, Row, Col, Table, Button } from "react-bootstrap";
+import React, { useEffect, useState } from "react";
+import {
+  Container,
+  Row,
+  Col,
+  Table,
+  Button,
+  Modal,
+  Form,
+} from "react-bootstrap";
 import UserMenu from "../components/UserMenu";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
@@ -12,10 +20,24 @@ import PieChartManagers from "../components/PieChartManagers";
 import { toast, ToastContainer } from "react-toastify";
 
 const BusinessManagerReportScreen = () => {
-  const [jsonData, setJsonData] = useState([]);
+  const [jsonData, setJsonData] = useState(null); // Initialize as null
   const [fixedJsonData, setFixedJsonData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [noFindAgents, setNoFindAgents] = useState([]);
+  const [showConfirmationModal, setShowConfirmationModal] = useState(false);
+  const [isChecked, setIsChecked] = useState(false);
+  const [userEmail, setUserEmail] = useState('');
+
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (user && user.email) {
+      setUserEmail(user.email);
+    }
+  }, []);
+
+  const handleCheckBoxChange = () => {
+    setIsChecked(!isChecked);
+  };
 
   const handleFileChange = (e) => {
     try {
@@ -53,12 +75,19 @@ const BusinessManagerReportScreen = () => {
       setIsLoading(false);
     }
   };
+
   const handleClick = async () => {
+    setShowConfirmationModal(true); // Show confirmation modal
+  };
+
+  const handleConfirmReport = async (email) => {
     try {
+      setShowConfirmationModal(false);
+      console.log('email: ', email); // Make sure email is defined here
       setIsLoading(true);
       const response = await axios.post(
         "/api/business-managers/report/create",
-        { jsonData }
+        { jsonData, email } // Check if `email` is correctly passed here
       );
       setFixedJsonData(response.data.filteredData);
       setNoFindAgents(response.data.noAgentInDataList);
@@ -66,7 +95,14 @@ const BusinessManagerReportScreen = () => {
       console.error(error);
     } finally {
       setIsLoading(false);
+      if(isChecked){
+        toast.success('מייל נשלח בהצלחה.')
+      }
     }
+  };
+
+  const handleCloseModal = () => {
+    setShowConfirmationModal(false); // Properly close modal
   };
 
   return (
@@ -85,9 +121,10 @@ const BusinessManagerReportScreen = () => {
               onChange={handleFileChange}
               className="me-2 my-4"
             />
-            {isLoading && jsonData.length === 0 ? (
+            {isLoading && !jsonData ? (
               <Loader text={"נא המתן לטעינת הקובץ..."} />
             ) : (
+              jsonData &&
               jsonData.length > 0 &&
               fixedJsonData.length === 0 && (
                 <div
@@ -103,32 +140,29 @@ const BusinessManagerReportScreen = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {jsonData.slice(0, 20).map(
-                        (
-                          row,
-                          index // Slice to display only the first 20 rows
-                        ) => (
-                          <tr key={index}>
-                            {Object.values(row).map((value, cellIndex) => (
-                              <td key={cellIndex}>{value}</td>
-                            ))}
-                          </tr>
-                        )
-                      )}
+                      {jsonData.slice(0, 20).map((row, index) => (
+                        <tr key={index}>
+                          {Object.values(row).map((value, cellIndex) => (
+                            <td key={cellIndex}>{value}</td>
+                          ))}
+                        </tr>
+                      ))}
                     </tbody>
                   </Table>
                 </div>
               )
             )}
-            {isLoading && jsonData.length > 0 ? (
+            {isLoading && jsonData && jsonData.length > 0 ? (
               <Loader text={"מכין את הדוח..."} />
             ) : (
               fixedJsonData.length > 0 && (
                 <div>
                   {noFindAgents && noFindAgents.length > 0 && (
                     <div>
-                      <h5 className="mb-2">סוכנים שלא נמצאו ({noFindAgents.length}):</h5>
-                      <ul style={{maxHeight:'10vh',overflowY:'auto'}}>
+                      <h5 className="mb-2">
+                        סוכנים שלא נמצאו ({noFindAgents.length}):
+                      </h5>
+                      <ul style={{ maxHeight: "10vh", overflowY: "auto" }}>
                         {noFindAgents.map((noFindAgent, index) => (
                           <li key={index}>{noFindAgent}</li>
                         ))}
@@ -148,7 +182,7 @@ const BusinessManagerReportScreen = () => {
                         </tr>
                       </thead>
                       <tbody>
-                        {fixedJsonData.slice(0,20).map((row, index) => (
+                        {fixedJsonData.slice(0, 20).map((row, index) => (
                           <tr key={index}>
                             {Object.values(row).map((value, cellIndex) => (
                               <td key={cellIndex}>{value}</td>
@@ -166,7 +200,8 @@ const BusinessManagerReportScreen = () => {
                 </div>
               )
             )}
-            {jsonData.length > 0 &&
+            {jsonData &&
+              jsonData.length > 0 &&
               !isLoading &&
               fixedJsonData.length === 0 && (
                 <Button onClick={handleClick}>ייצר דוח</Button>
@@ -174,6 +209,55 @@ const BusinessManagerReportScreen = () => {
           </Container>
         </Col>
       </Row>
+
+      {/* Confirmation Modal */}
+      <Modal
+        dir="rtl"
+        show={showConfirmationModal}
+        onHide={handleCloseModal}
+        centered
+      >
+        <Modal.Header closeButton>
+          <Modal.Title style={{ flexGrow: 1, textAlign: "right" }}>
+            באפשרותך לקבל דוח בסיום
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form.Group>
+            <Form.Check
+              id="mailCheckBox"
+              type="switch"
+              onChange={handleCheckBoxChange}
+              checked={isChecked}
+              label="לחץ לשליחת פרטי דוח במייל"
+            />
+            {isChecked && (
+              <Form.Control
+              className="mt-2"
+                placeholder="הזן מייל"
+                type="email"
+                value={userEmail}
+                id="emailToSend"
+                name="emailToSendReport"
+              />
+            )}
+          </Form.Group>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button
+            variant="success"
+            onClick={() => {
+              const emailInput = document.getElementById("emailToSend");
+              const emailValue = isChecked && emailInput ? emailInput.value : "";
+
+              handleConfirmReport(emailValue);
+            }}
+          >
+            אישור
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
       <Footer />
     </>
   );
