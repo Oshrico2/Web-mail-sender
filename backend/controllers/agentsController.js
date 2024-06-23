@@ -85,14 +85,14 @@ const searchAgentsByName = async (req, res) => {
 // @route   POST /api/agents/add
 // @access  Private
 const addAgent = async (req, res) => {
-  const { name, firstName, lastName, email, agentNumber, addMail } = req.body;
+  const { name, firstName, lastName, email, agentNumber, additionalMail } = req.body;
   const agent = new Agent({
     name: name,
     firstName: firstName,
     lastName: lastName,
     email: email,
     agentNumber: agentNumber,
-    additionalMail: addMail,
+    additionalMail: additionalMail,
   });
 
   await agent.save();
