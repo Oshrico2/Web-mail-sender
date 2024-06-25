@@ -89,6 +89,7 @@ const updateEmployeeById = async (req, res) => {
     employee.name = name !== undefined ? name : employee.name;
     employee.email = email !== undefined ? email : employee.email;
     employee.subject = subject !== undefined ? subject : employee.subject;
+    employee.updatedAt = Date.now();
 
     const updatedEmployee = await employee.save();
     res.json(updatedEmployee);

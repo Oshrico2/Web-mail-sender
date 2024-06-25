@@ -18,6 +18,9 @@ const employeeSchema = mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  updatedAt: {
+    type: Date,
+  },
   createdBy: {
     type: String,
     default: 'admin',

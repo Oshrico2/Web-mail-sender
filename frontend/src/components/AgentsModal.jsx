@@ -15,8 +15,8 @@ const AgentsModal = ({ show, onHide, agent, onDelete }) => {
     customerStatus: true,
     weeklyStatus: false,
     confirmedMailing: true,
-    createdBy:'',
-    createdAt:''
+    createdBy: "",
+    createdAt: "",
   });
 
   useEffect(() => {
@@ -199,9 +199,16 @@ const AgentsModal = ({ show, onHide, agent, onDelete }) => {
             </Button>
           </Form>
         </Modal.Body>
-        <Modal.Footer dir="rtl">
-
-            <label>נוצר על ידי {formData.createdBy}, בתאריך {formatDate(formData.createdAt)}</label>
+        <Modal.Footer>
+          <label dir="rtl">
+            נוצר על ידי {formData.createdBy}, בתאריך{" "}
+            {formatDate(formData.createdAt)}
+            {agent?.updatedAt && (
+              <>
+                <br />עודכן לאחרונה {formatDate(agent.updatedAt)}
+              </>
+            )}
+          </label>
         </Modal.Footer>
       </Modal>
       <ToastContainer rtl={true} />

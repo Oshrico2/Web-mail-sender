@@ -150,7 +150,7 @@ const updateAgentById = async (req, res) => {
       confirmedMailing !== undefined
         ? confirmedMailing
         : agent.confirmedMailing;
-
+    agent.updatedAt = Date.now();
     const updatedAgent = await agent.save();
     res.json(updatedAgent);
   } else {

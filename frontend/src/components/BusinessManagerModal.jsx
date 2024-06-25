@@ -198,10 +198,15 @@ const BusinessManagersModal = ({ show, onHide, businessManager, onDelete }) => {
             </Button>
           </Form>
         </Modal.Body>
-        <Modal.Footer dir="rtl">
-          <label>
+        <Modal.Footer>
+          <label dir="rtl">
             נוצר על ידי {formData.createdBy}, בתאריך{" "}
             {formatDate(formData.createdAt)}
+            {businessManager?.updatedAt && (
+              <>
+                <br />עודכן לאחרונה {formatDate(businessManager.updatedAt)}
+              </>
+            )}
           </label>
         </Modal.Footer>
       </Modal>

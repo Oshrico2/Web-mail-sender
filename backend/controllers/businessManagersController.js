@@ -23,8 +23,7 @@ const addBusinessManager = async (req, res) => {
     name: name,
     email: email,
     lettersOfLastNamesUnderCare: lettersOfLastNamesUnderCare,
-    createdBy:getUsername(req.cookies.token),
-
+    createdBy: getUsername(req.cookies.token),
   });
 
   await businessManager.save();
@@ -60,6 +59,8 @@ const updateBusinessManagerById = async (req, res) => {
       lettersOfLastNamesUnderCare !== undefined
         ? lettersOfLastNamesUnderCare
         : businessManager.lettersOfLastNamesUnderCare;
+    businessManager.updatedAt = Date.now();
+
     const updatedBusinessManager = await businessManager.save();
     res.json(updatedBusinessManager);
   } else {

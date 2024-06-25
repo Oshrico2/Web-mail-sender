@@ -96,10 +96,15 @@ const CampaignsModal = ({ show, onHide, campaign, onDelete }) => {
             </Button>
           </Form>
         </Modal.Body>
-        <Modal.Footer dir="rtl">
-          <label>
+        <Modal.Footer>
+          <label dir="rtl">
             נוצר על ידי {formData.createdBy}, בתאריך{" "}
             {formatDate(formData.createdAt)}
+            {campaign?.updatedAt && (
+              <>
+                <br />עודכן לאחרונה {formatDate(campaign.updatedAt)}
+              </>
+            )}
           </label>
         </Modal.Footer>
       </Modal>

@@ -62,6 +62,8 @@ const updateUserById = async (req, res) => {
     user.lastName = lastName !== undefined ? lastName : user.lastName;
     user.email = email !== undefined ? email : user.email;
     user.isAdmin = isAdmin !== undefined ? isAdmin : user.isAdmin;
+    user.updatedAt = Date.now();
+
     const updatedUser = await user.save();
     res.json(updatedUser);
   } else {

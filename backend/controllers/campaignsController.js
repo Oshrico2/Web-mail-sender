@@ -69,6 +69,8 @@ const updateCampaignById = async (req, res) => {
 
   if (campaign) {
     campaign.name = name !== undefined ? name : campaign.name;
+    campaign.updatedAt = Date.now();
+
     const updatedCampaign = await campaign.save();
     res.json(updatedCampaign);
   } else {
