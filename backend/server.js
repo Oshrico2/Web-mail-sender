@@ -26,7 +26,7 @@ const PORT = process.env.PORT || 4000;
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true, limit: "50mb" })); // Increase limit to 50mb
 app.use(bodyParser.json({ limit: "50mb" }));
-app.use("/api/agents", protect, agentsRoutes);
+app.use("/api/agents", agentsRoutes);
 app.use("/api/upload", protect, uploadRoutes);
 app.use("/api/employees", protect, employeeRoutes);
 app.use("/api/campaigns", protect, campaignsRoutes);

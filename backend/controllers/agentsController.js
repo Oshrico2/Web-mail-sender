@@ -153,8 +153,10 @@ const updateAgentById = async (req, res) => {
       confirmedMailing !== undefined
         ? confirmedMailing
         : agent.confirmedMailing;
-    agent.updatedAt = Date.now();
-    agent.updatedBy = getUsername(req.cookies.token);
+    if(req.cookies.token){
+      agent.updatedAt = Date.now();
+      agent.updatedBy = getUsername(req.cookies.token);
+    }
 
     const updatedAgent = await agent.save();
     res.json(updatedAgent);
