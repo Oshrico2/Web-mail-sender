@@ -14,6 +14,7 @@ import mailingRoutes from "./routes/mailingRoutes.js";
 import campaignsRoutes from "./routes/campaignsRoutes.js";
 import businessManagersRoutes from "./routes/businessManagersRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
+import removeMailingRoutes from './routes/removeMailingRoutes.js'
 import { admin, protect } from "./middleware/authMiddleware.js";
 
 dotenv.config();
@@ -26,7 +27,7 @@ const PORT = process.env.PORT || 4000;
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true, limit: "50mb" })); // Increase limit to 50mb
 app.use(bodyParser.json({ limit: "50mb" }));
-app.use("/api/agents", agentsRoutes);
+app.use("/api/agents",protect, agentsRoutes);
 app.use("/api/upload", protect, uploadRoutes);
 app.use("/api/employees", protect, employeeRoutes);
 app.use("/api/campaigns", protect, campaignsRoutes);
@@ -35,6 +36,7 @@ app.use("/api/login", loginRoutes);
 app.use("/api/mailing", protect, mailingRoutes);
 app.use("/api/business-managers", protect, businessManagersRoutes);
 app.use("/api/users", admin, userRoutes);
+app.use("/api/remove-mailing", removeMailingRoutes);
 
 const __dirname = path.resolve();
 app.use("/uploads", express.static(path.join(__dirname, "/uploads")));

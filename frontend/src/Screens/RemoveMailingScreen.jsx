@@ -14,11 +14,12 @@ const RemoveMailingScreen = () => {
     const email = e.target.email.value;
 
     try {
-      const response = await axios.get(`/api/agents`);
-      const agents = response.data;
-      const agent = agents.find(agent => agent.email === email);
-      const response2 = await axios.put(`/api/agents/${agent._id}`,{confirmedMailing:false});
-      console.log(response2);
+      // const response = await axios.get(`/api/agents`);
+      // const agents = response.data;
+      // const agent = agents.find(agent => agent.email === email);
+      // const response2 = await axios.put(`/api/agents/${agent._id}`,{confirmedMailing:false});
+      // console.log(response2);
+      await axios.put('/api/remove-mailing',{email})
       toast.success('נשלח בהצלחה');
     } catch (error) {
       console.error(error);
