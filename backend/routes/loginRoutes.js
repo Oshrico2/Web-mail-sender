@@ -19,7 +19,7 @@ router.post("/", async (req, res) => {
         user,
       },
       process.env.JWT_SECRET,
-      { expiresIn: "1h" }
+      { expiresIn: "24h" }
     );
     const expiration = Date.now() + 3600000 * 24; // 1 day in milliseconds
     res.cookie("token", token, {
