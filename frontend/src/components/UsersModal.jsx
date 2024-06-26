@@ -152,12 +152,14 @@ const UsersModal = ({ show, onHide, user, onDelete }) => {
           </Form>
         </Modal.Body>
         <Modal.Footer>
-          <label  dir="rtl">
+        <label dir="rtl">
             נוצר על ידי {formData.createdBy}, בתאריך{" "}
             {formatDate(formData.createdAt)}
             {user?.updatedAt && (
               <>
-                <br />עודכן לאחרונה {formatDate(user.updatedAt)}
+                <br />
+                עודכן לאחרונה על ידי {user.updatedBy}, בתאריך{" "}
+                {formatDate(user.updatedAt)}
               </>
             )}
           </label>

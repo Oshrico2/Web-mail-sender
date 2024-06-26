@@ -32,6 +32,9 @@ const businessManagerSchema = mongoose.Schema({
     type: String,
     default: 'admin',
   },
+  updatedBy: {
+    type: String,
+  },
 });
 
 const BusinessManager = mongoose.model("BusinessManager", businessManagerSchema);

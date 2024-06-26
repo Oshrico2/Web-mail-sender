@@ -32,7 +32,9 @@ const getAllWeeklyAgents = async (req, res) => {
 // @access  Private
 const getAllNoCustomerStatusAgents = async (req, res) => {
   try {
-    const agents = await Agent.find({ customerStatus: false }).sort({ name: 1 });
+    const agents = await Agent.find({ customerStatus: false }).sort({
+      name: 1,
+    });
     res.json(agents);
   } catch (error) {
     console.error("Error fetching agents:", error);
@@ -86,7 +88,8 @@ const searchAgentsByName = async (req, res) => {
 // @route   POST /api/agents/add
 // @access  Private
 const addAgent = async (req, res) => {
-  const { name, firstName, lastName, email, agentNumber, additionalMail } = req.body;
+  const { name, firstName, lastName, email, agentNumber, additionalMail } =
+    req.body;
   const agent = new Agent({
     name: name,
     firstName: firstName,
@@ -94,7 +97,7 @@ const addAgent = async (req, res) => {
     email: email,
     agentNumber: agentNumber,
     additionalMail: additionalMail,
-    createdBy:getUsername(req.cookies.token),
+    createdBy: getUsername(req.cookies.token),
   });
 
   await agent.save();
@@ -143,14 +146,16 @@ const updateAgentById = async (req, res) => {
     agent.additionalMail =
       additionalMail !== undefined ? additionalMail : agent.additionalMail;
     agent.customerStatus =
-    customerStatus !== undefined ? customerStatus : agent.customerStatus;
-      agent.weeklyStatus =
+      customerStatus !== undefined ? customerStatus : agent.customerStatus;
+    agent.weeklyStatus =
       weeklyStatus !== undefined ? weeklyStatus : agent.weeklyStatus;
     agent.confirmedMailing =
       confirmedMailing !== undefined
         ? confirmedMailing
         : agent.confirmedMailing;
     agent.updatedAt = Date.now();
+    agent.updatedBy = getUsername(req.cookies.token);
+
     const updatedAgent = await agent.save();
     res.json(updatedAgent);
   } else {

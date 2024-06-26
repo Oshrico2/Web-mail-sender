@@ -40,8 +40,11 @@ const userSchema = mongoose.Schema(
       type: Date,
     },
     createdBy: {
+      type: String,
+      default: "admin",
+    },
+    updatedBy: {
     type: String,
-    default: 'admin',
   },
   },
   {

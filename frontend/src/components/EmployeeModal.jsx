@@ -128,12 +128,14 @@ const EmployeesModal = ({ show, onHide, employee, onDelete }) => {
           </Form>
         </Modal.Body>
         <Modal.Footer>
-          <label  dir="rtl">
+        <label dir="rtl">
             נוצר על ידי {formData.createdBy}, בתאריך{" "}
             {formatDate(formData.createdAt)}
             {employee?.updatedAt && (
               <>
-                <br />עודכן לאחרונה {formatDate(employee.updatedAt)}
+                <br />
+                עודכן לאחרונה על ידי {employee.updatedBy}, בתאריך{" "}
+                {formatDate(employee.updatedAt)}
               </>
             )}
           </label>

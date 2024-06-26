@@ -25,6 +25,9 @@ const employeeSchema = mongoose.Schema({
     type: String,
     default: 'admin',
   },
+  updatedBy: {
+    type: String,
+  },
 });
 
 const Employee = mongoose.model("Employee", employeeSchema);

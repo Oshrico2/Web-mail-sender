@@ -205,7 +205,9 @@ const AgentsModal = ({ show, onHide, agent, onDelete }) => {
             {formatDate(formData.createdAt)}
             {agent?.updatedAt && (
               <>
-                <br />עודכן לאחרונה {formatDate(agent.updatedAt)}
+                <br />
+                עודכן לאחרונה על ידי {agent.updatedBy}, בתאריך{" "}
+                {formatDate(agent.updatedAt)}
               </>
             )}
           </label>

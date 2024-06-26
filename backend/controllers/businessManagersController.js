@@ -60,6 +60,8 @@ const updateBusinessManagerById = async (req, res) => {
         ? lettersOfLastNamesUnderCare
         : businessManager.lettersOfLastNamesUnderCare;
     businessManager.updatedAt = Date.now();
+    businessManager.updatedBy = getUsername(req.cookies.token);
+
 
     const updatedBusinessManager = await businessManager.save();
     res.json(updatedBusinessManager);

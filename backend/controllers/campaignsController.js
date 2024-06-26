@@ -70,6 +70,7 @@ const updateCampaignById = async (req, res) => {
   if (campaign) {
     campaign.name = name !== undefined ? name : campaign.name;
     campaign.updatedAt = Date.now();
+    campaign.updatedBy = getUsername(req.cookies.token);
 
     const updatedCampaign = await campaign.save();
     res.json(updatedCampaign);

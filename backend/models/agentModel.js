@@ -51,6 +51,9 @@ const agentSchema = mongoose.Schema({
   updatedAt: {
     type: Date,
   },
+  updatedBy: {
+    type: String,
+  },
   createdBy: {
     type: String,
     default: 'admin',

@@ -17,6 +17,9 @@ const campaignSchema = mongoose.Schema({
     type: String,
     default: 'admin',
   },
+  updatedBy: {
+    type: String,
+  },
 });
 
 const Campaign = mongoose.model("Campaign", campaignSchema);

@@ -63,6 +63,7 @@ const updateUserById = async (req, res) => {
     user.email = email !== undefined ? email : user.email;
     user.isAdmin = isAdmin !== undefined ? isAdmin : user.isAdmin;
     user.updatedAt = Date.now();
+    user.updatedBy = getUsername(req.cookies.token);
 
     const updatedUser = await user.save();
     res.json(updatedUser);

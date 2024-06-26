@@ -90,6 +90,7 @@ const updateEmployeeById = async (req, res) => {
     employee.email = email !== undefined ? email : employee.email;
     employee.subject = subject !== undefined ? subject : employee.subject;
     employee.updatedAt = Date.now();
+    employee.updatedBy = getUsername(req.cookies.token);
 
     const updatedEmployee = await employee.save();
     res.json(updatedEmployee);
