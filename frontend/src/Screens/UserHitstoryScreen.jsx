@@ -4,6 +4,8 @@ import Header from "../components/Header";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Loader from "../components/Loader";
+import { BsFillRecordCircleFill } from "react-icons/bs";
+
 
 const UserHistoryScreen = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -38,25 +40,27 @@ const UserHistoryScreen = () => {
         </Col>
         <Col md={10}>
           <div dir="rtl">
-            <Container className="mt-3">
+            <Container  className="mt-5" style={{maxWidth:'800px'}}>
               {isLoading && <Loader />}
               <ListGroup style={{maxHeight:'60vh',overflowY:'auto'}}>
                 {userActivities.length > 0 &&
                   userActivities.slice(0, itemsToShow).map((item, index) => (
+
                     <ListGroup.Item
                       key={index}
                       className={`text-black ${item.color}`}
-                      style={{
-                        backgroundColor:
-                          item.color === 'red'
-                            ? 'rgba(220, 53, 69, 0.55)' // bg-danger with 60% opacity
-                            : item.color === 'orange'
-                            ? 'rgba(255, 193, 7, 0.55)' // bg-warning with 60% opacity
-                            : item.color === 'blue'
-                            ? 'rgba(0, 123, 255, 0.55)' // bg-primary with 60% opacity
-                            : 'rgba(40, 167, 69, 0.55)', // bg-success with 60% opacity
-                      }}
+                      
                     >
+                    <BsFillRecordCircleFill className="ms-2" size={20} style={{
+                        color:
+                          item.color === 'red'
+                            ? 'rgba(220, 53, 69, 0.6)' // bg-danger with 60% opacity
+                            : item.color === 'orange'
+                            ? 'rgba(255, 193, 7, 0.6)' // bg-warning with 60% opacity
+                            : item.color === 'blue'
+                            ? 'rgba(0, 123, 255, 0.6)' // bg-primary with 60% opacity
+                            : 'rgba(40, 167, 69, 0.6)', // bg-success with 60% opacity
+                      }}/>
                       <strong>{item.title} - </strong> {item.description}
                     </ListGroup.Item>
                   ))}

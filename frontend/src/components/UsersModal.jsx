@@ -48,7 +48,7 @@ const UsersModal = ({ show, onHide, user, onDelete }) => {
       await axios.post('/api/users-activity/add', {
         title: 'הסרת משתמש',
         action:'נמחק',
-        entityName: formData.name,
+        entityName: formData.username,
         color:'red'
       });
       toast.success("המשתמש נמחק בהצלחה");
@@ -68,7 +68,7 @@ const UsersModal = ({ show, onHide, user, onDelete }) => {
       await axios.post('/api/users-activity/add', {
         title: 'עדכון משתמש',
         action:'עודכן',
-        entityName: formData.name,
+        entityName: formData.username,
         color:'orange'
       });
       toast.success("פרטי המשתמש עודכנו בהצלחה");

@@ -29,7 +29,7 @@ const AddUserModal = ({ show, onHide }) => {
       await axios.post('/api/users-activity/add', {
         title:'הוספת משתמש',
         action: 'נוסף',
-        entityName: formData.name,
+        entityName: formData.username,
         color:'green',
       });
       toast.success("המשתמש נוסף בהצלחה!");

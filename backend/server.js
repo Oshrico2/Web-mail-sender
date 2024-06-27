@@ -37,8 +37,8 @@ app.use("/api/login", loginRoutes);
 app.use("/api/mailing", protect, mailingRoutes);
 app.use("/api/business-managers", protect, businessManagersRoutes);
 app.use("/api/users", admin, userRoutes);
-app.use("/api/users-activity", admin, userActivityRoutes);
-app.use("/api/remove-mailing", protect ,removeMailingRoutes);
+app.use("/api/users-activity", protect, userActivityRoutes);
+app.use("/api/remove-mailing" ,removeMailingRoutes);
 
 const __dirname = path.resolve();
 app.use("/uploads", express.static(path.join(__dirname, "/uploads")));
