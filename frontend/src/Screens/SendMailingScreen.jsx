@@ -42,6 +42,12 @@ const SendMailingScreen = () => {
           "Content-Type": "multipart/form-data; charset=utf-8",
         },
       });
+      await axios.post('/api/users-activity/add', {
+        title: `${sendMailTo === '' ?' ניסיון שליחת תפוצה':'שליחת תפוצה לסוכנים'}`,
+        action: `${sendMailTo === '' ?'בוצע ניסיון שליחת תפוצה':'בוצעה שליחת תפוצה'}`,
+        entityName: formData.name,
+        color:'blue'
+      });
       toast.success("השליחה הסתיימה בהצלחה");
     } catch (error) {
       toast.error("בעייה בשליחת המייל");

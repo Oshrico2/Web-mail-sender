@@ -35,6 +35,12 @@ const CampaignsModal = ({ show, onHide, campaign, onDelete }) => {
     try {
       await axios.delete(`/api/campaigns/${campaign._id}`);
       onDelete(campaign._id);
+      await axios.post('/api/users-activity/add', {
+        title: 'הסרת קמפיין',
+        action:'נמחק',
+        entityName: formData.name,
+        color:'red'
+      });
       toast.success("הקמפיין נמחק בהצלחה");
       setTimeout(() => {
         window.location.reload();
@@ -49,6 +55,12 @@ const CampaignsModal = ({ show, onHide, campaign, onDelete }) => {
     e.preventDefault();
     try {
       await axios.put(`/api/campaigns/${campaign._id}`, formData);
+      await axios.post('/api/users-activity/add', {
+        title: 'עדכון קמפיין',
+        action:'עודכן',
+        entityName: formData.name,
+        color:'orange'
+      });
       toast.success("פרטי הקמפיין עודכנו בהצלחה");
       setTimeout(() => {
         window.location.reload();

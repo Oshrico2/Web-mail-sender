@@ -83,12 +83,17 @@ const BusinessManagerReportScreen = () => {
   const handleConfirmReport = async (email) => {
     try {
       setShowConfirmationModal(false);
-      console.log('email: ', email); // Make sure email is defined here
       setIsLoading(true);
       const response = await axios.post(
         "/api/business-managers/report/create",
-        { jsonData, email } // Check if `email` is correctly passed here
+        { jsonData, email } 
       );
+      await axios.post('/api/users-activity/add', {
+        title:'דוח למנהלי פיתוח עסקי',
+        action: 'דוח למנהלי פיתוח עסקי נשלח',
+        color:'blue',
+        entityName: getCurrentDateFormatted(Date.Now)
+      });
       setFixedJsonData(response.data.filteredData);
       setNoFindAgents(response.data.noAgentInDataList);
     } catch (error) {

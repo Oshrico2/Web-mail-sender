@@ -26,6 +26,12 @@ const AddAgentModal = ({ show, onHide }) => {
     e.preventDefault();
     try {
       await axios.post("/api/agents/add", formData);
+      await axios.post('/api/users-activity/add', {
+        title: 'הוספת סוכן',
+        action:'נוסף',
+        entityName: formData.name,
+        color:'green',
+      });
       toast.success("הסוכן נוסף בהצלחה!");
       setTimeout(() => {
         window.location.reload();

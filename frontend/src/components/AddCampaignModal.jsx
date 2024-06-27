@@ -21,6 +21,12 @@ const AddCampaignModal = ({ show, onHide }) => {
     e.preventDefault();
     try {
       await axios.post('/api/campaigns/add', formData);
+      await axios.post('/api/users-activity/add', {
+        title: 'הוספת קמפיין',
+        action:'עודכן',
+        entityName: formData.name,
+        color:'green'
+      });
       toast.success('הקמפיין נוסף בהצלחה!');
       setTimeout(() => {
         window.location.reload();

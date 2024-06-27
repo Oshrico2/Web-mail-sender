@@ -26,6 +26,12 @@ const AddUserModal = ({ show, onHide }) => {
     try {
         console.log(formData);
       await axios.post("/api/users/add", formData);
+      await axios.post('/api/users-activity/add', {
+        title:'הוספת משתמש',
+        action: 'נוסף',
+        entityName: formData.name,
+        color:'green',
+      });
       toast.success("המשתמש נוסף בהצלחה!");
       setTimeout(() => {
         window.location.reload();

@@ -118,6 +118,9 @@ const UserMenu = () => {
               <LinkContainer to="/users/add">
                 <Nav.Item eventKey="8-2">הוסף משתמש חדש</Nav.Item>
               </LinkContainer>
+              <LinkContainer to="/users/history">
+                <Nav.Item eventKey="8-3">היסטוריית פעולות</Nav.Item>
+              </LinkContainer>
             </Nav.Menu>
             )}
           </Nav>

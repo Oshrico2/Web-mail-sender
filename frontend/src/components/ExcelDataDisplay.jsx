@@ -26,6 +26,7 @@ const ExcelDataDisplay = () => {
         weeklyStatus: false,
         data:jsonData,
       })
+      
       .then((response) => {
         setNoMailAgents(response.data);
       })
@@ -35,6 +36,12 @@ const ExcelDataDisplay = () => {
       })
       .finally(() => {
         setIsLoading(false); // Deactivate loader after request is completed
+      });
+      await axios.post('/api/users-activity/add', {
+        title: 'שליחת סטטוס יומי',
+        action:'סטטוס יומי לסוכן נשלח',
+        entityName: 'סטטוס לקוחות יומי',
+        color:'blue'
       });
     setShow(false);
   };
@@ -58,6 +65,12 @@ const ExcelDataDisplay = () => {
       .finally(() => {
         setIsLoading(false); // Deactivate loader after request is completed
       });
+      await axios.post('/api/users-activity/add', {
+        title: 'שליחת סטטוס שבועי',
+        action:'סטטוס שבועי לסוכן נשלח',
+        entityName: 'סטטוס לקוחות שבועי',
+        color:'blue'
+      });
     setShow(false);
   };
 
@@ -80,6 +93,12 @@ const ExcelDataDisplay = () => {
       .finally(() => {
         setIsLoading(false); // Deactivate loader after request is completed
       });
+      await axios.post('/api/users-activity/add', {
+        title: 'שליחת סטטוס בריאות',
+        action:'סטטוס בריאות לסוכן נשלח',
+        entityName: 'סטטוס לקוחות בריאות',
+        color:'blue'
+      });
   };
 
   const handlePensiaStatus = async () => {
@@ -100,6 +119,12 @@ const ExcelDataDisplay = () => {
       })
       .finally(() => {
         setIsLoading(false); // Deactivate loader after request is completed
+      });
+      await axios.post('/api/users-activity/add', {
+        title: 'שליחת סטטוס פנסיוני',
+        action:'סטטוס פנסיוני לסוכן נשלח',
+        entityName: 'סטטוס לקוחות יומי',
+        color:'blue'
       });
   };
 

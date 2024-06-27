@@ -24,6 +24,12 @@ const AddEmployeeModal = ({ show, onHide }) => {
     try {
       await axios.post('/api/employees/add', formData);
       toast.success('העובד נוסף בהצלחה!');
+      await axios.post('/api/users-activity/add', {
+        title:'הוספת עובד',
+        action: 'נוסף',
+        entityName: formData.name,
+        color:'green',
+      });
       setTimeout(() => {
         window.location.reload();
     }, 1000);

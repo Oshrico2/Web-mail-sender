@@ -51,6 +51,12 @@ const AgentsModal = ({ show, onHide, agent, onDelete }) => {
     try {
       await axios.delete(`/api/agents/${agent._id}`);
       onDelete(agent._id);
+      await axios.post('/api/users-activity/add', {
+        title: 'הסרת סוכן',
+        action:'נמחק',
+        entityName: formData.name,
+        color:'red'
+      });
       toast.success("הסוכן נמחק בהצלחה");
       setTimeout(() => {
         window.location.reload();
@@ -65,6 +71,12 @@ const AgentsModal = ({ show, onHide, agent, onDelete }) => {
     e.preventDefault();
     try {
       await axios.put(`/api/agents/${agent._id}`, formData);
+      await axios.post('/api/users-activity/add', {
+        title: 'עדכון סוכן',
+        action:'עודכן',
+        entityName: formData.name,
+        color:'orange',
+      });
       toast.success("פרטי הסוכן עודכנו בהצלחה");
     } catch (error) {
       console.error("Error updating agent:", error);

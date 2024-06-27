@@ -45,6 +45,12 @@ const UsersModal = ({ show, onHide, user, onDelete }) => {
     try {
       await axios.delete(`/api/users/${user._id}`);
       onDelete(user._id);
+      await axios.post('/api/users-activity/add', {
+        title: 'הסרת משתמש',
+        action:'נמחק',
+        entityName: formData.name,
+        color:'red'
+      });
       toast.success("המשתמש נמחק בהצלחה");
       setTimeout(() => {
         window.location.reload();
@@ -59,6 +65,12 @@ const UsersModal = ({ show, onHide, user, onDelete }) => {
     e.preventDefault();
     try {
       await axios.put(`/api/users/${user._id}`, formData);
+      await axios.post('/api/users-activity/add', {
+        title: 'עדכון משתמש',
+        action:'עודכן',
+        entityName: formData.name,
+        color:'orange'
+      });
       toast.success("פרטי המשתמש עודכנו בהצלחה");
       setTimeout(() => {
         window.location.reload();

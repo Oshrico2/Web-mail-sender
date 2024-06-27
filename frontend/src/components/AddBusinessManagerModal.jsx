@@ -61,6 +61,12 @@ const AddBusinessManagerModal = ({ show, onHide }) => {
       }
 
       await axios.post('/api/business-managers/add', formData);
+      await axios.post('/api/users-activity/add', {
+        title:'הוספת מנהל פיתוח עסקי',
+        action: 'נוסף',
+        entityName: formData.name,
+        color:'green',
+      });
       toast.success('המנהל נוסף בהצלחה!');
       setTimeout(() => {
         window.location.reload();

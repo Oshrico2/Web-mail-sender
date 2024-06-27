@@ -59,6 +59,14 @@ const getCurrentDateFormatted = () => {
   return `${day}/${month}/${year}`;
 };
 
+const getCurrentTimeFormatted = () => {
+  const today = new Date();
+  const hours = String(today.getHours()).padStart(2, "0");
+  const minutes = String(today.getMinutes()).padStart(2, "0");
+  const seconds = String(today.getSeconds()).padStart(2, "0");
+  return `${hours}:${minutes}:${seconds}`;
+};
+
 const formatDates = (data) => {
   for (const item of data) {
     if(item['תאריך שינוי']){
@@ -177,6 +185,7 @@ const getUsername = (i_Token) =>{
 export {
   readExcelFile,
   getCurrentDateFormatted,
+  getCurrentTimeFormatted,
   formatDates,
   removeUnwantedColumns,
   // getAgentsFromDB,

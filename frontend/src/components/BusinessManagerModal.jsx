@@ -91,6 +91,12 @@ const BusinessManagersModal = ({ show, onHide, businessManager, onDelete }) => {
       await axios.delete(`/api/business-managers/${businessManager._id}`);
       onDelete(businessManager._id);
       toast.success("המנהל נמחק בהצלחה");
+      await axios.post('/api/users-activity/add', {
+        title: 'הסרת מנהל פיתוח עסקי',
+        action:'נמחק',
+        entityName: formData.name,
+        color:'red'
+      });
       setTimeout(() => {
         window.location.reload();
       }, 1000);
@@ -119,6 +125,12 @@ const BusinessManagersModal = ({ show, onHide, businessManager, onDelete }) => {
         `/api/business-managers/${businessManager._id}`,
         formData
       );
+      await axios.post('/api/users-activity/add', {
+        title: 'עדכון מנהל פיתוח עסקי',
+        action:'עודכן',
+        entityName: formData.name,
+        color:'orange'
+      });
       toast.success("פרטי המנהל עודכנו בהצלחה");
       setTimeout(() => {
         window.location.reload();

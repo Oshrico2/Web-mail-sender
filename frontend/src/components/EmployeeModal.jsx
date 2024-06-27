@@ -40,6 +40,12 @@ const EmployeesModal = ({ show, onHide, employee, onDelete }) => {
     try {
       await axios.delete(`/api/employees/${employee._id}`);
       onDelete(employee._id);
+      await axios.post('/api/users-activity/add', {
+        title: 'הסרת עובד',
+        action:'נמחק',
+        entityName: formData.name,
+        color:'red'
+      });
       toast.success("העובד נמחק בהצלחה");
       setTimeout(() => {
         window.location.reload();
@@ -57,6 +63,12 @@ const EmployeesModal = ({ show, onHide, employee, onDelete }) => {
         `/api/employees/${employee._id}`,
         formData
       );
+      await axios.post('/api/users-activity/add', {
+        title: 'עדכון עובד',
+        action:'עודכן',
+        entityName: formData.name,
+        color:'orange'
+      });
       toast.success("פרטי העובד עודכנו בהצלחה");
       setTimeout(() => {
         window.location.reload();

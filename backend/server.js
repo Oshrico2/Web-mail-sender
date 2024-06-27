@@ -14,6 +14,7 @@ import mailingRoutes from "./routes/mailingRoutes.js";
 import campaignsRoutes from "./routes/campaignsRoutes.js";
 import businessManagersRoutes from "./routes/businessManagersRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
+import userActivityRoutes from "./routes/userActivityRoutes.js";
 import removeMailingRoutes from './routes/removeMailingRoutes.js'
 import { admin, protect } from "./middleware/authMiddleware.js";
 
@@ -36,7 +37,8 @@ app.use("/api/login", loginRoutes);
 app.use("/api/mailing", protect, mailingRoutes);
 app.use("/api/business-managers", protect, businessManagersRoutes);
 app.use("/api/users", admin, userRoutes);
-app.use("/api/remove-mailing", removeMailingRoutes);
+app.use("/api/users-activity", admin, userActivityRoutes);
+app.use("/api/remove-mailing", protect ,removeMailingRoutes);
 
 const __dirname = path.resolve();
 app.use("/uploads", express.static(path.join(__dirname, "/uploads")));
