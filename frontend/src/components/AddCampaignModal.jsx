@@ -23,7 +23,7 @@ const AddCampaignModal = ({ show, onHide }) => {
       await axios.post('/api/campaigns/add', formData);
       await axios.post('/api/users-activity/add', {
         title: 'הוספת קמפיין',
-        action:'עודכן',
+        action:'נוסף',
         entityName: formData.name,
         color:'green'
       });
