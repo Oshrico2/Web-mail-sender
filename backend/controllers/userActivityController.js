@@ -38,7 +38,8 @@ const addUserActivity = async (req, res) => {
       createdBy: username,
       entityName,
       description,
-      color
+      color,
+      createdAt:date
     });
 
     await newUserActivity.save();
