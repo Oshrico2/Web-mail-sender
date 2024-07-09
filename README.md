@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>App Review</title>
 </head>
 <body>
 
@@ -105,7 +104,11 @@
 <img src="https://github.com/Oshrico2/Web-mail-sender/assets/95771163/3eba1195-a881-40d5-9550-627463ec6cea" alt="Add User Screen">
 
 <h3>User Activity History Screen - '/history'</h3>
-<p>User activity history can be viewed. Green - adding something to the database. Yellow - change of something in the database. Red - deletion of something from the database. Blue - performing operations in the system (preparing reports, sending customer status, etc.). Shows who the user is who performed the action date and time:</p>
+<p>User activity history can be viewed.</p>
+<p style="color: green;">Green - adding something to the database.</p>
+<p style="color: yellow;">Yellow - change of something in the database.</p>
+<p style="color: red;">Red - deletion of something from the database.</p>
+<p style="color: blue;">Blue - performing operations in the system (preparing reports, sending customer status, etc.). Shows who the user is, the action date, and time.</p>
 <img src="https://github.com/Oshrico2/Web-mail-sender/assets/95771163/806b03d7-57b5-4c75-a161-96088510ba7f" alt="User Activity History Screen">
 
 </body>
