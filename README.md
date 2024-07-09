@@ -103,7 +103,7 @@
 <h3>Add User Screen - '/users/add'</h3>
 <img src="https://github.com/Oshrico2/Web-mail-sender/assets/95771163/3eba1195-a881-40d5-9550-627463ec6cea" alt="Add User Screen">
 
-<h3>User Activity History Screen - '/history'</h3>
+<h3>User Activity History Screen - '/users/history'</h3>
 <p>User activity history can be viewed.</p>
 <p style="color: green;">Green - adding something to the database.</p>
 <p style="color: yellow;">Yellow - change of something in the database.</p>
