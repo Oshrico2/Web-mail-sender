@@ -29,7 +29,7 @@ router.post("/", async (req, res) => {
     res.send({
       token,
       expiration,
-      user: { username: user.username, isAdmin: user.isAdmin,email:user.email },
+      user: { username: user.username, isAdmin: user.isAdmin,email:user.email,firstName:user.firstName },
     });
   } catch (error) {
     console.error("Error logging in:", error);

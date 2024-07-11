@@ -5,9 +5,10 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 
 const MainScreen = () => {
+
   return (
     <>
-      <Header title="מסך ראשי" />
+      <Header title = {`שלום, ${JSON.parse(localStorage.getItem('user')).firstName}`}/>
       <Row>
         <Col md={2}>
           <UserMenu />
@@ -18,7 +19,7 @@ const MainScreen = () => {
             <h4>
               ברוכים הבאים!
               <br />
-              כאן תוכלו לשלוח מיילים לסוכנים
+              כאן תוכלו לשלוח סטטוסים לסוכנים, להכין דוחות ועוד.
             </h4>
             <div className="d-flex justify-content-center">
               <img

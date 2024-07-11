@@ -23,7 +23,7 @@ const UserMenu = () => {
   return (
     <div style={{ width: 240 }}>
       <hr />
-      <Sidenav defaultOpenKeys={["3", "4"]}>
+      <Sidenav>
         <Sidenav.Body>
           <Nav activeKey={activeKey} onSelect={setActiveKey}>
             <LinkContainer to="/">
@@ -123,6 +123,9 @@ const UserMenu = () => {
               </LinkContainer>
             </Nav.Menu>
             )}
+            <LinkContainer to="/logout">
+              <Nav.Item eventKey="9">התנתק</Nav.Item>
+            </LinkContainer>
           </Nav>
         </Sidenav.Body>
       </Sidenav>

@@ -21,6 +21,7 @@ import BusinessManagerReportScreen from './Screens/BusinessManagerReportScreen'
 import UsersScreen from './Screens/UsersScreen';
 import AddUserScreen from './Screens/AddUserScreen';
 import UserHitstoryScreen from './Screens/UserHitstoryScreen';
+import LogoutScreen from './Screens/LogoutScreen';
 
 
 const App = () => {
@@ -91,6 +92,7 @@ const RenderRoutes = ({ isAuthenticated, setIsAuthenticated }) => {
       <Route path="/users" element={<UsersScreen />} />
       <Route path="/users/add" element={<AddUserScreen />} />
       <Route path="/users/history" element={<UserHitstoryScreen />} />
+      <Route path="/logout" element={<LogoutScreen />} />
     </Routes>
   );
 };
