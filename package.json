@@ -24,6 +24,6 @@
   "license": "ISC",
   "description": "Talpiot Family Office: customer-status emails, mailing and reports for insurance agents",
   "engines": {
-    "node": ">=18"
+    "node": "22.x"
   }
 }
