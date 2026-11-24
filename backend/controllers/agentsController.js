@@ -1,6 +1,7 @@
 import Agent from "../models/agentModel.js";
 import { logActivity } from "../utils/activity.js";
-import { asyncHandler, escapeRegex, HttpError } from "../utils/http.js";
+import { asyncHandler, HttpError } from "../utils/http.js";
+import { and, paginate, readListParams } from "../utils/paginate.js";
 
 const EDITABLE = [
   "name",
@@ -14,39 +15,63 @@ const EDITABLE = [
   "confirmedMailing",
 ];
 
-const list = (filter) => Agent.find(filter).sort({ name: 1 });
+// Named groups used by the list filters and the count strip.
+export const AGENT_GROUPS = {
+  all: {},
+  daily: { customerStatus: { $ne: false }, weeklyStatus: { $ne: true } },
+  weekly: { customerStatus: { $ne: false }, weeklyStatus: true },
+  none: { customerStatus: false },
+  mailing: { confirmedMailing: { $ne: false } },
+  noMailing: { confirmedMailing: false },
+};
 
-// @route   GET /api/agents
-const getAllAgents = asyncHandler(async (req, res) => {
-  res.json(await list({}));
-});
+const LIST_OPTIONS = {
+  sortable: ["name", "agentNumber", "email", "additionalMail", "lastName", "confirmedMailing", "createdAt"],
+  defaultSort: "name",
+  searchFields: ["name", "email", "agentNumber", "additionalMail", "firstName", "lastName"],
+};
 
-// @route   GET /api/agents/per-week
-const getAllWeeklyAgents = asyncHandler(async (req, res) => {
-  res.json(await list({ weeklyStatus: true }));
-});
+// Agents whose last name starts with one of the given Hebrew letters
+// (used by "associated agents" of a business manager).
+const lettersFilter = (letters) => {
+  const clean = String(letters || "").replace(/[^\u05D0-\u05EA]/g, "");
+  return clean ? { lastName: { $regex: `^\\s*[${clean}]` } } : null;
+};
 
-// @route   GET /api/agents/no-customer-status
-const getAllNoCustomerStatusAgents = asyncHandler(async (req, res) => {
-  res.json(await list({ customerStatus: false }));
-});
+const listAgents = (preset) =>
+  asyncHandler(async (req, res) => {
+    const params = readListParams(req, LIST_OPTIONS);
+    const group = AGENT_GROUPS[preset || req.query.filter] || {};
+    const filter = and(group, params.search, lettersFilter(req.query.letters));
+    res.json(await paginate(Agent, filter, params));
+  });
+
+// @route   GET /api/agents?page=&limit=&sort=&q=&filter=&letters=
+const getAllAgents = listAgents();
+// Older paths kept for compatibility; all paginated now.
+const getAllWeeklyAgents = listAgents("weekly");
+const getAllNoCustomerStatusAgents = listAgents("none");
+const getAllConfirmedMailingAgents = listAgents("mailing");
 
 // @route   GET /api/agents/recently-added
 const getTenRecentlyAddedAgents = asyncHandler(async (req, res) => {
   res.json(await Agent.find({}).sort({ createdAt: -1 }).limit(10));
 });
 
-// @route   GET /api/agents/confirmed-mailing
-const getAllConfirmedMailingAgents = asyncHandler(async (req, res) => {
-  res.json(await list({ confirmedMailing: { $ne: false } }));
+// @route   GET /api/agents/search/:name  (kept; same as ?q=)
+const searchAgentsByName = asyncHandler(async (req, res) => {
+  req.query.q = req.params.name;
+  const params = readListParams(req, LIST_OPTIONS);
+  res.json(await paginate(Agent, params.search || {}, params));
 });
 
-// @route   GET /api/agents/search/:name
-const searchAgentsByName = asyncHandler(async (req, res) => {
-  const pattern = { $regex: escapeRegex(req.params.name), $options: "i" };
-  res.json(
-    await list({ $or: [{ name: pattern }, { email: pattern }, { agentNumber: pattern }] })
+// @desc    Counts per group for the count strip (no documents fetched)
+// @route   GET /api/agents/stats
+const getAgentStats = asyncHandler(async (req, res) => {
+  const entries = await Promise.all(
+    Object.entries(AGENT_GROUPS).map(async ([key, filter]) => [key, await Agent.countDocuments(filter)])
   );
+  res.json(Object.fromEntries(entries));
 });
 
 // @route   POST /api/agents/add
@@ -135,4 +160,5 @@ export {
   searchAgentsByName,
   getAllNoCustomerStatusAgents,
   getTenRecentlyAddedAgents,
+  getAgentStats,
 };

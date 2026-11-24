@@ -32,24 +32,24 @@ const greeting = () => {
 
 export default function HomeScreen() {
   const { user } = useAuth();
-  const [agents, setAgents] = useState(null);
+  const [stats, setStats] = useState(null);
   const [activity, setActivity] = useState(null);
 
   useEffect(() => {
     document.title = "דף הבית · תלפיות";
-    api.get("/agents").then(({ data }) => setAgents(data)).catch(() => setAgents([]));
+    api.get("/agents/stats").then(({ data }) => setStats(data)).catch(() => setStats({}));
     if (user?.isAdmin) {
-      api.get("/users-activity", { params: { limit: 6 } }).then(({ data }) => setActivity(data)).catch(() => setActivity([]));
+      api.get("/users-activity", { params: { limit: 6 } }).then(({ data }) => setActivity(data.items)).catch(() => setActivity([]));
     }
   }, [user?.isAdmin]);
 
-  const list = agents || [];
+  // Counts come from /agents/stats; no agent documents are downloaded here.
   const panes = [
-    { label: "סוכנים במאגר", to: "/agents", value: list.length },
-    { label: "סטטוס יומי", to: "/agents?filter=daily", value: list.filter((a) => a.customerStatus !== false && !a.weeklyStatus).length },
-    { label: "סטטוס שבועי", to: "/agents?filter=weekly", value: list.filter((a) => a.customerStatus !== false && a.weeklyStatus).length },
-    { label: "לא מקבלים סטטוס", to: "/agents?filter=none", value: list.filter((a) => a.customerStatus === false).length },
-    { label: "ברשימת תפוצה", to: "/agents?filter=mailing", value: list.filter((a) => a.confirmedMailing !== false).length },
+    { label: "סוכנים במאגר", to: "/agents", value: stats?.all },
+    { label: "סטטוס יומי", to: "/agents?filter=daily", value: stats?.daily },
+    { label: "סטטוס שבועי", to: "/agents?filter=weekly", value: stats?.weekly },
+    { label: "לא מקבלים סטטוס", to: "/agents?filter=none", value: stats?.none },
+    { label: "ברשימת תפוצה", to: "/agents?filter=mailing", value: stats?.mailing },
   ];
 
   return (
@@ -98,7 +98,7 @@ export default function HomeScreen() {
           {panes.map((pane) => (
             <Link key={pane.label} to={pane.to} className="ribbon__pane">
               <span className="ribbon__label">{pane.label}</span>
-              <span className="ribbon__value">{agents ? number(pane.value) : "—"}</span>
+              <span className="ribbon__value">{stats ? number(pane.value ?? 0) : "—"}</span>
             </Link>
           ))}
         </nav>

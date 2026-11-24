@@ -1,6 +1,13 @@
 import User from "../models/userModel.js";
 import { logActivity } from "../utils/activity.js";
-import { asyncHandler, escapeRegex, HttpError } from "../utils/http.js";
+import { asyncHandler, HttpError } from "../utils/http.js";
+import { paginate, readListParams } from "../utils/paginate.js";
+
+const LIST_OPTIONS = {
+  sortable: ["firstName", "lastName", "username", "email", "isAdmin"],
+  defaultSort: "firstName",
+  searchFields: ["firstName", "lastName", "username", "email"],
+};
 
 const MIN_PASSWORD = 6;
 
@@ -8,8 +15,15 @@ const MIN_PASSWORD = 6;
 // @route   GET /api/users
 // @access  Admin
 const getAllUsers = asyncHandler(async (req, res) => {
-  const users = await User.find({}).select("-password").sort({ firstName: 1 });
-  res.json(users);
+  const params = readListParams(req, LIST_OPTIONS);
+  res.json(await paginate(User, params.search || {}, { ...params, select: "-password" }));
+});
+
+// @desc    User counts for the count strip
+// @route   GET /api/users/stats
+const getUserStats = asyncHandler(async (req, res) => {
+  const [total, admins] = await Promise.all([User.countDocuments({}), User.countDocuments({ isAdmin: true })]);
+  res.json({ total, admins });
 });
 
 // @desc    Add a user
@@ -106,11 +120,9 @@ const deleteUserById = asyncHandler(async (req, res) => {
 // @route   GET /api/users/search/:name
 // @access  Admin
 const searchUserByName = asyncHandler(async (req, res) => {
-  const pattern = { $regex: escapeRegex(req.params.name), $options: "i" };
-  const users = await User.find({
-    $or: [{ firstName: pattern }, { lastName: pattern }, { username: pattern }],
-  }).select("-password");
-  res.json(users);
+  req.query.q = req.params.name;
+  const params = readListParams(req, LIST_OPTIONS);
+  res.json(await paginate(User, params.search || {}, { ...params, select: "-password" }));
 });
 
 export {
@@ -120,4 +132,5 @@ export {
   updateUserById,
   deleteUserById,
   searchUserByName,
+  getUserStats,
 };

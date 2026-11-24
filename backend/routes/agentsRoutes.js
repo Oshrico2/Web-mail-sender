@@ -10,12 +10,14 @@ import {
   getAllConfirmedMailingAgents,
   searchAgentsByName,
   getAllNoCustomerStatusAgents,
-  getTenRecentlyAddedAgents
+  getTenRecentlyAddedAgents,
+  getAgentStats,
 } from "../controllers/agentsController.js";
 
 const router = express.Router();
 router.route('/search/:name').get(searchAgentsByName);
 router.route('/').get(getAllAgents);
+router.route('/stats').get(getAgentStats);
 router.route('/add').post(addAgent);
 router.route('/per-week').get(getAllWeeklyAgents);
 router.route('/no-customer-status').get(getAllNoCustomerStatusAgents);

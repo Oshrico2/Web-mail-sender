@@ -15,6 +15,7 @@ import {
   getBusinessManagerById,
   updateBusinessManagerById,
   deleteBusinessManagerById,
+  getLetterOwners,
 } from "../controllers/businessManagersController.js";
 import { logActivity } from "../utils/activity.js";
 import { asyncHandler, escapeHtml, HttpError, isEmail } from "../utils/http.js";
@@ -72,6 +73,7 @@ const sendReportMail = async (mailTo, data, agentsNotFound) => {
 const router = express.Router();
 
 router.route("/").get(getAllBusinessManagers);
+router.route("/letters").get(getLetterOwners);
 router.route("/add").post(addBusinessManager);
 
 // @desc    Assign each lead to a business-development manager by the first

@@ -1,7 +1,8 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ArrowDown, ArrowUp, ArrowUpDown, Check, Minus, Search } from "lucide-react";
-import { collator, normalize, number } from "../lib/format";
+import { number } from "../lib/format";
 import Empty from "./Empty";
+import Pager from "./Pager";
 
 const SKELETON_ROWS = 8;
 
@@ -16,94 +17,64 @@ export const YesNo = ({ value, yes = "כן", no = "לא" }) =>
     </span>
   );
 
-const textOf = (col, row) => {
-  const v = col.sortValue ? col.sortValue(row) : row[col.key];
-  return Array.isArray(v) ? v.join(" ") : v;
-};
-
 /**
- * columns: [{ key, label, render?, sortValue?, className?, hideSm? }]
- * filters: [{ id, label, test(row) }]
+ * Renders one server page. `list` comes from usePagedList.
+ * columns: [{ key, label, render?, sortKey? (server field), sortable?, className?, hideSm? }]
+ * filters: [{ id, label }] with counts: { [id]: number }
  */
 export default function DataTable({
-  rows,
+  list,
   columns,
-  status = "ready",
-  error,
-  onRetry,
-  searchKeys = ["name"],
   searchPlaceholder = "חיפוש",
   filters,
   filter,
   onFilterChange,
-  chips = true,
+  counts,
   onRowClick,
   selectedId,
   guideKey = "name",
-  entering,
   toolbarEnd,
   empty,
-  initialSort,
 }) {
-  const [query, setQuery] = useState("");
-  const [sort, setSort] = useState(initialSort || { key: columns[0].key, dir: 1 });
+  const { items: rows, status, error, reload, entering, query, setQuery, sort, setSort, page, pages, total, limit, setPage, setLimit } = list;
   const [range, setRange] = useState({ first: 0, last: 0 });
   const wrapRef = useRef(null);
   const sentinelRef = useRef(null);
   const [scrolled, setScrolled] = useState(false);
-
-  // Filtering happens in the browser: the list is already loaded, so there is
-  // no request per keystroke and no out-of-order results.
-  const filtered = useMemo(() => {
-    const active = filters?.find((f) => f.id === filter);
-    const q = normalize(query);
-    let list = active ? rows.filter(active.test) : rows;
-    if (q) {
-      list = list.filter((row) =>
-        searchKeys.some((key) => normalize(Array.isArray(row[key]) ? row[key].join(" ") : row[key]).includes(q))
-      );
-    }
-    const col = columns.find((c) => c.key === sort.key);
-    if (col) {
-      list = [...list].sort((a, b) => {
-        const va = textOf(col, a);
-        const vb = textOf(col, b);
-        if (typeof va === "boolean" || typeof vb === "boolean") return (Number(vb) - Number(va)) * sort.dir;
-        return collator.compare(String(va ?? ""), String(vb ?? "")) * sort.dir;
-      });
-    }
-    return list;
-  }, [rows, filters, filter, query, searchKeys, columns, sort]);
+  const offset = (page - 1) * limit;
 
   // Sticky header lifts once the list scrolls under it.
   useEffect(() => {
     const wrap = wrapRef.current;
     const sentinel = sentinelRef.current;
     if (!wrap || !sentinel) return;
-    const io = new IntersectionObserver(([entry]) => setScrolled(!entry.isIntersecting), {
-      root: wrap,
-    });
+    const io = new IntersectionObserver(([entry]) => setScrolled(!entry.isIntersecting), { root: wrap });
     io.observe(sentinel);
     return () => io.disconnect();
   }, [status]);
 
+  // New page: back to the top of the scroller.
+  useEffect(() => {
+    if (wrapRef.current) wrapRef.current.scrollTop = 0;
+  }, [page, limit]);
+
   // Guide words: the first and last record currently in view.
   useEffect(() => {
     const wrap = wrapRef.current;
-    if (!wrap || status !== "ready") return;
+    if (!wrap || status === "loading") return;
     let frame = 0;
     const measure = () => {
       frame = 0;
       const body = wrap.querySelector("tbody");
       if (!body) return;
-      const top = wrap.getBoundingClientRect().top + 70;
-      const bottom = wrap.getBoundingClientRect().bottom;
+      const box = wrap.getBoundingClientRect();
+      const top = box.top + 70;
       const trs = body.children;
       let first = -1;
       let last = -1;
       for (let i = 0; i < trs.length; i++) {
         const r = trs[i].getBoundingClientRect();
-        if (r.bottom > top && r.top < bottom) {
+        if (r.bottom > top && r.top < box.bottom) {
           if (first === -1) first = i;
           last = i;
         } else if (first !== -1) break;
@@ -121,18 +92,11 @@ export default function DataTable({
       wrap.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onScroll);
     };
-  }, [filtered, status]);
+  }, [rows, status]);
 
-  const toggleSort = (key) =>
-    setSort((s) => (s.key === key ? { key, dir: -s.dir } : { key, dir: 1 }));
-
-  const counts = useMemo(
-    () => Object.fromEntries((filters || []).map((f) => [f.id, f.test ? rows.filter(f.test).length : rows.length])),
-    [filters, rows]
-  );
-
-  const firstRow = filtered[range.first];
-  const lastRow = filtered[range.last];
+  const guide = (row) => (row ? String(row[guideKey] ?? "") : " ");
+  const firstRow = rows[range.first];
+  const lastRow = rows[range.last];
 
   return (
     <div className="panel">
@@ -140,24 +104,13 @@ export default function DataTable({
         <label className="search">
           <span className="visually-hidden">{searchPlaceholder}</span>
           <Search aria-hidden="true" />
-          <input
-            type="search"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder={searchPlaceholder}
-          />
+          <input type="search" value={query} onChange={(e) => setQuery(e.target.value)} placeholder={searchPlaceholder} />
         </label>
-        {filters && chips && (
+        {filters && (
           <div className="chips" role="group" aria-label="סינון">
             {filters.map((f) => (
-              <button
-                key={f.id}
-                type="button"
-                className="chip"
-                aria-pressed={filter === f.id}
-                onClick={() => onFilterChange(f.id)}
-              >
-                {f.label} <span className="num">{number(counts[f.id] ?? 0)}</span>
+              <button key={f.id} type="button" className="chip" aria-pressed={filter === f.id} onClick={() => onFilterChange(f.id)}>
+                {f.label} {counts?.[f.id] != null && <span className="num">{number(counts[f.id])}</span>}
               </button>
             ))}
           </div>
@@ -173,52 +126,48 @@ export default function DataTable({
             title="לא הצלחנו לטעון את הרשימה"
             text={error}
             action={
-              onRetry && (
-                <button type="button" className="btn btn--ghost" onClick={onRetry}>
-                  נסה שוב
-                </button>
-              )
+              <button type="button" className="btn btn--ghost" onClick={reload}>
+                נסה שוב
+              </button>
             }
           />
         ) : (
           <>
-            <div className="guide" aria-live="off">
-              <span className="guide__word">
-                {status === "ready" && firstRow ? textOf({ key: guideKey }, firstRow) : " "}
-              </span>
+            <div className="guide" aria-hidden="true">
+              <span className="guide__word">{status !== "loading" && guide(firstRow)}</span>
               <span className="guide__range">
                 {status === "loading"
                   ? "טוען…"
-                  : filtered.length
-                    ? `מוצגים ${number(range.first + 1)}–${number(range.last + 1)} מתוך ${number(filtered.length)}`
+                  : rows.length
+                    ? `שורות ${number(offset + range.first + 1)}–${number(offset + range.last + 1)} מתוך ${number(total)}`
                     : "אין תוצאות"}
               </span>
-              <span className="guide__word">
-                {status === "ready" && lastRow && range.last !== range.first
-                  ? textOf({ key: guideKey }, lastRow)
-                  : " "}
-              </span>
+              <span className="guide__word">{status !== "loading" && range.last !== range.first && guide(lastRow)}</span>
             </div>
-            <table className="table" data-enter={entering || undefined}>
+            <table className="table" data-enter={entering || undefined} aria-busy={status === "refreshing" || undefined}>
               <thead>
                 <tr>
-                  {columns.map((col) => (
-                    <th
-                      key={col.key}
-                      scope="col"
-                      className={col.hideSm ? "hide-sm" : undefined}
-                      aria-sort={sort.key === col.key ? (sort.dir === 1 ? "ascending" : "descending") : undefined}
-                    >
-                      {col.sortable === false ? (
-                        <span className="th-plain">{col.label}</span>
-                      ) : (
-                        <button type="button" className="th-btn" onClick={() => toggleSort(col.key)}>
-                          {col.label}
-                          {sort.key === col.key ? sort.dir === 1 ? <ArrowDown /> : <ArrowUp /> : <ArrowUpDown />}
-                        </button>
-                      )}
-                    </th>
-                  ))}
+                  {columns.map((col) => {
+                    const key = col.sortKey || col.key;
+                    const active = col.sortable !== false && sort?.key === key;
+                    return (
+                      <th
+                        key={col.key}
+                        scope="col"
+                        className={col.hideSm ? "hide-sm" : undefined}
+                        aria-sort={active ? (sort.dir === 1 ? "ascending" : "descending") : undefined}
+                      >
+                        {col.sortable === false ? (
+                          <span className="th-plain">{col.label}</span>
+                        ) : (
+                          <button type="button" className="th-btn" onClick={() => setSort(key)}>
+                            {col.label}
+                            {active ? sort.dir === 1 ? <ArrowDown /> : <ArrowUp /> : <ArrowUpDown />}
+                          </button>
+                        )}
+                      </th>
+                    );
+                  })}
                 </tr>
               </thead>
               <tbody>
@@ -232,7 +181,7 @@ export default function DataTable({
                         ))}
                       </tr>
                     ))
-                  : filtered.map((row, i) => (
+                  : rows.map((row, i) => (
                       <tr
                         key={row._id || i}
                         style={{ "--i": i }}
@@ -260,16 +209,27 @@ export default function DataTable({
                     ))}
               </tbody>
             </table>
-            {status === "ready" && filtered.length === 0 && (
-              query ? (
-                <Empty title="לא נמצאו תוצאות" text={`אין רשומות שמתאימות ל"${query}". נסה מילה אחרת או נקה את החיפוש.`} action={<button type="button" className="btn btn--ghost" onClick={() => setQuery("")}>ניקוי חיפוש</button>} />
+            {status !== "loading" && rows.length === 0 &&
+              (query ? (
+                <Empty
+                  title="לא נמצאו תוצאות"
+                  text={`אין רשומות שמתאימות ל"${query}". נסו מילה אחרת או נקו את החיפוש.`}
+                  action={
+                    <button type="button" className="btn btn--ghost" onClick={() => setQuery("")}>
+                      ניקוי חיפוש
+                    </button>
+                  }
+                />
               ) : (
                 empty
-              )
-            )}
+              ))}
           </>
         )}
       </div>
+
+      {status !== "error" && (
+        <Pager page={page} pages={pages} total={total} limit={limit} onPage={setPage} onLimit={setLimit} busy={status === "refreshing"} />
+      )}
     </div>
   );
 }

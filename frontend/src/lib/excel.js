@@ -1,4 +1,5 @@
 import { formatShortDate } from "./format";
+import { api } from "./api";
 
 // xlsx is ~400KB; load it only on the screens that read or export a sheet.
 const loadXlsx = () => import("xlsx");
@@ -59,4 +60,21 @@ export async function exportSheet(rows, columns, fileName) {
   workbook.Workbook = { Views: [{ RTL: true }] };
   XLSX.utils.book_append_sheet(workbook, sheet, "גיליון1");
   XLSX.writeFile(workbook, `${fileName} ${formatShortDate()}.xlsx`);
+}
+
+// Export everything that matches the current search/filter, fetched from the
+// server in pages of 500 so no single request is huge.
+export async function exportFromApi(path, params, columns, fileName, onProgress) {
+  const rows = [];
+  let page = 1;
+  let pages = 1;
+  do {
+    const { data } = await api.get(path, { params: { ...params, page, limit: 500 } });
+    rows.push(...data.items);
+    pages = data.pages;
+    onProgress?.(rows.length, data.total);
+    page += 1;
+  } while (page <= pages);
+  await exportSheet(rows, columns, fileName);
+  return rows.length;
 }

@@ -1,11 +1,11 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { History, Loader2, Search } from "lucide-react";
+import { useMemo, useState } from "react";
+import { History, Search } from "lucide-react";
 import { Page } from "../components/Page";
 import Empty from "../components/Empty";
-import { api, errorMessage } from "../lib/api";
-import { dayKey, dayLabel, formatTime, normalize } from "../lib/format";
+import { usePagedList } from "../lib/usePagedList";
+import Pager from "../components/Pager";
+import { dayKey, dayLabel, formatTime } from "../lib/format";
 
-const PAGE = 50;
 const KINDS = [
   { id: "all", label: "הכל" },
   { id: "green", label: "הוספות" },
@@ -15,53 +15,22 @@ const KINDS = [
 ];
 
 export default function ActivityScreen() {
-  const [items, setItems] = useState([]);
-  const [total, setTotal] = useState(0);
-  const [status, setStatus] = useState("loading");
-  const [error, setError] = useState("");
-  const [loadingMore, setLoadingMore] = useState(false);
   const [kind, setKind] = useState("all");
-  const [q, setQ] = useState("");
-
-  const load = useCallback(async (skip = 0) => {
-    const { data, headers } = await api.get("/users-activity", { params: { limit: PAGE, skip } });
-    setTotal(Number(headers["x-total-count"]) || 0);
-    setItems((prev) => (skip ? [...prev, ...data] : data));
-  }, []);
-
-  useEffect(() => {
-    load()
-      .then(() => setStatus("ready"))
-      .catch((err) => {
-        setError(errorMessage(err));
-        setStatus("error");
-      });
-  }, [load]);
-
-  const more = async () => {
-    setLoadingMore(true);
-    try {
-      await load(items.length);
-    } finally {
-      setLoadingMore(false);
-    }
-  };
+  // Search and type filter run in the database; only one page is loaded.
+  const list = usePagedList("/users-activity", {
+    initialSort: { key: "createdAt", dir: -1 },
+    params: { color: kind === "all" ? undefined : kind },
+  });
 
   const groups = useMemo(() => {
-    const query = normalize(q);
-    const list = items.filter(
-      (i) =>
-        (kind === "all" || i.color === kind) &&
-        (!query || normalize(`${i.title} ${i.description} ${i.createdBy}`).includes(query))
-    );
     const map = new Map();
-    for (const item of list) {
+    for (const item of list.items) {
       const key = dayKey(item.createdAt);
       if (!map.has(key)) map.set(key, { label: dayLabel(item.createdAt), items: [] });
       map.get(key).items.push(item);
     }
     return [...map.values()];
-  }, [items, kind, q]);
+  }, [list.items]);
 
   return (
     <Page title="היסטוריית פעולות" description="כל שינוי במאגרים וכל שליחה נרשמים כאן אוטומטית.">
@@ -70,7 +39,7 @@ export default function ActivityScreen() {
           <label className="search">
             <span className="visually-hidden">חיפוש בהיסטוריה</span>
             <Search aria-hidden="true" />
-            <input type="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder="חיפוש לפי שם, פעולה או משתמש" />
+            <input type="search" value={list.query} onChange={(e) => list.setQuery(e.target.value)} placeholder="חיפוש לפי שם, פעולה או משתמש" />
           </label>
           <div className="chips" role="group" aria-label="סוג פעולה">
             {KINDS.map((k) => (
@@ -82,7 +51,7 @@ export default function ActivityScreen() {
           </div>
         </div>
 
-        {status === "loading" && (
+        {list.status === "loading" && (
           <ul className="feed" aria-hidden="true">
             {Array.from({ length: 8 }, (_, i) => (
               <li key={i}>
@@ -95,11 +64,12 @@ export default function ActivityScreen() {
             ))}
           </ul>
         )}
-        {status === "error" && <Empty tone="error" title="לא הצלחנו לטעון את ההיסטוריה" text={error} />}
-        {status === "ready" && groups.length === 0 && (
-          <Empty icon={History} title="אין פעולות להצגה" text={q || kind !== "all" ? "נסו סינון אחר." : "פעולות יופיעו כאן ברגע שמישהו ישנה משהו במערכת."} />
+        {list.status === "error" && <Empty tone="error" title="לא הצלחנו לטעון את ההיסטוריה" text={list.error} />}
+        {(list.status === "ready" || list.status === "refreshing") && groups.length === 0 && (
+          <Empty icon={History} title="אין פעולות להצגה" text={list.query || kind !== "all" ? "נסו סינון אחר." : "פעולות יופיעו כאן ברגע שמישהו ישנה משהו במערכת."} />
         )}
-        {status === "ready" &&
+        <div aria-busy={list.status === "refreshing" || undefined} className="activity-page">
+        {(list.status === "ready" || list.status === "refreshing") &&
           groups.map((g) => (
             <section key={g.label}>
               <h2 className="day-band">{g.label}</h2>
@@ -121,16 +91,17 @@ export default function ActivityScreen() {
             </section>
           ))}
 
-        {status === "ready" && items.length < total && (
-          <div className="table-foot">
-            <span>
-              מוצגות {items.length} מתוך {total} פעולות
-            </span>
-            <button type="button" className="btn btn--ghost btn--sm" onClick={more} disabled={loadingMore}>
-              {loadingMore && <Loader2 className="spin" />}
-              טעינת פעולות קודמות
-            </button>
-          </div>
+        </div>
+        {list.status !== "loading" && list.status !== "error" && (
+          <Pager
+            page={list.page}
+            pages={list.pages}
+            total={list.total}
+            limit={list.limit}
+            onPage={list.setPage}
+            onLimit={list.setLimit}
+            busy={list.status === "refreshing"}
+          />
         )}
       </div>
     </Page>

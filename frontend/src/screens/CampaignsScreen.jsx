@@ -1,12 +1,12 @@
-import { Building2, Download, Plus } from "lucide-react";
+import { Building2, Plus } from "lucide-react";
 import { Page, Ribbon } from "../components/Page";
 import DataTable from "../components/DataTable";
 import RecordSheet, { required } from "../components/RecordSheet";
 import { TextInput } from "../components/Field";
 import Empty from "../components/Empty";
-import { useResource } from "../lib/useResource";
+import { usePagedList, useJson } from "../lib/usePagedList";
+import ExportButton from "../components/ExportButton";
 import { useSheetState } from "../lib/useSheetState";
-import { exportSheet } from "../lib/excel";
 import { formatDate } from "../lib/format";
 
 const COLUMNS = [
@@ -18,7 +18,13 @@ const COLUMNS = [
 const ENTITY = { one: "קמפיין", the: "הקמפיין", base: "/campaigns", create: "/campaigns/add" };
 
 export default function CampaignsScreen() {
-  const { items, status, error, reload, upsert, remove, entering } = useResource("/campaigns");
+  const list = usePagedList("/campaigns", { initialSort: { key: "name", dir: 1 } });
+  // total of the whole collection (not of the current search)
+  const [all, reloadAll] = useJson("/campaigns?limit=1");
+  const refresh = () => {
+    list.reload();
+    reloadAll();
+  };
   const sheet = useSheetState();
 
   return (
@@ -27,15 +33,13 @@ export default function CampaignsScreen() {
       description="לידים שמגיעים מקמפיין או מוועד לא משויכים לסוכן, ומסוננים מדוח מנהלי הפיתוח."
       actions={
         <>
-          <button
-            type="button"
-            className="btn btn--ghost"
-            disabled={!items.length}
-            onClick={() => exportSheet(items, [{ key: "name", label: "שם" }, { key: "createdBy", label: "נוסף על ידי" }], "רשימת קמפיינים וועדים")}
-          >
-            <Download />
-            ייצוא לאקסל
-          </button>
+          <ExportButton
+            path="/campaigns"
+            params={{ q: list.query || undefined }}
+            columns={[{ key: "name", label: "שם" }, { key: "createdBy", label: "נוסף על ידי" }]}
+            fileName="רשימת קמפיינים וועדים"
+            disabled={!list.total}
+          />
           <button type="button" className="btn btn--primary" onClick={sheet.openNew}>
             <Plus />
             קמפיין או ועד
@@ -43,14 +47,10 @@ export default function CampaignsScreen() {
         </>
       }
     >
-      <Ribbon panes={[{ label: "קמפיינים וועדים במאגר", value: items.length }]} loading={status === "loading"} />
+      <Ribbon panes={[{ label: "קמפיינים וועדים במאגר", value: all?.total ?? 0 }]} loading={!all} />
       <DataTable
-        rows={items}
+        list={list}
         columns={COLUMNS}
-        status={status}
-        error={error}
-        onRetry={reload}
-        entering={entering}
         searchPlaceholder="חיפוש קמפיין או ועד"
         onRowClick={sheet.openRecord}
         selectedId={sheet.selectedId}
@@ -63,8 +63,8 @@ export default function CampaignsScreen() {
         entity={ENTITY}
         initial={(c) => ({ name: c?.name || "" })}
         validate={(f) => ({ name: required(f.name, "שם") })}
-        onSaved={upsert}
-        onDeleted={remove}
+        onSaved={refresh}
+        onDeleted={refresh}
         renderFields={({ form, set, errors }) => (
           <TextInput
             label="שם"

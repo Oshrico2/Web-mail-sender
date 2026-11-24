@@ -1,24 +1,25 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { Download, Plus, Users } from "lucide-react";
+import { Plus, Users } from "lucide-react";
 import { Page, Ribbon } from "../components/Page";
 import DataTable, { YesNo } from "../components/DataTable";
 import RecordSheet, { emailError, required } from "../components/RecordSheet";
 import { Switch, TextInput } from "../components/Field";
 import Empty from "../components/Empty";
-import { useResource } from "../lib/useResource";
+import { usePagedList, useJson } from "../lib/usePagedList";
+import ExportButton from "../components/ExportButton";
 import { useSheetState } from "../lib/useSheetState";
-import { exportSheet } from "../lib/excel";
 
 const getsStatus = (a) => a.customerStatus !== false;
 
+// Groups are evaluated by the server (GET /api/agents?filter=…, /agents/stats).
 const FILTERS = [
-  { id: "all", label: "כל הסוכנים", test: () => true },
-  { id: "daily", label: "סטטוס יומי", test: (a) => getsStatus(a) && !a.weeklyStatus },
-  { id: "weekly", label: "סטטוס שבועי", test: (a) => getsStatus(a) && a.weeklyStatus },
-  { id: "none", label: "לא מקבלים סטטוס", test: (a) => !getsStatus(a), tone: "warn" },
-  { id: "mailing", label: "ברשימת תפוצה", test: (a) => a.confirmedMailing !== false },
-  { id: "noMailing", label: "הוסרו מתפוצה", test: (a) => a.confirmedMailing === false, tone: "muted" },
+  { id: "all", label: "כל הסוכנים" },
+  { id: "daily", label: "סטטוס יומי" },
+  { id: "weekly", label: "סטטוס שבועי" },
+  { id: "none", label: "לא מקבלים סטטוס", tone: "warn" },
+  { id: "mailing", label: "ברשימת תפוצה" },
+  { id: "noMailing", label: "הוסרו מתפוצה", tone: "muted" },
 ];
 
 const statusTag = (a) =>
@@ -54,14 +55,13 @@ const COLUMNS = [
     key: "status",
     label: "סטטוס לקוחות",
     hideSm: true,
-    sortValue: (a) => (!getsStatus(a) ? "ג" : a.weeklyStatus ? "ב" : "א"),
+    sortable: false,
     render: statusTag,
   },
   {
     key: "confirmedMailing",
     label: "תפוצה",
     hideSm: true,
-    sortValue: (a) => a.confirmedMailing !== false,
     render: (a) => <YesNo value={a.confirmedMailing !== false} yes="מקבל דיוור" no="הוסר מדיוור" />,
   },
 ];
@@ -100,7 +100,7 @@ const validate = (f) => ({
 });
 
 export default function AgentsScreen() {
-  const { items, status, error, reload, upsert, remove, entering } = useResource("/agents");
+  const [stats, reloadStats] = useJson("/agents/stats");
   const sheet = useSheetState();
   const [params, setParams] = useSearchParams();
   const [filter, setFilterState] = useState(params.get("filter") || "all");
@@ -114,25 +114,25 @@ export default function AgentsScreen() {
     setParams(p, { replace: true });
   };
 
-  const panes = useMemo(
-    () => FILTERS.map((f) => ({ id: f.id, label: f.label, tone: f.tone, value: items.filter(f.test).length })),
-    [items]
-  );
+  const list = usePagedList("/agents", { initialSort: { key: "name", dir: 1 }, params: { filter } });
+  const panes = FILTERS.map((f) => ({ id: f.id, label: f.label, tone: f.tone, value: stats?.[f.id] ?? 0 }));
+  const refresh = () => {
+    list.reload();
+    reloadStats();
+  };
 
   return (
     <Page
       title="סוכנים"
       actions={
         <>
-          <button
-            type="button"
-            className="btn btn--ghost"
-            disabled={!items.length}
-            onClick={() => exportSheet(items, EXPORT, "רשימת סוכנים")}
-          >
-            <Download />
-            ייצוא לאקסל
-          </button>
+          <ExportButton
+            path="/agents"
+            params={{ filter, q: list.query || undefined, sort: "name" }}
+            columns={EXPORT}
+            fileName="רשימת סוכנים"
+            disabled={!list.total}
+          />
           <button type="button" className="btn btn--primary" onClick={sheet.openNew}>
             <Plus />
             סוכן חדש
@@ -140,20 +140,11 @@ export default function AgentsScreen() {
         </>
       }
     >
-      <Ribbon panes={panes} active={filter} onSelect={setFilter} loading={status === "loading"} />
+      <Ribbon panes={panes} active={filter} onSelect={setFilter} loading={!stats} />
 
       <DataTable
-        rows={items}
+        list={list}
         columns={COLUMNS}
-        status={status}
-        error={error}
-        onRetry={reload}
-        entering={entering}
-        filters={FILTERS}
-        chips={false}
-        filter={filter}
-        onFilterChange={setFilter}
-        searchKeys={["name", "agentNumber", "email", "additionalMail", "firstName", "lastName"]}
         searchPlaceholder="חיפוש לפי שם, מספר סוכן או מייל"
         onRowClick={sheet.openRecord}
         selectedId={sheet.selectedId}
@@ -180,8 +171,8 @@ export default function AgentsScreen() {
         entity={ENTITY}
         initial={initial}
         validate={validate}
-        onSaved={upsert}
-        onDeleted={remove}
+        onSaved={refresh}
+        onDeleted={refresh}
         deleteText="הסוכן יוסר מהמאגר ולא יקבל יותר סטטוסים או דיוור. הפעולה תירשם בהיסטוריה."
         renderFields={({ form, set, errors }) => (
           <>

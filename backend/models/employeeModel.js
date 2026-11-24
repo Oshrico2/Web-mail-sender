@@ -33,6 +33,8 @@ const employeeSchema = mongoose.Schema({
   },
 });
 
+employeeSchema.index({ subject: 1, name: 1 });
+
 const Employee = mongoose.model("Employee", employeeSchema);
 
 export default Employee;

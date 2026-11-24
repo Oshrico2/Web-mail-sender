@@ -1,22 +1,37 @@
 import Employee from "../models/employeeModel.js";
 import { logActivity } from "../utils/activity.js";
 import { asyncHandler, escapeRegex, HttpError } from "../utils/http.js";
+import { and, paginate, readListParams } from "../utils/paginate.js";
 
 const like = (value) => ({ $regex: escapeRegex(value), $options: "i" });
+const LIST_OPTIONS = { sortable: ["name", "subject", "email"], defaultSort: "name", searchFields: ["name", "subject", "email"] };
 
-// @route   GET /api/employees
+// @route   GET /api/employees?page=&limit=&sort=&q=&subject=
 const getAllEmployees = asyncHandler(async (req, res) => {
-  res.json(await Employee.find({}).sort({ name: 1 }));
+  const params = readListParams(req, LIST_OPTIONS);
+  const subject = req.query.subject ? { subject: String(req.query.subject) } : null;
+  res.json(await paginate(Employee, and(params.search, subject), params));
 });
 
-// @route   GET /api/employees/search/:name
+// @desc    Distinct subjects with their employee counts
+// @route   GET /api/employees/subjects
+const getEmployeeSubjects = asyncHandler(async (req, res) => {
+  const rows = await Employee.aggregate([
+    { $group: { _id: "$subject", count: { $sum: 1 } } },
+    { $sort: { _id: 1 } },
+  ]).collation({ locale: "he" });
+  const total = rows.reduce((s, r) => s + r.count, 0);
+  res.json({ total, subjects: rows.filter((r) => r._id).map((r) => ({ subject: r._id, count: r.count })) });
+});
+
+// @route   GET /api/employees/search/:name  (kept; paginated)
 const getEmployeeByName = asyncHandler(async (req, res) => {
-  res.json(await Employee.find({ name: like(req.params.name) }).sort({ name: 1 }));
+  res.json(await paginate(Employee, { name: like(req.params.name) }, readListParams(req, LIST_OPTIONS)));
 });
 
-// @route   GET /api/employees/search-by-subject/:subject
+// @route   GET /api/employees/search-by-subject/:subject  (kept; paginated)
 const getEmployeesBySubject = asyncHandler(async (req, res) => {
-  res.json(await Employee.find({ subject: like(req.params.subject) }).sort({ name: 1 }));
+  res.json(await paginate(Employee, { subject: like(req.params.subject) }, readListParams(req, LIST_OPTIONS)));
 });
 
 // @route   POST /api/employees/add
@@ -84,4 +99,5 @@ export {
   updateEmployeeById,
   deleteEmployeeById,
   getEmployeesBySubject,
+  getEmployeeSubjects,
 };

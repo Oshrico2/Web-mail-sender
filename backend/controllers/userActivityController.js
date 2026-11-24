@@ -1,21 +1,21 @@
 import UserActivity from "../models/userActivityModel.js";
 import { logActivity } from "../utils/activity.js";
 import { asyncHandler, HttpError } from "../utils/http.js";
+import { and, paginate, readListParams } from "../utils/paginate.js";
 
 const COLORS = new Set(["green", "orange", "red", "blue"]);
 
 // @desc    Activity records, newest first, paginated
-// @route   GET /api/users-activity?limit=50&skip=0
+// @route   GET /api/users-activity?page=&limit=&q=&color=
 // @access  Admin
 const getAllUserActivities = asyncHandler(async (req, res) => {
-  const limit = Math.min(Math.max(parseInt(req.query.limit, 10) || 50, 1), 200);
-  const skip = Math.max(parseInt(req.query.skip, 10) || 0, 0);
-  const [items, total] = await Promise.all([
-    UserActivity.find({}).sort({ createdAt: -1 }).skip(skip).limit(limit),
-    UserActivity.estimatedDocumentCount(),
-  ]);
-  res.set("X-Total-Count", String(total));
-  res.json(items);
+  const params = readListParams(req, {
+    sortable: ["createdAt"],
+    defaultSort: "-createdAt",
+    searchFields: ["title", "entityName", "action", "createdBy"],
+  });
+  const color = COLORS.has(req.query.color) ? { color: req.query.color } : null;
+  res.json(await paginate(UserActivity, and(params.search, color), params));
 });
 
 // @desc    Add an activity record (kept for compatibility; the server now

@@ -66,6 +66,11 @@ const agentSchema = mongoose.Schema({
   },
 });
 
+agentSchema.index({ customerStatus: 1, weeklyStatus: 1 });
+agentSchema.index({ confirmedMailing: 1 });
+agentSchema.index({ lastName: 1 });
+agentSchema.index({ createdAt: -1 });
+
 const Agent = mongoose.model("Agent", agentSchema);
 
 export default Agent;

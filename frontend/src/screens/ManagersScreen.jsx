@@ -1,15 +1,14 @@
-import { useEffect, useMemo, useState } from "react";
-import { Compass, Download, Plus, Search } from "lucide-react";
+import { Compass, Plus, Search } from "lucide-react";
 import { Page, Ribbon } from "../components/Page";
 import DataTable from "../components/DataTable";
 import RecordSheet, { emailError, required } from "../components/RecordSheet";
 import { TextInput } from "../components/Field";
 import Empty from "../components/Empty";
-import { useResource } from "../lib/useResource";
+import { usePagedList, useJson } from "../lib/usePagedList";
+import ExportButton from "../components/ExportButton";
+import Pager from "../components/Pager";
 import { useSheetState } from "../lib/useSheetState";
-import { exportSheet } from "../lib/excel";
-import { api } from "../lib/api";
-import { collator, normalize } from "../lib/format";
+import { number } from "../lib/format";
 
 export const HEBREW_LETTERS = "אבגדהוזחטיכלמנסעפצקרשת".split("");
 
@@ -22,7 +21,7 @@ const COLUMNS = [
   {
     key: "lettersOfLastNamesUnderCare",
     label: "שמות משפחה באחריות",
-    sortValue: (m) => sortedLetters(m.lettersOfLastNamesUnderCare)[0] || "ת",
+    sortable: false,
     render: (m) => (
       <span className="letters">
         {sortedLetters(m.lettersOfLastNamesUnderCare).map((l) => (
@@ -38,60 +37,55 @@ const COLUMNS = [
 const ENTITY = { one: "מנהל", the: "המנהל", base: "/business-managers", create: "/business-managers/add" };
 
 function AssociatedAgents({ letters }) {
-  const [agents, setAgents] = useState(null);
-  const [q, setQ] = useState("");
-
-  useEffect(() => {
-    let alive = true;
-    api.get("/agents").then(({ data }) => alive && setAgents(data)).catch(() => alive && setAgents([]));
-    return () => {
-      alive = false;
-    };
-  }, []);
-
-  const list = useMemo(() => {
-    if (!agents) return [];
-    return agents
-      .filter((a) => a.lastName && letters.includes(a.lastName.trim().charAt(0)))
-      .filter((a) => !q || normalize(a.name).includes(normalize(q)))
-      .sort((a, b) => collator.compare(a.name, b.name));
-  }, [agents, letters, q]);
+  const list = usePagedList("/agents", {
+    initialSort: { key: "name", dir: 1 },
+    params: { letters: letters.join("") },
+    pageSize: 25,
+  });
 
   return (
     <section className="panel">
       <div className="panel__head">
-        <h2 style={{ fontSize: "var(--fs-lg)" }}>סוכנים משויכים {agents && `(${list.length})`}</h2>
+        <h2 style={{ fontSize: "var(--fs-lg)" }}>
+          סוכנים משויכים {list.status !== "loading" && `(${number(list.total)})`}
+        </h2>
       </div>
       <div style={{ padding: "12px 16px" }}>
         <label className="search" style={{ maxWidth: "none" }}>
           <span className="visually-hidden">חיפוש סוכן</span>
           <Search aria-hidden="true" />
-          <input type="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder="חיפוש סוכן" />
+          <input type="search" value={list.query} onChange={(e) => list.setQuery(e.target.value)} placeholder="חיפוש סוכן" />
         </label>
       </div>
-      <ul className="feed" style={{ maxHeight: 280, overflowY: "auto" }}>
-        {!agents && <li className="cell-muted">טוען…</li>}
-        {agents && list.length === 0 && <li className="cell-muted">אין סוכנים ששם המשפחה שלהם מתחיל באותיות האלו.</li>}
-        {list.map((a) => (
+      <ul className="feed" aria-busy={list.status === "refreshing" || undefined}>
+        {list.status === "loading" && <li className="cell-muted">טוען…</li>}
+        {list.status !== "loading" && list.items.length === 0 && (
+          <li className="cell-muted">אין סוכנים ששם המשפחה שלהם מתחיל באותיות האלו.</li>
+        )}
+        {list.items.map((a) => (
           <li key={a._id} style={{ gridTemplateColumns: "1fr auto" }}>
             <b>{a.name}</b>
             <span className="cell-muted">{a.lastName}</span>
           </li>
         ))}
       </ul>
+      {list.pages > 1 && (
+        <Pager compact page={list.page} pages={list.pages} total={list.total} limit={list.limit} onPage={list.setPage} />
+      )}
     </section>
   );
 }
 
 export default function ManagersScreen() {
-  const { items, status, error, reload, upsert, remove, entering } = useResource("/business-managers");
+  const list = usePagedList("/business-managers", { initialSort: { key: "name", dir: 1 } });
   const sheet = useSheetState();
-
-  const owners = useMemo(() => {
-    const map = new Map();
-    for (const m of items) for (const l of m.lettersOfLastNamesUnderCare) map.set(l, m);
-    return map;
-  }, [items]);
+  // Letter → manager map from a small dedicated endpoint (≤22 entries).
+  const [letterData, reloadLetters] = useJson("/business-managers/letters");
+  const owners = new Map(Object.entries(letterData?.owners || {}));
+  const refresh = () => {
+    list.reload();
+    reloadLetters();
+  };
   const unassigned = HEBREW_LETTERS.filter((l) => !owners.has(l));
 
   return (
@@ -100,25 +94,17 @@ export default function ManagersScreen() {
       description="כל מנהל אחראי על הסוכנים ששם המשפחה שלהם מתחיל באותיות שלו."
       actions={
         <>
-          <button
-            type="button"
-            className="btn btn--ghost"
-            disabled={!items.length}
-            onClick={() =>
-              exportSheet(
-                items,
-                [
-                  { key: "name", label: "שם" },
-                  { key: "email", label: "דואר אלקטרוני" },
-                  { key: "lettersOfLastNamesUnderCare", label: "אותיות", exportValue: (m) => sortedLetters(m.lettersOfLastNamesUnderCare) },
-                ],
-                "רשימת מנהלי פיתוח עסקי"
-              )
-            }
-          >
-            <Download />
-            ייצוא לאקסל
-          </button>
+          <ExportButton
+            path="/business-managers"
+            params={{ q: list.query || undefined }}
+            columns={[
+              { key: "name", label: "שם" },
+              { key: "email", label: "דואר אלקטרוני" },
+              { key: "lettersOfLastNamesUnderCare", label: "אותיות", exportValue: (m) => sortedLetters(m.lettersOfLastNamesUnderCare) },
+            ]}
+            fileName="רשימת מנהלי פיתוח עסקי"
+            disabled={!list.total}
+          />
           <button type="button" className="btn btn--primary" onClick={sheet.openNew}>
             <Plus />
             מנהל חדש
@@ -127,26 +113,21 @@ export default function ManagersScreen() {
       }
     >
       <Ribbon
-        loading={status === "loading"}
+        loading={!letterData}
         panes={[
-          { label: "מנהלים", value: items.length },
+          { label: "מנהלים", value: letterData?.managers ?? 0 },
           { label: "אותיות משויכות", value: HEBREW_LETTERS.length - unassigned.length },
           { label: "אותיות ללא מנהל", value: unassigned.length, tone: unassigned.length ? "warn" : undefined },
         ]}
       />
-      {status === "ready" && unassigned.length > 0 && (
+      {letterData && unassigned.length > 0 && (
         <p className="notice notice--warn" style={{ marginBottom: 24 }}>
           סוכנים ששם המשפחה שלהם מתחיל באותיות {unassigned.join(", ")} לא ישויכו לאף מנהל בדוח.
         </p>
       )}
       <DataTable
-        rows={items}
+        list={list}
         columns={COLUMNS}
-        status={status}
-        error={error}
-        onRetry={reload}
-        entering={entering}
-        searchKeys={["name", "email", "lettersOfLastNamesUnderCare"]}
         searchPlaceholder="חיפוש מנהל או אות"
         onRowClick={sheet.openRecord}
         selectedId={sheet.selectedId}
@@ -167,8 +148,8 @@ export default function ManagersScreen() {
           email: emailError(f.email),
           lettersOfLastNamesUnderCare: f.lettersOfLastNamesUnderCare.length ? undefined : "יש לבחור לפחות אות אחת",
         })}
-        onSaved={upsert}
-        onDeleted={remove}
+        onSaved={refresh}
+        onDeleted={refresh}
         extraActions={sheet.record && <AssociatedAgents letters={sheet.record.lettersOfLastNamesUnderCare} />}
         renderFields={({ form, set, errors }) => (
           <>

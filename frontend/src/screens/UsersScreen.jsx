@@ -1,16 +1,16 @@
-import { Download, Plus, ShieldCheck } from "lucide-react";
+import { Plus, ShieldCheck } from "lucide-react";
 import { Page, Ribbon } from "../components/Page";
 import DataTable from "../components/DataTable";
 import RecordSheet, { emailError, required } from "../components/RecordSheet";
 import { Switch, TextInput } from "../components/Field";
 import Empty from "../components/Empty";
-import { useResource } from "../lib/useResource";
+import { usePagedList, useJson } from "../lib/usePagedList";
+import ExportButton from "../components/ExportButton";
 import { useSheetState } from "../lib/useSheetState";
-import { exportSheet } from "../lib/excel";
 import { useAuth } from "../lib/auth";
 
 const COLUMNS = [
-  { key: "firstName", label: "שם", className: "cell-strong", sortValue: (u) => `${u.firstName} ${u.lastName}`, render: (u) => `${u.firstName} ${u.lastName}` },
+  { key: "firstName", label: "שם", className: "cell-strong", render: (u) => `${u.firstName} ${u.lastName}` },
   { key: "username", label: "שם משתמש", render: (u) => <span className="ltr">{u.username}</span> },
   { key: "email", label: "דואר אלקטרוני", hideSm: true, render: (u) => <span className="ltr">{u.email}</span> },
   {
@@ -26,7 +26,12 @@ const MIN_PASSWORD = 6;
 
 export default function UsersScreen() {
   const { user: me } = useAuth();
-  const { items, status, error, reload, upsert, remove, entering } = useResource("/users");
+  const list = usePagedList("/users", { initialSort: { key: "firstName", dir: 1 } });
+  const [stats, reloadStats] = useJson("/users/stats");
+  const refresh = () => {
+    list.reload();
+    reloadStats();
+  };
   const sheet = useSheetState();
   const isSelf = sheet.record?._id === me?._id;
 
@@ -35,27 +40,19 @@ export default function UsersScreen() {
       title="משתמשים"
       actions={
         <>
-          <button
-            type="button"
-            className="btn btn--ghost"
-            disabled={!items.length}
-            onClick={() =>
-              exportSheet(
-                items,
-                [
-                  { key: "firstName", label: "שם פרטי" },
-                  { key: "lastName", label: "שם משפחה" },
-                  { key: "username", label: "שם משתמש" },
-                  { key: "email", label: "דואר אלקטרוני" },
-                  { key: "isAdmin", label: "מנהל מערכת" },
-                ],
-                "רשימת משתמשים"
-              )
-            }
-          >
-            <Download />
-            ייצוא לאקסל
-          </button>
+          <ExportButton
+            path="/users"
+            params={{ q: list.query || undefined }}
+            columns={[
+              { key: "firstName", label: "שם פרטי" },
+              { key: "lastName", label: "שם משפחה" },
+              { key: "username", label: "שם משתמש" },
+              { key: "email", label: "דואר אלקטרוני" },
+              { key: "isAdmin", label: "מנהל מערכת" },
+            ]}
+            fileName="רשימת משתמשים"
+            disabled={!list.total}
+          />
           <button type="button" className="btn btn--primary" onClick={sheet.openNew}>
             <Plus />
             משתמש חדש
@@ -64,21 +61,16 @@ export default function UsersScreen() {
       }
     >
       <Ribbon
-        loading={status === "loading"}
+        loading={!stats}
         panes={[
-          { label: "משתמשים", value: items.length },
-          { label: "מנהלי מערכת", value: items.filter((u) => u.isAdmin).length },
+          { label: "משתמשים", value: stats?.total ?? 0 },
+          { label: "מנהלי מערכת", value: stats?.admins ?? 0 },
         ]}
       />
       <DataTable
-        rows={items}
+        list={list}
         columns={COLUMNS}
-        status={status}
-        error={error}
-        onRetry={reload}
-        entering={entering}
         guideKey="firstName"
-        searchKeys={["firstName", "lastName", "username", "email"]}
         searchPlaceholder="חיפוש לפי שם, שם משתמש או מייל"
         onRowClick={sheet.openRecord}
         selectedId={sheet.selectedId}
@@ -112,8 +104,8 @@ export default function UsersScreen() {
           const { password, ...rest } = f;
           return password ? { ...rest, password } : rest;
         }}
-        onSaved={upsert}
-        onDeleted={remove}
+        onSaved={refresh}
+        onDeleted={refresh}
         renderFields={({ form, set, errors, isNew }) => (
           <>
             <div className="form-row">

@@ -1,6 +1,13 @@
 import BusinessManager from "../models/businessManagerModel.js";
 import { logActivity } from "../utils/activity.js";
 import { asyncHandler, HttpError } from "../utils/http.js";
+import { paginate, readListParams } from "../utils/paginate.js";
+
+const LIST_OPTIONS = {
+  sortable: ["name", "email"],
+  defaultSort: "name",
+  searchFields: ["name", "email", "lettersOfLastNamesUnderCare"],
+};
 
 // Each surname letter belongs to at most one manager. This used to be checked
 // only in the browser, so two tabs (or a direct API call) could break it.
@@ -22,9 +29,21 @@ const assertLettersFree = async (letters = [], exceptId) => {
 const uniqueLetters = (letters) =>
   Array.isArray(letters) ? [...new Set(letters.map((l) => String(l).trim()))] : letters;
 
-// @route   GET /api/business-managers
+// @route   GET /api/business-managers?page=&limit=&sort=&q=
 const getAllBusinessManagers = asyncHandler(async (req, res) => {
-  res.json(await BusinessManager.find({}).sort({ name: 1 }));
+  const params = readListParams(req, LIST_OPTIONS);
+  res.json(await paginate(BusinessManager, params.search || {}, params));
+});
+
+// @desc    Which manager owns each surname letter (small, fixed size: ≤22)
+// @route   GET /api/business-managers/letters
+const getLetterOwners = asyncHandler(async (req, res) => {
+  const managers = await BusinessManager.find({}).select("name lettersOfLastNamesUnderCare").lean();
+  const owners = {};
+  for (const m of managers) {
+    for (const letter of m.lettersOfLastNamesUnderCare) owners[letter] = { _id: m._id, name: m.name };
+  }
+  res.json({ managers: managers.length, owners });
 });
 
 // @route   POST /api/business-managers/add
@@ -99,4 +118,5 @@ export {
   getBusinessManagerById,
   updateBusinessManagerById,
   deleteBusinessManagerById,
+  getLetterOwners,
 };

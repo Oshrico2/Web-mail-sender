@@ -47,3 +47,23 @@ npm start       # node backend/server.js
 ```
 
 Vite and its React plugin are regular `dependencies` of the frontend on purpose: with `NODE_ENV=production`, `npm install` skips dev dependencies.
+
+## List API (pagination)
+
+Every list endpoint is paginated in the database. The browser only ever holds one page.
+
+```
+GET /api/agents?page=1&limit=50&sort=name&q=כהן&filter=weekly
+→ { items: [...], total: 151, page: 1, limit: 50, pages: 4 }
+```
+
+| Param | Meaning |
+| --- | --- |
+| `page` | 1-based page number |
+| `limit` | rows per page; the UI offers 25 / 50 / 100 / 200 and remembers the choice per screen; the server caps it at 500 |
+| `sort` | a whitelisted field, `-field` for descending (Hebrew collation) |
+| `q` | case-insensitive search across the module's text fields |
+
+Module filters: agents `filter=all|daily|weekly|none|mailing|noMailing` and `letters=אבג` (surname initials); employees `subject=…`; activity `color=green|orange|red|blue`.
+
+Counts without fetching documents: `GET /api/agents/stats`, `/api/users/stats`, `/api/employees/subjects`, `/api/business-managers/letters`. Excel export walks the same endpoint in pages of 500.

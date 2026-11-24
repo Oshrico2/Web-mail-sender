@@ -1,14 +1,13 @@
-import { useMemo, useState } from "react";
-import { Briefcase, Download, Plus } from "lucide-react";
+import { useState } from "react";
+import { Briefcase, Plus } from "lucide-react";
 import { Page, Ribbon } from "../components/Page";
 import DataTable from "../components/DataTable";
 import RecordSheet, { emailError, required } from "../components/RecordSheet";
 import { TextInput } from "../components/Field";
 import Empty from "../components/Empty";
-import { useResource } from "../lib/useResource";
+import { usePagedList, useJson } from "../lib/usePagedList";
+import ExportButton from "../components/ExportButton";
 import { useSheetState } from "../lib/useSheetState";
-import { exportSheet } from "../lib/excel";
-import { collator } from "../lib/format";
 
 const COLUMNS = [
   { key: "name", label: "שם", className: "cell-strong" },
@@ -29,19 +28,24 @@ const EXPORT = [
 const ENTITY = { one: "עובד", the: "העובד", base: "/employees", create: "/employees/add" };
 
 export default function EmployeesScreen() {
-  const { items, status, error, reload, upsert, remove, entering } = useResource("/employees");
-  const sheet = useSheetState();
   const [filter, setFilter] = useState("all");
-
-  // Subjects become filters, so “who handles pension?” is one click.
-  const subjects = useMemo(
-    () => [...new Set(items.map((e) => e.subject).filter(Boolean))].sort(collator.compare),
-    [items]
-  );
-  const filters = useMemo(
-    () => [{ id: "all", label: "הכל", test: () => true }, ...subjects.map((s) => ({ id: s, label: s, test: (e) => e.subject === s }))],
-    [subjects]
-  );
+  const list = usePagedList("/employees", {
+    initialSort: { key: "name", dir: 1 },
+    params: { subject: filter === "all" ? undefined : filter },
+  });
+  const sheet = useSheetState();
+  // Subjects and their counts come from the server, not from a full download.
+  const [subjectData, reloadSubjects] = useJson("/employees/subjects");
+  const subjects = (subjectData?.subjects || []).map((s) => s.subject);
+  const filters = [{ id: "all", label: "הכל" }, ...subjects.map((s) => ({ id: s, label: s }))];
+  const counts = {
+    all: subjectData?.total,
+    ...Object.fromEntries((subjectData?.subjects || []).map((s) => [s.subject, s.count])),
+  };
+  const refresh = () => {
+    list.reload();
+    reloadSubjects();
+  };
 
   return (
     <Page
@@ -49,10 +53,13 @@ export default function EmployeesScreen() {
       description="התחום של כל מטפל נכנס לעמודת “תחום” בסטטוס שהסוכנים מקבלים."
       actions={
         <>
-          <button type="button" className="btn btn--ghost" disabled={!items.length} onClick={() => exportSheet(items, EXPORT, "רשימת עובדים")}>
-            <Download />
-            ייצוא לאקסל
-          </button>
+          <ExportButton
+            path="/employees"
+            params={{ q: list.query || undefined, subject: filter === "all" ? undefined : filter }}
+            columns={EXPORT}
+            fileName="רשימת עובדים"
+            disabled={!list.total}
+          />
           <button type="button" className="btn btn--primary" onClick={sheet.openNew}>
             <Plus />
             עובד חדש
@@ -62,22 +69,18 @@ export default function EmployeesScreen() {
     >
       <Ribbon
         panes={[
-          { label: "עובדים", value: items.length },
+          { label: "עובדים", value: subjectData?.total ?? 0 },
           { label: "תחומים", value: subjects.length },
         ]}
-        loading={status === "loading"}
+        loading={!subjectData}
       />
       <DataTable
-        rows={items}
+        list={list}
         columns={COLUMNS}
-        status={status}
-        error={error}
-        onRetry={reload}
-        entering={entering}
         filters={filters}
+        counts={counts}
         filter={filter}
         onFilterChange={setFilter}
-        searchKeys={["name", "subject", "email"]}
         searchPlaceholder="חיפוש לפי שם או תחום"
         onRowClick={sheet.openRecord}
         selectedId={sheet.selectedId}
@@ -94,8 +97,8 @@ export default function EmployeesScreen() {
           subject: required(f.subject, "תחום"),
           email: emailError(f.email, { optional: true }),
         })}
-        onSaved={upsert}
-        onDeleted={remove}
+        onSaved={refresh}
+        onDeleted={refresh}
         renderFields={({ form, set, errors }) => (
           <>
             <TextInput

@@ -1,19 +1,21 @@
 import Campaign from "../models/campaignModel.js";
 import { logActivity } from "../utils/activity.js";
-import { asyncHandler, escapeRegex, HttpError } from "../utils/http.js";
+import { asyncHandler, HttpError } from "../utils/http.js";
+import { paginate, readListParams } from "../utils/paginate.js";
 
-// @route   GET /api/campaigns
+const LIST_OPTIONS = { sortable: ["name", "createdBy", "createdAt"], defaultSort: "name", searchFields: ["name"] };
+
+// @route   GET /api/campaigns?page=&limit=&sort=&q=
 const getAllCampaigns = asyncHandler(async (req, res) => {
-  res.json(await Campaign.find({}).sort({ name: 1 }));
+  const params = readListParams(req, LIST_OPTIONS);
+  res.json(await paginate(Campaign, params.search || {}, params));
 });
 
-// @route   GET /api/campaigns/search/:name
+// @route   GET /api/campaigns/search/:name  (kept; same as ?q=)
 const getCampaignByName = asyncHandler(async (req, res) => {
-  res.json(
-    await Campaign.find({
-      name: { $regex: escapeRegex(req.params.name), $options: "i" },
-    }).sort({ name: 1 })
-  );
+  req.query.q = req.params.name;
+  const params = readListParams(req, LIST_OPTIONS);
+  res.json(await paginate(Campaign, params.search || {}, params));
 });
 
 // @route   POST /api/campaigns/add

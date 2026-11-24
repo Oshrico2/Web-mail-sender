@@ -6,12 +6,14 @@ import {
   updateUserById,
   deleteUserById,
   searchUserByName,
+  getUserStats,
 } from "../controllers/userController.js";
 
 const router = express.Router();
 
 router.route('/search/:name').get(searchUserByName);
 router.route("/").get(getAllUsers);
+router.route("/stats").get(getUserStats);
 router.route("/add").post(addUser);
 router
   .route("/:id")

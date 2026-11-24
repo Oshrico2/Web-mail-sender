@@ -1,7 +1,7 @@
 import express from "express";
 import multer from "multer";
 import nodemailer from "nodemailer";
-import { fetchAgents } from "../utils/scripts.js";
+import Agent from "../models/agentModel.js";
 import { logActivity } from "../utils/activity.js";
 import { asyncHandler, HttpError, isEmail } from "../utils/http.js";
 
@@ -33,11 +33,9 @@ const uniqueEmails = (list) => {
 router.get(
   "/recipients",
   asyncHandler(async (req, res) => {
-    const agents = await fetchAgents();
-    const emails = uniqueEmails(
-      agents.filter((a) => a.confirmedMailing !== false).map((a) => a.email)
-    );
-    res.json({ count: emails.length });
+    // distinct() returns only the addresses, not whole agent documents.
+    const emails = await Agent.distinct("email", { confirmedMailing: { $ne: false } });
+    res.json({ count: uniqueEmails(emails).length });
   })
 );
 
@@ -62,9 +60,8 @@ router.post(
       if (!isEmail(testTo)) throw new HttpError(400, "כתובת הבדיקה אינה תקינה");
       recipients = [testTo];
     } else {
-      const agents = await fetchAgents();
       recipients = uniqueEmails(
-        agents.filter((a) => a.confirmedMailing !== false).map((a) => a.email)
+        await Agent.distinct("email", { confirmedMailing: { $ne: false } })
       );
     }
 
