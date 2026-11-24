@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 const campaignSchema = mongoose.Schema({
   name: {
     type: String,
+    trim: true,
     required: true,
     unique: true,
   },

@@ -128,3 +128,15 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+# Editors / OS
+.DS_Store
+.idea/
+
+# Frontend build output (built on Render)
+frontend/build
+
+# Impeccable working files (decision sketches, review captures)
+.impeccable/mocks/
+.impeccable/review/
+.impeccable/decision-payload.json
+.impeccable/questions/

@@ -1,0 +1,90 @@
+/* White City Plaster — Talpiot Family Office
+   Lime-white plaster work areas, a charcoal stair core, gold as the sun. */
+:root {
+  /* plaster */
+  --plaster: #f4f5f2;
+  --plaster-2: #eceee9;
+  --plaster-3: #e3e6e0;
+  --panel: #ffffff;
+  --line: #dadfd6;
+  --line-soft: #e9ebe6;
+
+  /* ink */
+  --ink: #2e3033;
+  --ink-2: #484c50;
+  --muted: #61665f;
+  --faint: #8a8e88;
+
+  /* stair core (rail) */
+  --core: #2e3033;
+  --core-2: #383b3f;
+  --core-3: #45484c;
+  --core-ink: #e4e6e1;
+  --core-muted: #a3a79f;
+
+  /* sun */
+  --gold: #c99a4b;
+  --gold-hi: #e9c77a;
+  --gold-deep: #7f5a1f;
+  --gold-wash: #fbf5e9;
+  --gold-wash-2: #f4e7cc;
+  --sun: linear-gradient(180deg, var(--gold-hi), var(--gold));
+
+  /* balcony shadow blue-grey: secondary data, info */
+  --shade: #8fa3ae;
+  --shade-wash: #e8eef1;
+  --shade-ink: #3f5966;
+
+  /* states */
+  --ok: #3f7350;
+  --ok-wash: #e3efe6;
+  --warn: #b4532a;
+  --warn-wash: #f7e5dc;
+  --warn-ink: #8f3d1b;
+
+  /* type */
+  --font-ui: "Assistant", "Segoe UI", "Arial Hebrew", system-ui, sans-serif;
+  --font-display: "Rubik", "Assistant", system-ui, sans-serif;
+  --fs-xs: 0.8125rem;  /* 13 */
+  --fs-sm: 0.875rem;   /* 14 */
+  --fs-md: 0.9375rem;  /* 15 */
+  --fs-lg: 1.0625rem;  /* 17 */
+  --fs-xl: 1.25rem;    /* 20 */
+  --fs-2xl: 1.5rem;    /* 24 */
+  --fs-3xl: 2rem;      /* 32 */
+  --fs-4xl: 2.75rem;   /* 44 */
+
+  /* space (4px base) */
+  --s1: 4px;
+  --s2: 8px;
+  --s3: 12px;
+  --s4: 16px;
+  --s5: 20px;
+  --s6: 24px;
+  --s8: 32px;
+  --s10: 40px;
+  --s12: 48px;
+
+  /* shape */
+  --r-sm: 8px;
+  --r-md: 10px;
+  --r-lg: 14px;
+  --r-pill: 999px;
+
+  /* depth: soft sun shadows, always offset downward */
+  --shadow-ledge: 0 10px 18px -12px rgb(46 48 51 / 0.22);
+  --shadow-sm: 0 1px 2px rgb(46 48 51 / 0.06), 0 2px 6px rgb(46 48 51 / 0.04);
+  --shadow-md: 0 6px 16px -4px rgb(46 48 51 / 0.12), 0 2px 4px rgb(46 48 51 / 0.05);
+  --shadow-lg: 0 24px 48px -12px rgb(30 32 34 / 0.28), 0 8px 16px -8px rgb(30 32 34 / 0.12);
+
+  /* motion */
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+  --t-press: 120ms;
+  --t-fast: 150ms;
+  --t-base: 200ms;
+  --t-sheet: 260ms;
+
+  --rail-w: 252px;
+}

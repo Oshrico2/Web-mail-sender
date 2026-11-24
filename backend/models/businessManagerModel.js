@@ -3,11 +3,13 @@ import mongoose from "mongoose";
 const businessManagerSchema = mongoose.Schema({
   name: {
     type: String,
+    trim: true,
     required: true,
     unique: true,
   },
   email: {
     type: String,
+    trim: true,
     required: true,
     unique: true,
   },

@@ -1,70 +1,45 @@
 import UserActivity from "../models/userActivityModel.js";
-import {
-  getCurrentDateFormatted,
-  getCurrentTimeFormatted,
-  getUsername,
-} from "../utils/scripts.js";
+import { logActivity } from "../utils/activity.js";
+import { asyncHandler, HttpError } from "../utils/http.js";
 
-// @desc    get all user activity records
-// @route   GET /api/users-activity/
+const COLORS = new Set(["green", "orange", "red", "blue"]);
+
+// @desc    Activity records, newest first, paginated
+// @route   GET /api/users-activity?limit=50&skip=0
 // @access  Admin
+const getAllUserActivities = asyncHandler(async (req, res) => {
+  const limit = Math.min(Math.max(parseInt(req.query.limit, 10) || 50, 1), 200);
+  const skip = Math.max(parseInt(req.query.skip, 10) || 0, 0);
+  const [items, total] = await Promise.all([
+    UserActivity.find({}).sort({ createdAt: -1 }).skip(skip).limit(limit),
+    UserActivity.estimatedDocumentCount(),
+  ]);
+  res.set("X-Total-Count", String(total));
+  res.json(items);
+});
 
-const getAllUserActivities = async (req, res) => {
-  try {
-    const userActivity = await UserActivity.find({}).sort({ createdAt: -1 }); // -1 for descending order
-    res.send(userActivity);
-  } catch (error) {
-    console.error("Error fetching userActivity:", error);
-    res.status(500).json({ message: "Server Error" });
-  }
-};
-
-// @desc    add a new user activity record
+// @desc    Add an activity record (kept for compatibility; the server now
+//          records every change itself)
 // @route   POST /api/users-activity/add
-// @access  Admin
-const addUserActivity = async (req, res) => {
-  try {
-    const { action, entityName,title,color } = req.body;
-    const date = Date.now();
-    const username = getUsername(req.cookies.token);
-    const description = `${entityName} - ${action} על ידי ${ username
-    } בתאריך ${getCurrentDateFormatted(date)} בשעה ${getCurrentTimeFormatted(
-      date
-    )}`;
+// @access  Private
+const addUserActivity = asyncHandler(async (req, res) => {
+  const { action, entityName, title, color } = req.body;
+  if (!action || !title) throw new HttpError(400, "חסרים פרטי פעולה");
+  await logActivity(req, {
+    action: String(action),
+    title: String(title),
+    entityName: String(entityName ?? ""),
+    color: COLORS.has(color) ? color : "blue",
+  });
+  res.status(201).json({ message: "נרשם" });
+});
 
-    const newUserActivity = new UserActivity({
-      action,
-      title,
-      createdBy: username,
-      entityName,
-      description,
-      color,
-      createdAt:date
-    });
-
-    await newUserActivity.save();
-    res.status(201).json(newUserActivity);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Server Error" });
-  }
-};
-
-// @desc    get a user activity record by ID
 // @route   GET /api/users-activity/:id
 // @access  Admin
-const getUserActivityById = async (req, res) => {
-  const { id } = req.params;
-  try {
-    const userActivity = await UserActivity.findById(id);
-    if (!userActivity) {
-      return res.status(404).json({ message: "User activity not found" });
-    }
-    res.json(userActivity);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Server Error" });
-  }
-};
+const getUserActivityById = asyncHandler(async (req, res) => {
+  const activity = await UserActivity.findById(req.params.id);
+  if (!activity) throw new HttpError(404, "הרשומה לא נמצאה");
+  res.json(activity);
+});
 
 export { getAllUserActivities, getUserActivityById, addUserActivity };

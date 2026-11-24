@@ -3,30 +3,36 @@ import mongoose from "mongoose";
 const agentSchema = mongoose.Schema({
   name: {
     type: String,
+    trim: true,
     required: true,
     unique: true,
   },
   firstName: {
     type: String,
+    trim: true,
     required: false,
     unique: false,
   },
   lastName: {
     type: String,
+    trim: true,
     required: true,
     unique: false,
   },
   email: {
     type: String,
+    trim: true,
     required: true,
     unique: true,
   },
   additionalMail: {
     type: String,
+    trim: true,
     required: false,
   },
   agentNumber: {
     type: String,
+    trim: true,
     required: false,
   },
   customerStatus: {

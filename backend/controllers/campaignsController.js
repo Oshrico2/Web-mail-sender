@@ -1,101 +1,72 @@
 import Campaign from "../models/campaignModel.js";
-import { getUsername } from "../utils/scripts.js";
+import { logActivity } from "../utils/activity.js";
+import { asyncHandler, escapeRegex, HttpError } from "../utils/http.js";
 
-// @desc    Get all campaigns
 // @route   GET /api/campaigns
-// @access  Private
-const getAllCampaigns = async (req, res) => {
-  try {
-    const campaigns = await Campaign.find({}).sort({ name: 1 }); // 1 for ascending order
-    res.json(campaigns);
-  } catch (error) {
-    console.error("Error fetching campaigns:", error);
-    res.status(500).json({ message: "Server Error" });
-  }
-};
+const getAllCampaigns = asyncHandler(async (req, res) => {
+  res.json(await Campaign.find({}).sort({ name: 1 }));
+});
 
-// @desc    Get campaign by name
 // @route   GET /api/campaigns/search/:name
-// @access  Private
-const getCampaignByName = async (req, res) => {
-  try {
-    const { name } = req.params;
-    const campaign = await Campaign.find({
-      name: { $regex: name, $options: "i" },
-    });
-    res.json(campaign);
-  } catch (error) {
-    console.error("Error searching campaign by name:", error);
-    res.status(500).json({ message: "Server Error" });
-  }
-};
+const getCampaignByName = asyncHandler(async (req, res) => {
+  res.json(
+    await Campaign.find({
+      name: { $regex: escapeRegex(req.params.name), $options: "i" },
+    }).sort({ name: 1 })
+  );
+});
 
-// @desc    Add an campaign
 // @route   POST /api/campaigns/add
-// @access  Private
-const addCampaign = async (req, res) => {
-  const { name } = req.body;
-  const campaign = new Campaign({
-    name: name,
-    createdBy:getUsername(req.cookies.token),
-
+const addCampaign = asyncHandler(async (req, res) => {
+  const campaign = await Campaign.create({
+    name: req.body.name,
+    createdBy: req.user.username,
   });
+  await logActivity(req, {
+    title: "הוספת קמפיין",
+    action: "נוסף",
+    entityName: campaign.name,
+    color: "green",
+  });
+  res.status(201).json(campaign);
+});
 
-  await campaign.save();
-  res.status(200).json({ message: "Campaign added successfully" });
-};
-
-// @desc    Get campaign by ID
 // @route   GET /api/campaigns/:id
-// @access  Private
-const getCampaignById = async (req, res) => {
+const getCampaignById = asyncHandler(async (req, res) => {
   const campaign = await Campaign.findById(req.params.id);
+  if (!campaign) throw new HttpError(404, "הקמפיין לא נמצא");
+  res.json(campaign);
+});
 
-  if (campaign) {
-    res.json(campaign);
-  } else {
-    res.status(404);
-    throw new Error("Campaign not found");
-  }
-};
-
-// @desc    Update campaign by ID
 // @route   PUT /api/campaigns/:id
-// @access  Private
-const updateCampaignById = async (req, res) => {
-  const { name } = req.body;
-
+const updateCampaignById = asyncHandler(async (req, res) => {
   const campaign = await Campaign.findById(req.params.id);
+  if (!campaign) throw new HttpError(404, "הקמפיין לא נמצא");
+  if (req.body.name !== undefined) campaign.name = req.body.name;
+  campaign.updatedAt = Date.now();
+  campaign.updatedBy = req.user.username;
+  const updated = await campaign.save();
+  await logActivity(req, {
+    title: "עדכון קמפיין",
+    action: "עודכן",
+    entityName: updated.name,
+    color: "orange",
+  });
+  res.json(updated);
+});
 
-  if (campaign) {
-    campaign.name = name !== undefined ? name : campaign.name;
-    campaign.updatedAt = Date.now();
-    campaign.updatedBy = getUsername(req.cookies.token);
-
-    const updatedCampaign = await campaign.save();
-    res.json(updatedCampaign);
-  } else {
-    res.status(404);
-    throw new Error("Campaign not found");
-  }
-};
-
-// @desc    Delete campaign by ID
 // @route   DELETE /api/campaigns/:id
-// @access  Private
-const deleteCampaignById = async (req, res) => {
-  try {
-    const campaign = await Campaign.findByIdAndDelete(req.params.id);
-    if (!campaign) {
-      res.status(404).json({ message: "Campaign not found" });
-      return;
-    }
-    res.json({ message: "Campaign removed successfully" });
-  } catch (error) {
-    console.error("Error deleting campaign:", error);
-    res.status(500).json({ message: "Internal Server Error" });
-  }
-};
+const deleteCampaignById = asyncHandler(async (req, res) => {
+  const campaign = await Campaign.findByIdAndDelete(req.params.id);
+  if (!campaign) throw new HttpError(404, "הקמפיין לא נמצא");
+  await logActivity(req, {
+    title: "הסרת קמפיין",
+    action: "נמחק",
+    entityName: campaign.name,
+    color: "red",
+  });
+  res.json({ message: "הקמפיין נמחק" });
+});
 
 export {
   getAllCampaigns,

@@ -1,202 +1,127 @@
 import Agent from "../models/agentModel.js";
-import { getUsername } from "../utils/scripts.js";
+import { logActivity } from "../utils/activity.js";
+import { asyncHandler, escapeRegex, HttpError } from "../utils/http.js";
 
-// @desc    Get all agents
-// @route   GET /api/agents/all
-// @access  Private
-const getAllAgents = async (req, res) => {
-  try {
-    const agents = await Agent.find({}).sort({ name: 1 }); // 1 for ascending order
-    res.json(agents);
-  } catch (error) {
-    console.error("Error fetching agents:", error);
-    res.status(500).json({ message: "Server Error" });
-  }
-};
+const EDITABLE = [
+  "name",
+  "firstName",
+  "lastName",
+  "email",
+  "agentNumber",
+  "additionalMail",
+  "customerStatus",
+  "weeklyStatus",
+  "confirmedMailing",
+];
 
-// @desc    Get weekly agents
+const list = (filter) => Agent.find(filter).sort({ name: 1 });
+
+// @route   GET /api/agents
+const getAllAgents = asyncHandler(async (req, res) => {
+  res.json(await list({}));
+});
+
 // @route   GET /api/agents/per-week
-// @access  Private
-const getAllWeeklyAgents = async (req, res) => {
-  try {
-    const agents = await Agent.find({ weeklyStatus: true }).sort({ name: 1 });
-    res.json(agents);
-  } catch (error) {
-    console.error("Error fetching agents:", error);
-    res.status(500).json({ message: "Server Error" });
-  }
-};
+const getAllWeeklyAgents = asyncHandler(async (req, res) => {
+  res.json(await list({ weeklyStatus: true }));
+});
 
-// @desc    Get agents that doesnt get customer status
 // @route   GET /api/agents/no-customer-status
-// @access  Private
-const getAllNoCustomerStatusAgents = async (req, res) => {
-  try {
-    const agents = await Agent.find({ customerStatus: false }).sort({
-      name: 1,
-    });
-    res.json(agents);
-  } catch (error) {
-    console.error("Error fetching agents:", error);
-    res.status(500).json({ message: "Server Error" });
-  }
-};
+const getAllNoCustomerStatusAgents = asyncHandler(async (req, res) => {
+  res.json(await list({ customerStatus: false }));
+});
 
-// @desc    Get 10 recently added agents
 // @route   GET /api/agents/recently-added
-// @access  Private
-const getTenRecentlyAddedAgents = async (req, res) => {
-  try {
-    const agents = await Agent.find({}).sort({ createdAt: -1 }).limit(10);
-    res.json(agents);
-  } catch (error) {
-    console.error("Error fetching agents:", error);
-    res.status(500).json({ message: "Server Error" });
-  }
-};
+const getTenRecentlyAddedAgents = asyncHandler(async (req, res) => {
+  res.json(await Agent.find({}).sort({ createdAt: -1 }).limit(10));
+});
 
-// @desc    Get confirmed Mailing agents
 // @route   GET /api/agents/confirmed-mailing
-// @access  Private
-const getAllConfirmedMailingAgents = async (req, res) => {
-  try {
-    const agents = await Agent.find({ confirmedMailing: { $ne: false } }).sort({
-      name: 1,
-    });
-    res.json(agents);
-  } catch (error) {
-    console.error("Error fetching agents:", error);
-    res.status(500).json({ message: "Server Error" });
-  }
-};
+const getAllConfirmedMailingAgents = asyncHandler(async (req, res) => {
+  res.json(await list({ confirmedMailing: { $ne: false } }));
+});
 
-// @desc    Search agents by name
 // @route   GET /api/agents/search/:name
-// @access  Private
-const searchAgentsByName = async (req, res) => {
-  try {
-    const { name } = req.params;
-    const agents = await Agent.find({ name: { $regex: name, $options: "i" } });
-    res.json(agents);
-  } catch (error) {
-    console.error("Error searching agents by name:", error);
-    res.status(500).json({ message: "Server Error" });
-  }
-};
+const searchAgentsByName = asyncHandler(async (req, res) => {
+  const pattern = { $regex: escapeRegex(req.params.name), $options: "i" };
+  res.json(
+    await list({ $or: [{ name: pattern }, { email: pattern }, { agentNumber: pattern }] })
+  );
+});
 
-// @desc    Add an agent
 // @route   POST /api/agents/add
-// @access  Private
-const addAgent = async (req, res) => {
-  const { name, firstName, lastName, email, agentNumber, additionalMail } =
-    req.body;
-  const agent = new Agent({
-    name: name,
-    firstName: firstName,
-    lastName: lastName,
-    email: email,
-    agentNumber: agentNumber,
-    additionalMail: additionalMail,
-    createdBy: getUsername(req.cookies.token),
-  });
-
-  await agent.save();
-  res.status(200).json({ message: "Agent added successfully" });
-};
-
-// @desc    Get agent by ID
-// @route   GET /api/agents/:id
-// @access  Private
-const getAgentById = async (req, res) => {
-  const agent = await Agent.findById(req.params.id);
-
-  if (agent) {
-    res.json(agent);
-  } else {
-    res.status(404);
-    throw new Error("Agent not found");
-  }
-};
-
-// @desc    Update agent by ID
-// @route   PUT /api/agents/:id
-// @access  Private
-const updateAgentById = async (req, res) => {
-  const {
+const addAgent = asyncHandler(async (req, res) => {
+  const { name, firstName, lastName, email, agentNumber, additionalMail } = req.body;
+  const agent = await Agent.create({
     name,
     firstName,
     lastName,
     email,
     agentNumber,
     additionalMail,
-    customerStatus,
-    weeklyStatus,
-    confirmedMailing,
-  } = req.body;
+    createdBy: req.user.username,
+  });
+  await logActivity(req, {
+    title: "הוספת סוכן",
+    action: "נוסף",
+    entityName: agent.name,
+    color: "green",
+  });
+  res.status(201).json(agent);
+});
 
+// @route   GET /api/agents/:id
+const getAgentById = asyncHandler(async (req, res) => {
   const agent = await Agent.findById(req.params.id);
+  if (!agent) throw new HttpError(404, "הסוכן לא נמצא");
+  res.json(agent);
+});
 
-  if (agent) {
-    agent.name = name !== undefined ? name : agent.name;
-    agent.firstName = firstName !== undefined ? firstName : agent.firstName;
-    agent.lastName = lastName !== undefined ? lastName : agent.lastName;
-    agent.email = email !== undefined ? email : agent.email;
-    agent.agentNumber =
-      agentNumber !== undefined ? agentNumber : agent.agentNumber;
-    agent.additionalMail =
-      additionalMail !== undefined ? additionalMail : agent.additionalMail;
-    agent.customerStatus =
-      customerStatus !== undefined ? customerStatus : agent.customerStatus;
-    agent.weeklyStatus =
-      weeklyStatus !== undefined ? weeklyStatus : agent.weeklyStatus;
-    agent.confirmedMailing =
-      confirmedMailing !== undefined
-        ? confirmedMailing
-        : agent.confirmedMailing;
-    if(req.cookies.token){
-      agent.updatedAt = Date.now();
-      agent.updatedBy = getUsername(req.cookies.token);
-    }
-
-    const updatedAgent = await agent.save();
-    res.json(updatedAgent);
-  } else {
-    res.status(404);
-    throw new Error("Agent not found");
-  }
-};
-
-// @desc    Delete agent by ID
-// @route   DELETE /api/agents/:id
-// @access  Private
-const deleteAgentById = async (req, res) => {
-  try {
-    const agent = await Agent.findByIdAndDelete(req.params.id);
-    if (!agent) {
-      res.status(404).json({ message: "Agent not found" });
-      return;
-    }
-    res.json({ message: "Agent removed successfully" });
-  } catch (error) {
-    console.error("Error deleting agent:", error);
-    res.status(500).json({ message: "Internal Server Error" });
-  }
-};
-
-// @desc    Change agent by ID to weekly status
 // @route   PUT /api/agents/:id
-// @access  Private
-
-const changeToWeeklyStatus = async (req, res) => {
+const updateAgentById = asyncHandler(async (req, res) => {
   const agent = await Agent.findById(req.params.id);
-  if (agent) {
-    agent.weeklyStatus = true;
-    res.json({ message: "The agent will get 1 status in week" });
-  } else {
-    res.status(404);
-    throw new Error("Agent not found");
+  if (!agent) throw new HttpError(404, "הסוכן לא נמצא");
+
+  for (const key of EDITABLE) {
+    if (req.body[key] !== undefined) agent[key] = req.body[key];
   }
-};
+  agent.updatedAt = Date.now();
+  agent.updatedBy = req.user.username;
+
+  const updatedAgent = await agent.save();
+  await logActivity(req, {
+    title: "עדכון סוכן",
+    action: "עודכן",
+    entityName: updatedAgent.name,
+    color: "orange",
+  });
+  res.json(updatedAgent);
+});
+
+// @route   DELETE /api/agents/:id
+const deleteAgentById = asyncHandler(async (req, res) => {
+  const agent = await Agent.findByIdAndDelete(req.params.id);
+  if (!agent) throw new HttpError(404, "הסוכן לא נמצא");
+  await logActivity(req, {
+    title: "הסרת סוכן",
+    action: "נמחק",
+    entityName: agent.name,
+    color: "red",
+  });
+  res.json({ message: "הסוכן נמחק" });
+});
+
+// @route   PUT /api/agents/:id/weekly-status
+// (previously set the flag but never saved it)
+const changeToWeeklyStatus = asyncHandler(async (req, res) => {
+  const agent = await Agent.findById(req.params.id);
+  if (!agent) throw new HttpError(404, "הסוכן לא נמצא");
+  agent.weeklyStatus = true;
+  agent.updatedAt = Date.now();
+  agent.updatedBy = req.user.username;
+  await agent.save();
+  res.json({ message: "הסוכן יקבל סטטוס פעם בשבוע" });
+});
 
 export {
   getAllAgents,

@@ -1,41 +1,52 @@
 import express from "express";
-import { fetchAgents } from "../utils/scripts.js";
-import UserActivity from "../models/userActivityModel.js";
-import {
-  getCurrentDateFormatted,
-  getCurrentTimeFormatted,
-} from "../utils/scripts.js";
+import Agent from "../models/agentModel.js";
+import { logActivity } from "../utils/activity.js";
+import { asyncHandler, escapeRegex, isEmail, rateLimit } from "../utils/http.js";
 
 const router = express.Router();
 
-router.put("/", async (req, res) => {
-  const { email } = req.body;
-
-  console.log(email);
-  const agents = await fetchAgents();
-  const agent = agents.find((agent) => agent.email === email);
-  const date = Date.now()
-  if (agent) {
-    agent.confirmedMailing = false;
-    await agent.save();
-    const activity = new UserActivity({
-        action: "הסיר את עצמו מרשימת תפוצה",
-        title: "הסרה מרשימת תפוצה",
-        createdBy: "undefined",
-        entityName: agent.name,
-        description: `${agent.name} - הסיר את עצמו מרשימת תפוצה 
-       בתאריך ${getCurrentDateFormatted(date)} בשעה ${getCurrentTimeFormatted(
-          date
-        )}`,
-        color: 'orange',
-        createdAt: date,
-      });
-      await activity.save();
-    res.status(200).send("Successfully saved agent details");
-  } else {
-    res.status(404);
-    throw new Error("Agent not found");
-  }
+// Public endpoint (linked from every mailing). Rate limited so it cannot be
+// used to probe the agent list.
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 30,
+  message: "יותר מדי בקשות, נסה שוב מאוחר יותר",
 });
+
+router.put(
+  "/",
+  limiter,
+  asyncHandler(async (req, res) => {
+    const email = String(req.body.email || "").trim();
+    if (!isEmail(email)) {
+      return res.status(400).json({ message: "כתובת המייל אינה תקינה" });
+    }
+
+    // Exact, case-insensitive match. Previously loaded every agent and
+    // threw (crashing the server) when the address was not found.
+    const agent = await Agent.findOne({
+      email: { $regex: `^${escapeRegex(email)}$`, $options: "i" },
+    });
+    if (!agent) {
+      return res.status(404).json({ message: "כתובת המייל לא נמצאה ברשימת התפוצה" });
+    }
+
+    if (agent.confirmedMailing !== false) {
+      agent.confirmedMailing = false;
+      agent.updatedAt = Date.now();
+      agent.updatedBy = "הסרה עצמית";
+      await agent.save();
+      await logActivity(req, {
+        title: "הסרה מרשימת תפוצה",
+        action: "הסיר את עצמו מרשימת תפוצה",
+        entityName: agent.name,
+        color: "orange",
+        actor: agent.name,
+      });
+    }
+
+    res.json({ message: "הוסרת מרשימת התפוצה" });
+  })
+);
 
 export default router;

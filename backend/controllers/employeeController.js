@@ -1,121 +1,80 @@
 import Employee from "../models/employeeModel.js";
-import { getUsername } from "../utils/scripts.js";
+import { logActivity } from "../utils/activity.js";
+import { asyncHandler, escapeRegex, HttpError } from "../utils/http.js";
 
-// @desc    Get all employees
+const like = (value) => ({ $regex: escapeRegex(value), $options: "i" });
+
 // @route   GET /api/employees
-// @access  Private
-const getAllEmployees = async (req, res) => {
-  try {
-    const employees = await Employee.find({}).sort({ name: 1 }); // 1 for ascending order
-    // return employees
-    res.json(employees);
-  } catch (error) {
-    console.error("Error fetching employees:", error);
-    res.status(500).json({ message: "Server Error" });
-  }
-};
+const getAllEmployees = asyncHandler(async (req, res) => {
+  res.json(await Employee.find({}).sort({ name: 1 }));
+});
 
-// @desc    Get employee by name
 // @route   GET /api/employees/search/:name
-// @access  Private
-const getEmployeeByName = async (req, res) => {
-  try {
-    const { name } = req.params;
-    const employee = await Employee.find({
-      name: { $regex: name, $options: "i" },
-    });
-    res.json(employee);
-  } catch (error) {
-    console.error("Error searching employee by name:", error);
-    res.status(500).json({ message: "Server Error" });
-  }
-};
+const getEmployeeByName = asyncHandler(async (req, res) => {
+  res.json(await Employee.find({ name: like(req.params.name) }).sort({ name: 1 }));
+});
 
-// @desc    Get employee by subject
-// @route   GET /api/employees/search/:subject
-// @access  Private
-const getEmployeesBySubject = async (req, res) => {
-  try {
-    const { subject } = req.params;
-    const employees = await Employee.find({
-      subject: { $regex: subject, $options: "i" },
-    });
-    res.json(employees);
-  } catch (error) {
-    console.error("Error searching employee by subject:", error);
-    res.status(500).json({ message: "Server Error" });
-  }
-};
+// @route   GET /api/employees/search-by-subject/:subject
+const getEmployeesBySubject = asyncHandler(async (req, res) => {
+  res.json(await Employee.find({ subject: like(req.params.subject) }).sort({ name: 1 }));
+});
 
-// @desc    Add an employee
 // @route   POST /api/employees/add
-// @access  Private
-const addEmployee = async (req, res) => {
+const addEmployee = asyncHandler(async (req, res) => {
   const { name, email, subject } = req.body;
-  const employee = new Employee({
-    name: name,
-    email: email,
-    subject: subject,
-    createdBy:getUsername(req.cookies.token),
+  const employee = await Employee.create({
+    name,
+    email,
+    subject,
+    createdBy: req.user.username,
   });
+  await logActivity(req, {
+    title: "הוספת עובד",
+    action: "נוסף",
+    entityName: employee.name,
+    color: "green",
+  });
+  res.status(201).json(employee);
+});
 
-  await employee.save();
-  res.status(200).json({ message: "Employee added successfully" });
-};
-
-// @desc    Get employee by ID
 // @route   GET /api/employees/:id
-// @access  Private
-const getEmployeeById = async (req, res) => {
+const getEmployeeById = asyncHandler(async (req, res) => {
   const employee = await Employee.findById(req.params.id);
+  if (!employee) throw new HttpError(404, "העובד לא נמצא");
+  res.json(employee);
+});
 
-  if (employee) {
-    res.json(employee);
-  } else {
-    res.status(404);
-    throw new Error("Employee not found");
-  }
-};
-
-// @desc    Update employee by ID
 // @route   PUT /api/employees/:id
-// @access  Private
-const updateEmployeeById = async (req, res) => {
-  const { name, email, subject } = req.body;
-
+const updateEmployeeById = asyncHandler(async (req, res) => {
   const employee = await Employee.findById(req.params.id);
-
-  if (employee) {
-    employee.name = name !== undefined ? name : employee.name;
-    employee.email = email !== undefined ? email : employee.email;
-    employee.subject = subject !== undefined ? subject : employee.subject;
-    employee.updatedAt = Date.now();
-    employee.updatedBy = getUsername(req.cookies.token);
-
-    const updatedEmployee = await employee.save();
-    res.json(updatedEmployee);
-  } else {
-    res.status(404);
-    throw new Error("Employee not found");
+  if (!employee) throw new HttpError(404, "העובד לא נמצא");
+  for (const key of ["name", "email", "subject"]) {
+    if (req.body[key] !== undefined) employee[key] = req.body[key];
   }
-};
+  employee.updatedAt = Date.now();
+  employee.updatedBy = req.user.username;
+  const updated = await employee.save();
+  await logActivity(req, {
+    title: "עדכון עובד",
+    action: "עודכן",
+    entityName: updated.name,
+    color: "orange",
+  });
+  res.json(updated);
+});
 
-// @desc    Delete employee by ID
 // @route   DELETE /api/employees/:id
-// @access  Private
-const deleteEmployeeById = async (req, res) => {
-  try {
-    const employee = await Employee.findByIdAndDelete(req.params.id);
-    if (!employee) {
-      res.status(404).json({ message: "Employee not found" });
-      return;
-    }
-    res.json({ message: "Employee removed successfully" });
-  } catch (error) {
-    console.error("Error deleting employee:", error);
-    res.status(500).json({ message: "Internal Server Error" });
-  }
-};
+const deleteEmployeeById = asyncHandler(async (req, res) => {
+  const employee = await Employee.findByIdAndDelete(req.params.id);
+  if (!employee) throw new HttpError(404, "העובד לא נמצא");
+  await logActivity(req, {
+    title: "הסרת עובד",
+    action: "נמחק",
+    entityName: employee.name,
+    color: "red",
+  });
+  res.json({ message: "העובד נמחק" });
+});
 
 export {
   getAllEmployees,

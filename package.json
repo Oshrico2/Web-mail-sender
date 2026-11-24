@@ -1,33 +1,29 @@
 {
   "dependencies": {
-    "axios": "^1.7.2",
     "bcryptjs": "^2.4.3",
-    "body-parser": "^1.20.2",
     "cookie-parser": "^1.4.6",
-    "cors": "^2.8.5",
-    "crypto": "^1.0.1",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
-    "express-fileupload": "^1.5.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.4.0",
     "multer": "^1.4.5-lts.1",
     "nodemailer": "^6.9.13",
-    "path": "^0.12.7",
-    "react-router-bootstrap": "^0.26.2",
-    "stream": "^0.0.2",
     "xlsx": "^0.18.5"
   },
-  "name": "backend",
+  "name": "web-mail-sender",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "backend/server.js",
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "npm install && npm install --prefix frontend && npm run build --prefix frontend && mkdir -p uploads/status-by-agent"
+    "start": "node backend/server.js",
+    "dev": "node --watch backend/server.js",
+    "build": "npm install && npm install --include=dev --prefix frontend && npm run build --prefix frontend"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": ""
+  "description": "Talpiot Family Office: customer-status emails, mailing and reports for insurance agents",
+  "engines": {
+    "node": ">=18"
+  }
 }

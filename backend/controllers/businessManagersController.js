@@ -1,94 +1,97 @@
 import BusinessManager from "../models/businessManagerModel.js";
-import { getUsername } from "../utils/scripts.js";
+import { logActivity } from "../utils/activity.js";
+import { asyncHandler, HttpError } from "../utils/http.js";
 
-// @desc    Get all businessManagers
-// @route   GET /api/businessManagers
-// @access  Private
-const getAllBusinessManagers = async (req, res) => {
-  try {
-    const businessManagers = await BusinessManager.find({}).sort({ name: 1 }); // 1 for ascending order
-    res.json(businessManagers);
-  } catch (error) {
-    console.error("Error fetching businessManagers:", error);
-    res.status(500).json({ message: "Server Error" });
-  }
-};
-
-// @desc    Add a businessManager
-// @route   POST /api/businessManagers/add
-// @access  Private
-const addBusinessManager = async (req, res) => {
-  const { name, email, lettersOfLastNamesUnderCare } = req.body;
-  const businessManager = new BusinessManager({
-    name: name,
-    email: email,
-    lettersOfLastNamesUnderCare: lettersOfLastNamesUnderCare,
-    createdBy: getUsername(req.cookies.token),
-  });
-
-  await businessManager.save();
-  res.status(200).json({ message: "BusinessManager added successfully" });
-};
-
-// @desc    Get businessManager by ID
-// @route   GET /api/businessManagers/:id
-// @access  Private
-const getBusinessManagerById = async (req, res) => {
-  const businessManager = await BusinessManager.findById(req.params.id);
-
-  if (businessManager) {
-    res.json(businessManager);
-  } else {
-    res.status(404);
-    throw new Error("BusinessManager not found");
-  }
-};
-
-// @desc    Update businessManager by ID
-// @route   PUT /api/businessManagers/:id
-// @access  Private
-const updateBusinessManagerById = async (req, res) => {
-  const { name, email, lettersOfLastNamesUnderCare } = req.body;
-
-  const businessManager = await BusinessManager.findById(req.params.id);
-
-  if (businessManager) {
-    businessManager.name = name !== undefined ? name : businessManager.name;
-    businessManager.email = email !== undefined ? email : businessManager.email;
-    businessManager.lettersOfLastNamesUnderCare =
-      lettersOfLastNamesUnderCare !== undefined
-        ? lettersOfLastNamesUnderCare
-        : businessManager.lettersOfLastNamesUnderCare;
-    businessManager.updatedAt = Date.now();
-    businessManager.updatedBy = getUsername(req.cookies.token);
-
-
-    const updatedBusinessManager = await businessManager.save();
-    res.json(updatedBusinessManager);
-  } else {
-    res.status(404);
-    throw new Error("BusinessManager not found");
-  }
-};
-
-// @desc    Delete businessManager by ID
-// @route   DELETE /api/businessManagers/:id
-// @access  Private
-const deleteBusinessManagerById = async (req, res) => {
-  try {
-    const businessManager = await BusinessManager.findByIdAndDelete(
-      req.params.id
-    );
-    if (!businessManager) {
-      res.status(404).json({ message: "BusinessManager not found" });
-      return;
+// Each surname letter belongs to at most one manager. This used to be checked
+// only in the browser, so two tabs (or a direct API call) could break it.
+const assertLettersFree = async (letters = [], exceptId) => {
+  const others = await BusinessManager.find(
+    exceptId ? { _id: { $ne: exceptId } } : {}
+  );
+  const taken = [];
+  for (const manager of others) {
+    for (const letter of manager.lettersOfLastNamesUnderCare) {
+      if (letters.includes(letter)) taken.push(`${letter} (${manager.name})`);
     }
-    res.json({ message: "BusinessManager removed successfully" });
-  } catch (error) {
-    console.error("Error deleting businessManager:", error);
-    res.status(500).json({ message: "Internal Server Error" });
+  }
+  if (taken.length) {
+    throw new HttpError(409, `אותיות שכבר משויכות למנהל אחר: ${taken.join(", ")}`);
   }
 };
+
+const uniqueLetters = (letters) =>
+  Array.isArray(letters) ? [...new Set(letters.map((l) => String(l).trim()))] : letters;
+
+// @route   GET /api/business-managers
+const getAllBusinessManagers = asyncHandler(async (req, res) => {
+  res.json(await BusinessManager.find({}).sort({ name: 1 }));
+});
+
+// @route   POST /api/business-managers/add
+const addBusinessManager = asyncHandler(async (req, res) => {
+  const { name, email } = req.body;
+  const letters = uniqueLetters(req.body.lettersOfLastNamesUnderCare) || [];
+  await assertLettersFree(letters);
+  const manager = await BusinessManager.create({
+    name,
+    email,
+    lettersOfLastNamesUnderCare: letters,
+    createdBy: req.user.username,
+  });
+  await logActivity(req, {
+    title: "הוספת מנהל פיתוח עסקי",
+    action: "נוסף",
+    entityName: manager.name,
+    color: "green",
+  });
+  res.status(201).json(manager);
+});
+
+// @route   GET /api/business-managers/:id
+const getBusinessManagerById = asyncHandler(async (req, res) => {
+  const manager = await BusinessManager.findById(req.params.id);
+  if (!manager) throw new HttpError(404, "המנהל לא נמצא");
+  res.json(manager);
+});
+
+// @route   PUT /api/business-managers/:id
+const updateBusinessManagerById = asyncHandler(async (req, res) => {
+  const manager = await BusinessManager.findById(req.params.id);
+  if (!manager) throw new HttpError(404, "המנהל לא נמצא");
+
+  const { name, email } = req.body;
+  const letters = uniqueLetters(req.body.lettersOfLastNamesUnderCare);
+  if (letters !== undefined) {
+    await assertLettersFree(letters, manager._id);
+    manager.lettersOfLastNamesUnderCare = letters;
+  }
+  if (name !== undefined) manager.name = name;
+  if (email !== undefined) manager.email = email;
+  manager.updatedAt = Date.now();
+  manager.updatedBy = req.user.username;
+
+  const updated = await manager.save();
+  await logActivity(req, {
+    title: "עדכון מנהל פיתוח עסקי",
+    action: "עודכן",
+    entityName: updated.name,
+    color: "orange",
+  });
+  res.json(updated);
+});
+
+// @route   DELETE /api/business-managers/:id
+const deleteBusinessManagerById = asyncHandler(async (req, res) => {
+  const manager = await BusinessManager.findByIdAndDelete(req.params.id);
+  if (!manager) throw new HttpError(404, "המנהל לא נמצא");
+  await logActivity(req, {
+    title: "הסרת מנהל פיתוח עסקי",
+    action: "נמחק",
+    entityName: manager.name,
+    color: "red",
+  });
+  res.json({ message: "המנהל נמחק" });
+});
 
 export {
   getAllBusinessManagers,

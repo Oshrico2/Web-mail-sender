@@ -1,40 +1,68 @@
 import express from "express";
-import User from "../models/userModel.js";
-import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import dotenv from "dotenv";
+import User from "../models/userModel.js";
+import { protect } from "../middleware/authMiddleware.js";
+import { asyncHandler, rateLimit } from "../utils/http.js";
 
-dotenv.config();
 const router = express.Router();
+const SESSION_MS = 24 * 60 * 60 * 1000;
 
-router.post("/", async (req, res) => {
-  const { username, password } = req.body;
-  try {
-    const user = await User.findOne({ username }); // Find user by username
-    if (!user || !bcrypt.compareSync(password, user.password)) {
-      return res.status(401).send({ message: "Invalid credentials" });
+const cookieOptions = () => ({
+  httpOnly: true,
+  sameSite: "lax",
+  secure: process.env.NODE_ENV === "production",
+  path: "/",
+});
+
+const publicUser = (user) => ({
+  _id: user._id,
+  username: user.username,
+  firstName: user.firstName,
+  lastName: user.lastName,
+  email: user.email,
+  isAdmin: user.isAdmin,
+});
+
+const loginLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 20,
+  message: "יותר מדי ניסיונות התחברות, נסה שוב בעוד כמה דקות",
+});
+
+router.post(
+  "/",
+  loginLimiter,
+  asyncHandler(async (req, res) => {
+    const username = String(req.body.username || "").trim();
+    const password = String(req.body.password || "");
+    if (!username || !password) {
+      return res.status(400).json({ message: "יש להזין שם משתמש וסיסמא" });
     }
-    const token = jwt.sign(
-      {
-        user,
-      },
-      process.env.JWT_SECRET,
-      { expiresIn: "24h" }
-    );
-    const expiration = Date.now() + 3600000 * 24; // 1 day in milliseconds
-    res.cookie("token", token, {
-      httpOnly: true,
-      expires: new Date(expiration),
+
+    const user = await User.findOne({ username });
+    if (!user || !(await user.matchPassword(password))) {
+      return res.status(401).json({ message: "שם משתמש או סיסמא לא נכונים" });
+    }
+
+    // Only the id goes in the token. The previous token embedded the whole
+    // user document, password hash included, readable by anyone holding it.
+    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
+      expiresIn: SESSION_MS / 1000,
     });
-    res.send({
-      token,
-      expiration,
-      user: { username: user.username, isAdmin: user.isAdmin,email:user.email,firstName:user.firstName },
-    });
-  } catch (error) {
-    console.error("Error logging in:", error);
-    res.status(500).send({ message: "Internal server error" });
-  }
+    const expiration = Date.now() + SESSION_MS;
+    res.cookie("token", token, { ...cookieOptions(), maxAge: SESSION_MS });
+    res.json({ expiration, user: publicUser(user) });
+  })
+);
+
+// Who am I? Used by the app on load to validate the cookie session.
+router.get("/me", protect, (req, res) => {
+  res.json({ user: publicUser(req.user) });
+});
+
+router.post("/logout", (req, res) => {
+  res.clearCookie("token", cookieOptions());
+  res.json({ message: "התנתקת בהצלחה" });
 });
 
 export default router;

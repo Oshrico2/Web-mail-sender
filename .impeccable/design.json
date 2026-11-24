@@ -1,0 +1,730 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-24T09:19:44+00:00",
+  "title": "Design System: Talpiot Mail",
+  "extensions": {
+    "colorMeta": {
+      "plaster": {
+        "role": "neutral",
+        "displayName": "Lime Plaster",
+        "canonical": "oklch(96.9% 0.004 121.6)",
+        "tonalRamp": [
+          "#2e3033",
+          "#45484c",
+          "#61665f",
+          "#8a8e88",
+          "#dadfd6",
+          "#e3e6e0",
+          "#eceee9",
+          "#f4f5f2"
+        ]
+      },
+      "plaster-2": {
+        "role": "neutral",
+        "displayName": "Plaster Shade",
+        "canonical": "oklch(94.6% 0.007 124.5)",
+        "tonalRamp": [
+          "oklch(15% 0.007 124.5)",
+          "oklch(27% 0.007 124.5)",
+          "oklch(39% 0.007 124.5)",
+          "oklch(51% 0.007 124.5)",
+          "oklch(63% 0.007 124.5)",
+          "oklch(75% 0.007 124.5)",
+          "oklch(85% 0.007 124.5)",
+          "oklch(95% 0.007 124.5)"
+        ]
+      },
+      "plaster-3": {
+        "role": "neutral",
+        "displayName": "Plaster Shade Deep",
+        "canonical": "oklch(92.1% 0.009 128.6)",
+        "tonalRamp": [
+          "oklch(15% 0.009 128.6)",
+          "oklch(27% 0.009 128.6)",
+          "oklch(39% 0.009 128.6)",
+          "oklch(51% 0.009 128.6)",
+          "oklch(63% 0.009 128.6)",
+          "oklch(75% 0.009 128.6)",
+          "oklch(85% 0.009 128.6)",
+          "oklch(95% 0.009 128.6)"
+        ]
+      },
+      "plaster-band": {
+        "role": "neutral",
+        "displayName": "Plaster Band",
+        "canonical": "oklch(98.5% 0.003 106.4)",
+        "tonalRamp": [
+          "oklch(15% 0.003 106.4)",
+          "oklch(27% 0.003 106.4)",
+          "oklch(39% 0.003 106.4)",
+          "oklch(51% 0.003 106.4)",
+          "oklch(63% 0.003 106.4)",
+          "oklch(75% 0.003 106.4)",
+          "oklch(85% 0.003 106.4)",
+          "oklch(95% 0.003 106.4)"
+        ]
+      },
+      "panel": {
+        "role": "neutral",
+        "displayName": "White Panel",
+        "canonical": "oklch(100.0% 0.000 89.9)",
+        "tonalRamp": [
+          "oklch(15% 0.000 89.9)",
+          "oklch(27% 0.000 89.9)",
+          "oklch(39% 0.000 89.9)",
+          "oklch(51% 0.000 89.9)",
+          "oklch(63% 0.000 89.9)",
+          "oklch(75% 0.000 89.9)",
+          "oklch(85% 0.000 89.9)",
+          "oklch(95% 0.000 89.9)"
+        ]
+      },
+      "line": {
+        "role": "neutral",
+        "displayName": "Stone Hairline",
+        "canonical": "oklch(89.7% 0.013 130.8)",
+        "tonalRamp": [
+          "oklch(15% 0.013 130.8)",
+          "oklch(27% 0.013 130.8)",
+          "oklch(39% 0.013 130.8)",
+          "oklch(51% 0.013 130.8)",
+          "oklch(63% 0.013 130.8)",
+          "oklch(75% 0.013 130.8)",
+          "oklch(85% 0.013 130.8)",
+          "oklch(95% 0.013 130.8)"
+        ]
+      },
+      "line-soft": {
+        "role": "neutral",
+        "displayName": "Soft Hairline",
+        "canonical": "oklch(93.7% 0.007 124.5)",
+        "tonalRamp": [
+          "oklch(15% 0.007 124.5)",
+          "oklch(27% 0.007 124.5)",
+          "oklch(39% 0.007 124.5)",
+          "oklch(51% 0.007 124.5)",
+          "oklch(63% 0.007 124.5)",
+          "oklch(75% 0.007 124.5)",
+          "oklch(85% 0.007 124.5)",
+          "oklch(95% 0.007 124.5)"
+        ]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Charcoal Ink",
+        "canonical": "oklch(30.8% 0.006 258.4)",
+        "tonalRamp": [
+          "oklch(15% 0.006 258.4)",
+          "oklch(27% 0.006 258.4)",
+          "oklch(39% 0.006 258.4)",
+          "oklch(51% 0.006 258.4)",
+          "oklch(63% 0.006 258.4)",
+          "oklch(75% 0.006 258.4)",
+          "oklch(85% 0.006 258.4)",
+          "oklch(95% 0.006 258.4)"
+        ]
+      },
+      "ink-2": {
+        "role": "neutral",
+        "displayName": "Charcoal Ink Soft",
+        "canonical": "oklch(41.4% 0.008 248.0)",
+        "tonalRamp": [
+          "oklch(15% 0.008 248.0)",
+          "oklch(27% 0.008 248.0)",
+          "oklch(39% 0.008 248.0)",
+          "oklch(51% 0.008 248.0)",
+          "oklch(63% 0.008 248.0)",
+          "oklch(75% 0.008 248.0)",
+          "oklch(85% 0.008 248.0)",
+          "oklch(95% 0.008 248.0)"
+        ]
+      },
+      "muted": {
+        "role": "neutral",
+        "displayName": "Mortar",
+        "canonical": "oklch(50.4% 0.013 136.6)",
+        "tonalRamp": [
+          "oklch(15% 0.013 136.6)",
+          "oklch(27% 0.013 136.6)",
+          "oklch(39% 0.013 136.6)",
+          "oklch(51% 0.013 136.6)",
+          "oklch(63% 0.013 136.6)",
+          "oklch(75% 0.013 136.6)",
+          "oklch(85% 0.013 136.6)",
+          "oklch(95% 0.013 136.6)"
+        ]
+      },
+      "faint": {
+        "role": "neutral",
+        "displayName": "Pumice (icons only)",
+        "canonical": "oklch(64.2% 0.010 134.9)",
+        "tonalRamp": [
+          "oklch(15% 0.010 134.9)",
+          "oklch(27% 0.010 134.9)",
+          "oklch(39% 0.010 134.9)",
+          "oklch(51% 0.010 134.9)",
+          "oklch(63% 0.010 134.9)",
+          "oklch(75% 0.010 134.9)",
+          "oklch(85% 0.010 134.9)",
+          "oklch(95% 0.010 134.9)"
+        ]
+      },
+      "core": {
+        "role": "neutral",
+        "displayName": "Stair Core",
+        "canonical": "oklch(30.8% 0.006 258.4)",
+        "tonalRamp": [
+          "oklch(20% 0.006 258)",
+          "#2e3033",
+          "#383b3f",
+          "#45484c",
+          "#61665f",
+          "#a3a79f",
+          "#e4e6e1",
+          "#f4f5f2"
+        ]
+      },
+      "core-2": {
+        "role": "neutral",
+        "displayName": "Stair Core Lit",
+        "canonical": "oklch(35.1% 0.008 255.5)",
+        "tonalRamp": [
+          "oklch(15% 0.008 255.5)",
+          "oklch(27% 0.008 255.5)",
+          "oklch(39% 0.008 255.5)",
+          "oklch(51% 0.008 255.5)",
+          "oklch(63% 0.008 255.5)",
+          "oklch(75% 0.008 255.5)",
+          "oklch(85% 0.008 255.5)",
+          "oklch(95% 0.008 255.5)"
+        ]
+      },
+      "core-3": {
+        "role": "neutral",
+        "displayName": "Stair Core Divider",
+        "canonical": "oklch(40.0% 0.008 255.5)",
+        "tonalRamp": [
+          "oklch(15% 0.008 255.5)",
+          "oklch(27% 0.008 255.5)",
+          "oklch(39% 0.008 255.5)",
+          "oklch(51% 0.008 255.5)",
+          "oklch(63% 0.008 255.5)",
+          "oklch(75% 0.008 255.5)",
+          "oklch(85% 0.008 255.5)",
+          "oklch(95% 0.008 255.5)"
+        ]
+      },
+      "core-ink": {
+        "role": "neutral",
+        "displayName": "Core Ink",
+        "canonical": "oklch(92.2% 0.007 124.5)",
+        "tonalRamp": [
+          "oklch(15% 0.007 124.5)",
+          "oklch(27% 0.007 124.5)",
+          "oklch(39% 0.007 124.5)",
+          "oklch(51% 0.007 124.5)",
+          "oklch(63% 0.007 124.5)",
+          "oklch(75% 0.007 124.5)",
+          "oklch(85% 0.007 124.5)",
+          "oklch(95% 0.007 124.5)"
+        ]
+      },
+      "core-muted": {
+        "role": "neutral",
+        "displayName": "Core Muted",
+        "canonical": "oklch(72.3% 0.012 128.7)",
+        "tonalRamp": [
+          "oklch(15% 0.012 128.7)",
+          "oklch(27% 0.012 128.7)",
+          "oklch(39% 0.012 128.7)",
+          "oklch(51% 0.012 128.7)",
+          "oklch(63% 0.012 128.7)",
+          "oklch(75% 0.012 128.7)",
+          "oklch(85% 0.012 128.7)",
+          "oklch(95% 0.012 128.7)"
+        ]
+      },
+      "gold": {
+        "role": "primary",
+        "displayName": "Talpiot Sun Gold",
+        "canonical": "oklch(71.5% 0.112 78.3)",
+        "tonalRamp": [
+          "oklch(30% 0.06 76)",
+          "#7f5a1f",
+          "oklch(60% 0.10 77)",
+          "#c99a4b",
+          "#d4a75a",
+          "#e9c77a",
+          "#f4e7cc",
+          "#fbf5e9"
+        ]
+      },
+      "gold-hi": {
+        "role": "primary",
+        "displayName": "Window Light",
+        "canonical": "oklch(84.2% 0.103 86.4)",
+        "tonalRamp": [
+          "oklch(15% 0.103 86.4)",
+          "oklch(27% 0.103 86.4)",
+          "oklch(39% 0.103 86.4)",
+          "oklch(51% 0.103 86.4)",
+          "oklch(63% 0.103 86.4)",
+          "oklch(75% 0.103 86.4)",
+          "oklch(85% 0.103 86.4)",
+          "oklch(95% 0.103 86.4)"
+        ]
+      },
+      "gold-deep": {
+        "role": "primary",
+        "displayName": "Brass Shadow",
+        "canonical": "oklch(49.6% 0.089 75.3)",
+        "tonalRamp": [
+          "oklch(15% 0.089 75.3)",
+          "oklch(27% 0.089 75.3)",
+          "oklch(39% 0.089 75.3)",
+          "oklch(51% 0.089 75.3)",
+          "oklch(63% 0.089 75.3)",
+          "oklch(75% 0.089 75.3)",
+          "oklch(85% 0.089 75.3)",
+          "oklch(95% 0.089 75.3)"
+        ]
+      },
+      "gold-wash": {
+        "role": "primary",
+        "displayName": "Sun Wash",
+        "canonical": "oklch(97.2% 0.017 84.6)",
+        "tonalRamp": [
+          "oklch(15% 0.017 84.6)",
+          "oklch(27% 0.017 84.6)",
+          "oklch(39% 0.017 84.6)",
+          "oklch(51% 0.017 84.6)",
+          "oklch(63% 0.017 84.6)",
+          "oklch(75% 0.017 84.6)",
+          "oklch(85% 0.017 84.6)",
+          "oklch(95% 0.017 84.6)"
+        ]
+      },
+      "gold-wash-2": {
+        "role": "primary",
+        "displayName": "Sun Wash Deep",
+        "canonical": "oklch(93.1% 0.038 85.3)",
+        "tonalRamp": [
+          "oklch(15% 0.038 85.3)",
+          "oklch(27% 0.038 85.3)",
+          "oklch(39% 0.038 85.3)",
+          "oklch(51% 0.038 85.3)",
+          "oklch(63% 0.038 85.3)",
+          "oklch(75% 0.038 85.3)",
+          "oklch(85% 0.038 85.3)",
+          "oklch(95% 0.038 85.3)"
+        ]
+      },
+      "shade": {
+        "role": "secondary",
+        "displayName": "Balcony Shade",
+        "canonical": "oklch(70.4% 0.028 231.8)",
+        "tonalRamp": [
+          "oklch(15% 0.028 231.8)",
+          "oklch(27% 0.028 231.8)",
+          "oklch(39% 0.028 231.8)",
+          "oklch(51% 0.028 231.8)",
+          "oklch(63% 0.028 231.8)",
+          "oklch(75% 0.028 231.8)",
+          "oklch(85% 0.028 231.8)",
+          "oklch(95% 0.028 231.8)"
+        ]
+      },
+      "shade-wash": {
+        "role": "secondary",
+        "displayName": "Balcony Shade Wash",
+        "canonical": "oklch(94.5% 0.008 228.9)",
+        "tonalRamp": [
+          "oklch(15% 0.008 228.9)",
+          "oklch(27% 0.008 228.9)",
+          "oklch(39% 0.008 228.9)",
+          "oklch(51% 0.008 228.9)",
+          "oklch(63% 0.008 228.9)",
+          "oklch(75% 0.008 228.9)",
+          "oklch(85% 0.008 228.9)",
+          "oklch(95% 0.008 228.9)"
+        ]
+      },
+      "shade-ink": {
+        "role": "secondary",
+        "displayName": "Balcony Shade Ink",
+        "canonical": "oklch(44.8% 0.038 230.3)",
+        "tonalRamp": [
+          "oklch(15% 0.038 230.3)",
+          "oklch(27% 0.038 230.3)",
+          "oklch(39% 0.038 230.3)",
+          "oklch(51% 0.038 230.3)",
+          "oklch(63% 0.038 230.3)",
+          "oklch(75% 0.038 230.3)",
+          "oklch(85% 0.038 230.3)",
+          "oklch(95% 0.038 230.3)"
+        ]
+      },
+      "ok": {
+        "role": "tertiary",
+        "displayName": "Cypress",
+        "canonical": "oklch(50.9% 0.079 153.3)",
+        "tonalRamp": [
+          "oklch(15% 0.079 153.3)",
+          "oklch(27% 0.079 153.3)",
+          "oklch(39% 0.079 153.3)",
+          "oklch(51% 0.079 153.3)",
+          "oklch(63% 0.079 153.3)",
+          "oklch(75% 0.079 153.3)",
+          "oklch(85% 0.079 153.3)",
+          "oklch(95% 0.079 153.3)"
+        ]
+      },
+      "ok-wash": {
+        "role": "tertiary",
+        "displayName": "Cypress Wash",
+        "canonical": "oklch(94.1% 0.017 153.6)",
+        "tonalRamp": [
+          "oklch(15% 0.017 153.6)",
+          "oklch(27% 0.017 153.6)",
+          "oklch(39% 0.017 153.6)",
+          "oklch(51% 0.017 153.6)",
+          "oklch(63% 0.017 153.6)",
+          "oklch(75% 0.017 153.6)",
+          "oklch(85% 0.017 153.6)",
+          "oklch(95% 0.017 153.6)"
+        ]
+      },
+      "warn": {
+        "role": "tertiary",
+        "displayName": "Terracotta",
+        "canonical": "oklch(55.7% 0.137 41.9)",
+        "tonalRamp": [
+          "oklch(15% 0.120 41.9)",
+          "oklch(27% 0.120 41.9)",
+          "oklch(39% 0.120 41.9)",
+          "oklch(51% 0.120 41.9)",
+          "oklch(63% 0.120 41.9)",
+          "oklch(75% 0.120 41.9)",
+          "oklch(85% 0.120 41.9)",
+          "oklch(95% 0.120 41.9)"
+        ]
+      },
+      "warn-wash": {
+        "role": "tertiary",
+        "displayName": "Terracotta Wash",
+        "canonical": "oklch(93.4% 0.023 48.5)",
+        "tonalRamp": [
+          "oklch(15% 0.023 48.5)",
+          "oklch(27% 0.023 48.5)",
+          "oklch(39% 0.023 48.5)",
+          "oklch(51% 0.023 48.5)",
+          "oklch(63% 0.023 48.5)",
+          "oklch(75% 0.023 48.5)",
+          "oklch(85% 0.023 48.5)",
+          "oklch(95% 0.023 48.5)"
+        ]
+      },
+      "warn-ink": {
+        "role": "tertiary",
+        "displayName": "Terracotta Ink",
+        "canonical": "oklch(46.5% 0.121 41.3)",
+        "tonalRamp": [
+          "oklch(15% 0.120 41.3)",
+          "oklch(27% 0.120 41.3)",
+          "oklch(39% 0.120 41.3)",
+          "oklch(51% 0.120 41.3)",
+          "oklch(63% 0.120 41.3)",
+          "oklch(75% 0.120 41.3)",
+          "oklch(85% 0.120 41.3)",
+          "oklch(95% 0.120 41.3)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "Page titles and the home greeting."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Home today headline, login and unsubscribe titles."
+      },
+      "numeral": {
+        "displayName": "Numeral",
+        "purpose": "Ribbon counts and the thermometer counter; tabular."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Sheet and modal headings."
+      },
+      "title-sm": {
+        "displayName": "Title Small",
+        "purpose": "Panel headings, section titles, program cards, home rows."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "All readable UI text."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Field labels, column headers, ribbon labels, chips, buttons."
+      },
+      "caption": {
+        "displayName": "Caption",
+        "purpose": "Rail groups, guide words, day bands, tags, hints, timestamps."
+      }
+    },
+    "shadows": [
+      {
+        "name": "shadow-ledge",
+        "value": "0 10px 18px -12px rgb(46 48 51 / 0.22)",
+        "purpose": "Balcony ledge under ribbon strips and the public card."
+      },
+      {
+        "name": "shadow-sm",
+        "value": "0 1px 2px rgb(46 48 51 / 0.06), 0 2px 6px rgb(46 48 51 / 0.04)",
+        "purpose": "Hover lift on program cards."
+      },
+      {
+        "name": "shadow-md",
+        "value": "0 6px 16px -4px rgb(46 48 51 / 0.12), 0 2px 4px rgb(46 48 51 / 0.05)",
+        "purpose": "Toasts and the home today block."
+      },
+      {
+        "name": "shadow-lg",
+        "value": "0 24px 48px -12px rgb(30 32 34 / 0.28), 0 8px 16px -8px rgb(30 32 34 / 0.12)",
+        "purpose": "Sheets, modals, mobile rail drawer."
+      },
+      {
+        "name": "focus-halo",
+        "value": "0 0 0 3px rgb(201 154 75 / 0.18)",
+        "purpose": "Gold halo on focused inputs and search."
+      },
+      {
+        "name": "table-header-scrolled",
+        "value": "0 6px 10px -8px rgb(46 48 51 / 0.35)",
+        "purpose": "Under the sticky header once a table has scrolled."
+      },
+      {
+        "name": "scrim",
+        "value": "rgb(30 32 34 / 0.38)",
+        "purpose": "Backdrop behind sheets, modals, and the mobile rail."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-out",
+        "value": "cubic-bezier(0.23, 1, 0.32, 1)",
+        "purpose": "Default reveal easing: rows, modals, toasts, panes."
+      },
+      {
+        "name": "ease-in-out",
+        "value": "cubic-bezier(0.77, 0, 0.175, 1)",
+        "purpose": "The completion sweep across the thermometer core."
+      },
+      {
+        "name": "ease-drawer",
+        "value": "cubic-bezier(0.32, 0.72, 0, 1)",
+        "purpose": "Side sheet and mobile rail slide."
+      },
+      {
+        "name": "t-press",
+        "value": "120ms",
+        "purpose": "Button press scale (0.97)."
+      },
+      {
+        "name": "t-fast",
+        "value": "150ms",
+        "purpose": "Hover color changes, page fade-in."
+      },
+      {
+        "name": "t-base",
+        "value": "200ms",
+        "purpose": "Modal rise, toast, switch, station state."
+      },
+      {
+        "name": "t-sheet",
+        "value": "260ms",
+        "purpose": "Side sheet, backdrop, mobile rail."
+      },
+      {
+        "name": "row-in",
+        "value": "220ms ease-out, 30ms stagger, capped at 12 rows",
+        "purpose": "First data arrival only; fade-only under reduced motion."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "collapse",
+        "value": "1180px"
+      },
+      {
+        "name": "mobile",
+        "value": "900px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The sun: one per header, the main action of the view.",
+      "html": "<button class=\"ds-btn ds-btn-primary\" dir=\"rtl\"><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M5 12h14\"/><path d=\"M12 5v14\"/></svg>סוכן חדש</button>",
+      "css": ".ds-btn{display:inline-flex;align-items:center;gap:8px;min-height:42px;padding:0 20px;border:1px solid transparent;border-radius:var(--r-md,10px);font-family:var(--font-ui,Assistant,sans-serif);font-weight:700;font-size:var(--fs-md,0.9375rem);cursor:pointer;transition:background-color 150ms ease,border-color 150ms ease,transform 120ms cubic-bezier(0.23,1,0.32,1);} .ds-btn:active{transform:scale(0.97);} .ds-btn:focus-visible{outline:2px solid var(--gold,#c99a4b);outline-offset:2px;} .ds-btn-primary{background:var(--gold,#c99a4b);color:#1f2022;box-shadow:inset 0 1px 0 rgb(255 255 255 / 0.25),0 1px 2px rgb(127 90 31 / 0.25);} .ds-btn-primary:hover{background:#d4a75a;}"
+    },
+    {
+      "name": "Ghost Button",
+      "kind": "button",
+      "refersTo": "button-ghost",
+      "description": "Default secondary: export, cancel.",
+      "html": "<button class=\"ds-btn ds-btn-ghost\" dir=\"rtl\"><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4\"/><path d=\"m7 10 5 5 5-5\"/><path d=\"M12 15V3\"/></svg>ייצוא לאקסל</button>",
+      "css": ".ds-btn{display:inline-flex;align-items:center;gap:8px;min-height:42px;padding:0 20px;border:1px solid transparent;border-radius:var(--r-md,10px);font-family:var(--font-ui,Assistant,sans-serif);font-weight:700;font-size:var(--fs-md,0.9375rem);cursor:pointer;transition:background-color 150ms ease,border-color 150ms ease,transform 120ms cubic-bezier(0.23,1,0.32,1);} .ds-btn:active{transform:scale(0.97);} .ds-btn:focus-visible{outline:2px solid var(--gold,#c99a4b);outline-offset:2px;} .ds-btn-ghost{background:var(--panel,#fff);border-color:var(--line,#dadfd6);color:var(--ink,#2e3033);} .ds-btn-ghost:hover{background:var(--plaster-2,#eceee9);}"
+    },
+    {
+      "name": "Dark Button",
+      "kind": "button",
+      "refersTo": "button-dark",
+      "description": "Decisive actions off the main sun: login submit, new send.",
+      "html": "<button class=\"ds-btn ds-btn-dark\" dir=\"rtl\">שליחה חדשה</button>",
+      "css": ".ds-btn{display:inline-flex;align-items:center;gap:8px;min-height:42px;padding:0 20px;border:1px solid transparent;border-radius:var(--r-md,10px);font-family:var(--font-ui,Assistant,sans-serif);font-weight:700;font-size:var(--fs-md,0.9375rem);cursor:pointer;transition:background-color 150ms ease,border-color 150ms ease,transform 120ms cubic-bezier(0.23,1,0.32,1);} .ds-btn:active{transform:scale(0.97);} .ds-btn:focus-visible{outline:2px solid var(--gold,#c99a4b);outline-offset:2px;} .ds-btn-dark{background:var(--ink,#2e3033);color:#fff;} .ds-btn-dark:hover{background:#3b3e42;}"
+    },
+    {
+      "name": "Danger Button",
+      "kind": "button",
+      "refersTo": "button-danger-solid",
+      "description": "Final destructive confirmation only.",
+      "html": "<button class=\"ds-btn ds-btn-danger\" dir=\"rtl\">מחיקה</button>",
+      "css": ".ds-btn{display:inline-flex;align-items:center;gap:8px;min-height:42px;padding:0 20px;border:1px solid transparent;border-radius:var(--r-md,10px);font-family:var(--font-ui,Assistant,sans-serif);font-weight:700;font-size:var(--fs-md,0.9375rem);cursor:pointer;transition:background-color 150ms ease,border-color 150ms ease,transform 120ms cubic-bezier(0.23,1,0.32,1);} .ds-btn:active{transform:scale(0.97);} .ds-btn:focus-visible{outline:2px solid var(--gold,#c99a4b);outline-offset:2px;} .ds-btn-danger{background:var(--warn,#b4532a);color:#fff;} .ds-btn-danger:hover{background:#a2481f;}"
+    },
+    {
+      "name": "Text Field",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "42px white field with gold focus halo.",
+      "html": "<label class=\"ds-field\" dir=\"rtl\"><span>שם פרטי</span><input class=\"ds-input\" placeholder=\"לדוגמה: דנה\"></label>",
+      "css": ".ds-field{display:grid;gap:6px;font-family:var(--font-ui,Assistant,sans-serif);} .ds-field span{font-size:0.875rem;font-weight:700;color:var(--ink-2,#484c50);} .ds-input{height:42px;padding:0 12px;border:1px solid var(--line,#dadfd6);border-radius:var(--r-md,10px);background:var(--panel,#fff);color:var(--ink,#2e3033);font:inherit;transition:border-color 150ms ease,box-shadow 150ms ease;} .ds-input::placeholder{color:var(--muted,#61665f);} .ds-input:hover{border-color:#c7ccc3;} .ds-input:focus{outline:none;border-color:var(--gold,#c99a4b);box-shadow:0 0 0 3px rgb(201 154 75 / 0.18);}"
+    },
+    {
+      "name": "Search",
+      "kind": "input",
+      "refersTo": "search",
+      "description": "Plaster-filled table search that turns white on focus.",
+      "html": "<div class=\"ds-search\" dir=\"rtl\"><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><path d=\"m21 21-4.3-4.3\"/></svg><input placeholder=\"חיפוש לפי שם, מספר סוכן או מייל\"></div>",
+      "css": ".ds-search{position:relative;max-width:460px;font-family:var(--font-ui,Assistant,sans-serif);} .ds-search svg{position:absolute;inset-inline-start:12px;top:50%;transform:translateY(-50%);color:var(--faint,#8a8e88);} .ds-search input{width:100%;height:40px;padding-inline:40px 12px;border:1px solid var(--line,#dadfd6);border-radius:var(--r-md,10px);background:var(--plaster,#f4f5f2);font:inherit;transition:border-color 150ms ease,background-color 150ms ease,box-shadow 150ms ease;} .ds-search input:focus{outline:none;border-color:var(--gold,#c99a4b);background:#fff;box-shadow:0 0 0 3px rgb(201 154 75 / 0.18);}"
+    },
+    {
+      "name": "Filter Chip",
+      "kind": "chip",
+      "refersTo": "chip",
+      "description": "Pill filters where the ribbon is not the filter; pressed inverts to charcoal.",
+      "html": "<div class=\"ds-chips\" dir=\"rtl\"><button class=\"ds-chip\" aria-pressed=\"true\">הכל <span>42</span></button><button class=\"ds-chip\" aria-pressed=\"false\">ביטוח <span>18</span></button></div>",
+      "css": ".ds-chips{display:flex;gap:6px;font-family:var(--font-ui,Assistant,sans-serif);} .ds-chip{display:inline-flex;align-items:center;gap:6px;height:34px;padding:0 12px;border:1px solid var(--line,#dadfd6);border-radius:999px;background:#fff;font:inherit;font-size:0.875rem;font-weight:700;color:var(--ink-2,#484c50);cursor:pointer;transition:background-color 150ms ease,color 150ms ease;} .ds-chip span{font-weight:600;color:var(--muted,#61665f);} .ds-chip:hover{background:var(--plaster,#f4f5f2);} .ds-chip[aria-pressed=true]{background:var(--ink,#2e3033);border-color:var(--ink,#2e3033);color:#fff;} .ds-chip[aria-pressed=true] span{color:var(--gold-hi,#e9c77a);} .ds-chip:focus-visible{outline:2px solid var(--gold,#c99a4b);outline-offset:2px;}"
+    },
+    {
+      "name": "Ribbon Window",
+      "kind": "custom",
+      "refersTo": "ribbon",
+      "description": "One strip of directory counts; panes filter the table when pressed.",
+      "html": "<div class=\"ds-ribbon\" dir=\"rtl\"><button class=\"ds-pane\" aria-pressed=\"true\"><span>כל הסוכנים</span><b>150</b></button><button class=\"ds-pane\" aria-pressed=\"false\"><span>סטטוס יומי</span><b>120</b></button><button class=\"ds-pane ds-pane--warn\" aria-pressed=\"false\"><span>לא מקבלים סטטוס</span><b>6</b></button><button class=\"ds-pane ds-pane--muted\" aria-pressed=\"false\"><span>הוסרו מתפוצה</span><b>11</b></button></div>",
+      "css": ".ds-ribbon{display:flex;background:#fff;border:1px solid var(--line,#dadfd6);border-radius:var(--r-lg,14px);box-shadow:0 10px 18px -12px rgb(46 48 51 / 0.22);overflow:hidden;font-family:var(--font-ui,Assistant,sans-serif);} .ds-pane{flex:1;padding:16px 20px;border:0;border-inline-start:1px solid var(--line-soft,#e9ebe6);background:transparent;text-align:start;cursor:pointer;color:var(--ink,#2e3033);transition:background-color 150ms ease;} .ds-pane:first-child{border-inline-start:0;} .ds-pane:hover{background:var(--plaster,#f4f5f2);} .ds-pane span{display:block;font-size:0.875rem;font-weight:700;color:var(--muted,#61665f);} .ds-pane b{display:block;margin-top:2px;font-family:var(--font-display,Rubik,sans-serif);font-size:2rem;font-weight:500;line-height:1.1;font-variant-numeric:tabular-nums;} .ds-pane[aria-pressed=true]{background:var(--gold-wash-2,#f4e7cc);} .ds-pane[aria-pressed=true] span{color:var(--gold-deep,#7f5a1f);} .ds-pane--warn b{color:var(--warn,#b4532a);} .ds-pane--muted b{color:var(--shade-ink,#3f5966);} .ds-pane:focus-visible{outline:2px solid var(--gold,#c99a4b);outline-offset:-2px;}"
+    },
+    {
+      "name": "Rail Navigation",
+      "kind": "nav",
+      "refersTo": "rail",
+      "description": "The charcoal stair core; the current item is the lit window.",
+      "html": "<nav class=\"ds-rail\" dir=\"rtl\"><div class=\"ds-rail-group\">עבודה יומית</div><a class=\"ds-rail-link\" href=\"#\"><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M3 10 12 3l9 7v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z\"/></svg>דף הבית</a><div class=\"ds-rail-group\">מאגרים</div><a class=\"ds-rail-link\" href=\"#\" aria-current=\"page\"><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2\"/><circle cx=\"9\" cy=\"7\" r=\"4\"/><path d=\"M22 21v-2a4 4 0 0 0-3-3.87\"/><path d=\"M16 3.13a4 4 0 0 1 0 7.75\"/></svg>סוכנים</a></nav>",
+      "css": ".ds-rail{width:252px;padding:8px 0 16px;background:var(--core,#2e3033);color:var(--core-ink,#e4e6e1);font-family:var(--font-ui,Assistant,sans-serif);} .ds-rail-group{padding:20px 24px 8px;font-size:0.8125rem;font-weight:700;color:var(--core-muted,#a3a79f);} .ds-rail-link{position:relative;display:flex;align-items:center;gap:12px;margin:1px 12px;padding:9px 12px;border-radius:var(--r-sm,8px);color:var(--core-ink,#e4e6e1);text-decoration:none;font-size:0.9375rem;font-weight:600;transition:background-color 150ms ease;} .ds-rail-link svg{color:var(--core-muted,#a3a79f);} .ds-rail-link:hover{background:var(--core-2,#383b3f);} .ds-rail-link[aria-current=page]{background:var(--core-2,#383b3f);color:#fff;} .ds-rail-link[aria-current=page] svg{color:var(--gold-hi,#e9c77a);} .ds-rail-link[aria-current=page]::before{content:'';position:absolute;inset-inline-start:-12px;top:7px;bottom:7px;width:4px;border-radius:3px 0 0 3px;background:linear-gradient(180deg,#e9c77a,#c99a4b);} .ds-rail-link:focus-visible{outline:2px solid var(--gold,#c99a4b);outline-offset:2px;}"
+    },
+    {
+      "name": "Thermometer Window",
+      "kind": "custom",
+      "refersTo": "thermo-core",
+      "description": "Signature send progress: panes light gold per agent, terracotta on failure.",
+      "html": "<div class=\"ds-thermo\" dir=\"rtl\"><div class=\"ds-thermo-count\"><b>9 / 12</b><span>שולח…</span></div><div class=\"ds-thermo-panes\"><i data-s=\"sent\"></i><i data-s=\"sent\"></i><i data-s=\"sent\"></i><i data-s=\"failed\"></i><i data-s=\"sent\"></i><i data-s=\"skipped\"></i><i data-s=\"sent\"></i><i data-s=\"noEmail\"></i><i data-s=\"sent\"></i><i></i><i></i><i></i></div></div>",
+      "css": ".ds-thermo{width:360px;padding:16px;border-radius:var(--r-lg,14px);background:var(--core,#2e3033);font-family:var(--font-ui,Assistant,sans-serif);} .ds-thermo-count{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:12px;color:var(--core-muted,#a3a79f);font-size:0.875rem;} .ds-thermo-count b{font-family:var(--font-display,Rubik,sans-serif);font-size:2rem;font-weight:500;color:#fff;font-variant-numeric:tabular-nums;} .ds-thermo-panes{display:grid;grid-template-columns:repeat(6,1fr);gap:4px;} .ds-thermo-panes i{height:22px;border-radius:2px;background:var(--core-3,#45484c);transition:background-color 240ms cubic-bezier(0.23,1,0.32,1);} .ds-thermo-panes i[data-s=sent]{background:linear-gradient(180deg,#e9c77a,#c99a4b);box-shadow:0 0 0 1px rgb(233 199 122 / 0.25);} .ds-thermo-panes i[data-s=failed]{background:var(--warn,#b4532a);} .ds-thermo-panes i[data-s=noEmail]{background:transparent;box-shadow:inset 0 0 0 1.5px var(--gold-hi,#e9c77a);} .ds-thermo-panes i[data-s=skipped]{background:#5d6f78;}"
+    },
+    {
+      "name": "Tag",
+      "kind": "chip",
+      "refersTo": "tag",
+      "description": "Status tags in table cells; wash fill with matching ink.",
+      "html": "<div dir=\"rtl\" style=\"display:flex;gap:6px\"><span class=\"ds-tag\">יומי</span><span class=\"ds-tag ds-tag--gold\">שבועי</span><span class=\"ds-tag ds-tag--warn\">הוסר</span><span class=\"ds-tag ds-tag--shade\">ללא מייל</span></div>",
+      "css": ".ds-tag{display:inline-flex;align-items:center;height:24px;padding:0 9px;border-radius:6px;background:var(--plaster-2,#eceee9);font-family:var(--font-ui,Assistant,sans-serif);font-size:0.8125rem;font-weight:700;color:var(--ink-2,#484c50);} .ds-tag--gold{background:var(--gold-wash-2,#f4e7cc);color:var(--gold-deep,#7f5a1f);} .ds-tag--warn{background:var(--warn-wash,#f7e5dc);color:var(--warn-ink,#8f3d1b);} .ds-tag--shade{background:var(--shade-wash,#e8eef1);color:var(--shade-ink,#3f5966);}"
+    }
+  ],
+  "narrative": {
+    "northStar": "White City Plaster",
+    "overview": "The office is a Tel Aviv White City building. Work happens on lime-white plaster: a pale ground with pure white panels drawn by crisp one-pixel stone hairlines. A charcoal stair core runs down the right edge (the rail, in RTL), and Talpiot gold is the sun that lights it. Gold falls only where light means something: the current place, the primary action, progress, and selection. Everything else is plaster, charcoal ink, and a balcony-shadow blue-grey for secondary data.\n\nDensity is operational, not editorial. Pages open on a 44px Rubik title with actions at the far end, a ribbon-window strip of counts, then a single table panel with search, a sticky guide-words band, and a sortable sticky header. Records open in a side sheet from the left edge while the workspace recedes behind a charcoal scrim; centered modals are kept for confirmations. The signature is the thermometer window: a charcoal core of small panes that light gold one by one as emails send, terracotta where a send failed.\n\nMotion is a short sunlight sweep: 150 to 260ms, ease-out, rows settling 4px on first data arrival only, dialogs rising 8px and fading, one gold sweep across the core when a run completes. Under reduced motion, movement goes and fades stay.",
+    "keyCharacteristics": [
+      "Plaster ground, white panels, 1px stone hairlines; no grey sidebar plus blue accent admin template.",
+      "Charcoal core (rail, thermometer, home \"today\" block, login facade) as the building's spine.",
+      "Gold as light, never as decoration.",
+      "Rubik for titles and numerals, Assistant for all UI text; every figure tabular.",
+      "Soft corners (10 to 14px) and soft, downward-only shadows.",
+      "Hebrew RTL throughout; physical directions in this file are given for RTL."
+    ],
+    "rules": [
+      {
+        "name": "The Sunlight Rule",
+        "body": "Gold marks light: the current place, the primary action, progress, and selection or focus. Gold-wash tags (weekly status, manager letters) are the only resting gold. Never fill a panel, header, or block of text with gold.",
+        "section": "colors"
+      },
+      {
+        "name": "The One Sun Per View Rule",
+        "body": "Each page header has at most one gold primary button. Everything else in the header is ghost, dark, or quiet.",
+        "section": "colors"
+      },
+      {
+        "name": "The Terracotta Means Failure Rule",
+        "body": "Terracotta is reserved for errors and destruction. Do not use it for emphasis, counts that are merely notable, or decoration.",
+        "section": "colors"
+      },
+      {
+        "name": "The Tabular Figures Rule",
+        "body": "Every number is tabular: table cells, counts, ranges, timestamps. Columns of figures must align without effort.",
+        "section": "typography"
+      },
+      {
+        "name": "The Two Voices Rule",
+        "body": "Rubik speaks titles and numbers; Assistant speaks everything else. Do not set body or labels in Rubik, and do not set a page title in Assistant.",
+        "section": "typography"
+      },
+      {
+        "name": "The No Tracking Rule",
+        "body": "Hebrew is set without letter-spacing or case tricks. The only tracked text is the Latin \"FAMILY OFFICE\" line in the brand lockup (0.22em, 11px), which reproduces the logo and is not a label style.",
+        "section": "typography"
+      },
+      {
+        "name": "The Sun Is Overhead Rule",
+        "body": "Shadows fall downward with negative spread. No glow halos, no colored shadows, and no hard offset blocks.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Recede Rule",
+        "body": "When a record or confirmation opens, the workspace dims behind a charcoal scrim (rgb(30 32 34 / 0.38)). Focus comes from the room dimming, not from a heavier shadow.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do keep the ground plaster and the work surfaces white, separated by 1px stone hairlines.",
+      "Do reserve gold for place, primary action, progress, and selection or focus (The Sunlight Rule), with one gold primary per header.",
+      "Do set every title in Rubik and every number in Rubik or tabular Assistant.",
+      "Do put directory counts in one ribbon strip; make panes the filter when the strip is the filter.",
+      "Do open records in the left side sheet and keep centered modals for confirmations.",
+      "Do show sends as stations, an explicit confirm with counts, the thermometer window, and a final report of who was not reached.",
+      "Do keep motion between 150 and 260ms with ease-out, and remove movement (but keep fades) under `prefers-reduced-motion`.",
+      "Do use Lucide line icons (rendered SVG) at 18px (14px in tight cells, 20px in icon buttons), colored by the text they sit with."
+    ],
+    "donts": [
+      "Don't add a grey sidebar, white cards, and a blue accent; the rail is charcoal and the accent is gold.",
+      "Don't put a breadcrumb, eyebrow, or tracked label above page titles; the lit rail item carries location.",
+      "Don't use pane-gold or terracotta as decoration, or terracotta for anything but failure and destruction.",
+      "Don't cast glows, colored shadows, or hard offset shadows; shadows fall softly downward.",
+      "Don't use faint (#8a8e88) for text; it is for inactive icons only.",
+      "Don't replace the proportion strip with a donut or pie; proportions are a segmented strip with a table.",
+      "Don't add letter-spacing or uppercase to Hebrew text."
+    ]
+  }
+}
